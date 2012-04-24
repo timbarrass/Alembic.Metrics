@@ -11,6 +11,8 @@ namespace Sinks
 {
     public class CircularDataSink : IDataSink
     {
+        private object _padlock = new object();
+
         private int _pointsToKeep = 10;
 
         private SlidingBuffer<IMetricData> _data;
@@ -28,23 +30,33 @@ namespace Sinks
 
         public void Update(IMetricData perfMetricData)
         {
-            _data.Add(perfMetricData);
+            lock (_padlock)
+            {
+                _data.Add(perfMetricData);
+            }
         }
 
         public void Plot()
         {
-            var xvals = _data.Select(x => x.Timestamp).ToArray<DateTime>();
+            DateTime[] xvals;
+            var yvals = new Dictionary<MetricSpecification, double?[]>();
 
-            if (xvals.Length != 0)
+            lock (_padlock)
             {
-                foreach (var spec in _spec)
+                xvals = _data.Select(x => x.Timestamp).ToArray<DateTime>();
+
+                if (xvals.Length != 0)
                 {
-                    var name = spec.Name;
-
-                    var yvals = _data.Select(y => y.Values[name]).ToArray<double?>();
-
-                    GenerateChart(xvals, yvals, spec.ExpectedMin, spec.ExpectedMax, name);
+                    foreach (var spec in _spec)
+                    {
+                        yvals[spec] = _data.Select(y => y.Values[spec.Name]).ToArray<double?>();
+                    }
                 }
+            }
+
+            foreach(var spec in yvals.Keys)
+            {
+                GenerateChart(xvals, yvals[spec], spec.ExpectedMin, spec.ExpectedMax, spec.Name);
             }
         }
 
@@ -53,9 +65,10 @@ namespace Sinks
             var chart = new Chart();
             chart.Size = new Size(400, 200);
             chart.AntiAliasing = AntiAliasingStyles.None;
+            chart.Titles.Add(new Title(chartName, Docking.Top, new Font("Tahoma", 8), Color.Black));
 
             var chartArea = new ChartArea();
-            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nhh:mm";
+            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
             chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
             chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
             chartArea.AxisX.LabelStyle.Font = new Font("Tahoma", 7);
@@ -78,13 +91,13 @@ namespace Sinks
             chart.ChartAreas.Add(chartArea);
 
             var series = new Series();
-            series.Name = "Series1";
+            series.Name = chartName;
             series.ChartType = SeriesChartType.FastLine;
             series.XValueType = ChartValueType.DateTime;
             chart.Series.Add(series);
 
             // bind the datapoints
-            chart.Series["Series1"].Points.DataBindXY(xvals, yvals);
+            chart.Series[chartName].Points.DataBindXY(xvals, yvals);
 
             // copy the series and manipulate the copy
             //chart.DataManipulator.CopySeriesValues("Series1", "Series2");
@@ -127,5 +140,36 @@ namespace Sinks
             }
         }
 
+
+        private class KiloFormatter : ICustomFormatter, IFormatProvider
+        {
+            public object GetFormat(Type formatType)
+            {
+                return (formatType == typeof(ICustomFormatter)) ? this : null;
+            }
+
+            public string Format(string format, object arg, IFormatProvider formatProvider)
+            {
+                if (format == null || !format.Trim().StartsWith("K"))
+                {
+                    if (arg is IFormattable)
+                    {
+                        return ((IFormattable)arg).ToString(format, formatProvider);
+                    }
+                    return arg.ToString();
+                }
+
+                decimal value = Convert.ToDecimal(arg);
+
+                //  Here's is where you format your number
+
+                if (value > 1000)
+                {
+                    return (value / 1000).ToString() + "k";
+                }
+
+                return value.ToString();
+            }
+        }
     }
 }

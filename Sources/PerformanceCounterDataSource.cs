@@ -23,16 +23,10 @@ namespace Sources
 
         public IMetricData Query()
         {
-            //foreach(var process in Process.GetProcesses())
-            //{
-            //    Console.WriteLine(process);
-            //}
-
             var values = new Dictionary<string, double?>
                              {
                                  { "Committed", committedBytes.NextValue() },
                                  { "Processor", processorTime.NextValue() },
-                                 { "Processes", Process.GetProcessesByName("chrome").Length },
                              };
             
             return new MetricData(values, DateTime.Now);

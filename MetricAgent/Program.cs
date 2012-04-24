@@ -18,15 +18,14 @@ namespace MetricAgent
 
         public Program()
         {
-            var agentLoopDelay = 5;
+            var agentLoopDelay = 1;
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];
             var processToMonitor = ConfigurationSettings.AppSettings["processToMonitor"];
 
             _source = new CompositeSource( new PerformanceCounterDataSource(), new ProcessCountingSource(processToMonitor) );
 
-            //_sink = new RRDDataSink(_source.Spec, agentLoopDelay * 3, outputPath);
-            _sink = new CircularDataSink(30, _source.Spec);
+            _sink = new CircularDataSink(600, _source.Spec);
 
             _agent = new Agent(_source, _sink, agentLoopDelay);
 

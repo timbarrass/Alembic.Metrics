@@ -74,7 +74,8 @@ namespace MetricAgent
             // hack -- have the sink be able to plot for now as it has all the right refs
             while (true)
             {
-                Thread.Sleep(_loopDelay * 2);
+                Thread.Sleep(_loopDelay * 10);
+                //Thread.Sleep(_loopDelay);
 
                 lock (_padlock)
                 {
