@@ -44,6 +44,7 @@
     <Compile Include="IMetricData.cs" />
     <Compile Include="MetricData.cs" />
     <Compile Include="MetricSpecification.cs" />
+    <Compile Include="NullMetricData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

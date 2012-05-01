@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="CompositeSource.cs" />
     <Compile Include="IDataSource.cs" />
+    <Compile Include="NullSource.cs" />
     <Compile Include="PerformanceCounterDataSource.cs" />
     <Compile Include="PerformanceCounterDataSourceConfiguration.cs" />
     <Compile Include="ProcessCountingSource.cs" />

@@ -22,18 +22,15 @@ namespace MetricAgent
 
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
-            var countName = processes.Processes[0].Name + " count";
-            var uptimeName = processes.Processes[0].Name + " uptime";
-            var exe = processes.Processes[0].Exe;
+            _source = new NullSource();
 
-            _source = new ProcessCountingSource(countName, uptimeName, exe);
+            var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
             
-            for (int i = 1; i < processes.Processes.Count; i++ )
+            for (int i = 0; i < processes.Processes.Count; i++ )
             {
-                countName = processes.Processes[i].Name + " count";
-                uptimeName = processes.Processes[i].Name + " uptime";
-                exe = processes.Processes[i].Exe;
+                var countName = processes.Processes[i].Name + " count";
+                var uptimeName = processes.Processes[i].Name + " uptime";
+                var exe = processes.Processes[i].Exe;
 
                 _source = new CompositeSource(_source, new ProcessCountingSource(countName, uptimeName, exe));
             }
