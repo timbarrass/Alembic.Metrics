@@ -7,14 +7,25 @@ namespace Sources
 {
     public class PerformanceCounterDataSource : IDataSource
     {
-        private static readonly MetricSpecification[] _spec = new[]
-                                                                  {
-                                                                      new MetricSpecification("Committed", 0f, null), 
-                                                                      new MetricSpecification("Processor", 0f, 100f),
-                                                                  };
+        private MetricSpecification[] _spec;
 
         private PerformanceCounter committedBytes = new PerformanceCounter { CategoryName = "Memory", CounterName = "Committed Bytes" };
         private PerformanceCounter processorTime = new PerformanceCounter { CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total" };
+
+        private string _committedName;
+        private string _processorName;
+
+        public PerformanceCounterDataSource()
+        {
+            _committedName = "Committed B on " + Environment.MachineName;
+            _processorName = "Total CPU use on " + Environment.MachineName;
+
+            _spec = new[]
+                {
+                    new MetricSpecification(_committedName, 0f, null), 
+                    new MetricSpecification(_processorName, 0f, 100f),
+                };
+        }
 
         public ICollection<MetricSpecification> Spec
         {
@@ -25,8 +36,8 @@ namespace Sources
         {
             var values = new Dictionary<string, double?>
                              {
-                                 { "Committed", committedBytes.NextValue() },
-                                 { "Processor", processorTime.NextValue() },
+                                 { _committedName, committedBytes.NextValue() },
+                                 { _processorName, processorTime.NextValue() },
                              };
             
             return new MetricData(values, DateTime.Now);

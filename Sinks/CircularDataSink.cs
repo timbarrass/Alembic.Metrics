@@ -62,6 +62,8 @@ namespace Sinks
 
         private void GenerateChart(DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
         {
+            chartName = Environment.MachineName + ": " + chartName;
+
             var chart = new Chart();
             chart.Size = new Size(400, 200);
             chart.AntiAliasing = AntiAliasingStyles.None;
@@ -108,7 +110,7 @@ namespace Sinks
             chart.Invalidate();
 
             // write out a file
-            chart.SaveImage(Path.ChangeExtension(chartName, "png"), ChartImageFormat.Png);
+            chart.SaveImage(Path.ChangeExtension(chartName.Replace(":","-"), "png"), ChartImageFormat.Png);
         }
 
         private class SlidingBuffer<T> : IEnumerable<T>

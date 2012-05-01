@@ -20,10 +20,23 @@ namespace MetricAgent
         {
             var agentLoopDelay = 1;
 
-            var outputPath = ConfigurationSettings.AppSettings["outputPath"];
-            var processToMonitor = ConfigurationSettings.AppSettings["processToMonitor"];
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
+            var countName = processes.Processes[0].Name + " count";
+            var uptimeName = processes.Processes[0].Name + " uptime";
+            var exe = processes.Processes[0].Exe;
+            _source = new CompositeSource(new PerformanceCounterDataSource(), new ProcessCountingSource(countName, uptimeName, exe));
 
-            _source = new CompositeSource( new PerformanceCounterDataSource(), new ProcessCountingSource(processToMonitor) );
+            for (int i = 1; i < processes.Processes.Count; i++ )
+            {
+                countName = processes.Processes[i].Name + " count";
+                uptimeName = processes.Processes[i].Name + " uptime";
+                exe = processes.Processes[i].Exe;
+
+                _source = new CompositeSource(_source, new ProcessCountingSource(countName, uptimeName, exe));
+            }
+
+            var outputPath = ConfigurationSettings.AppSettings["outputPath"];
 
             _sink = new CircularDataSink(600, _source.Spec);
 

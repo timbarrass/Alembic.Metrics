@@ -80,7 +80,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
-            var source = new ProcessCountingSource("chrome");
+            var source = new ProcessCountingSource("count", "uptime", "chrome");
 
             var expectedMetrics = new[] { "Processes" };
 
