@@ -13,11 +13,16 @@ namespace Sources
 
     public class CounterElement : ConfigurationElement
     {
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name
+        {
+            get { return (string)base["name"]; }
+        }
+
         [ConfigurationProperty("categoryName", IsRequired = true)]
         public string CategoryName
         {
             get { return (string)base["categoryName"]; }
-
         }
 
         [ConfigurationProperty("counterName", IsRequired = true)]
@@ -30,6 +35,18 @@ namespace Sources
         public string InstanceName
         {
             get { return (string)base["instanceName"]; }
+        }
+
+        [ConfigurationProperty("min"), DefaultSettingValue(null)]
+        public float? Min
+        {
+            get { return (float?)base["min"]; }
+        }
+
+        [ConfigurationProperty("max"), DefaultSettingValue(null)]
+        public float? Max
+        {
+            get { return (float?)base["max"]; }
         }
     }
 

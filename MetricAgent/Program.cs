@@ -39,13 +39,15 @@ namespace MetricAgent
 
             for (int i = 0; i < counters.Counters.Count; i++)
             {
-                var counterName = counters.Counters[i].CategoryName + "-" + counters.Counters[i].CounterName; // todo: config section needs a friendly name
+                var counterName = counters.Counters[i].Name;
                 _source = new CompositeSource(_source, new PerformanceCounterDataSource(
                     counterName, 
                     counters.Counters[i].CategoryName, 
                     counters.Counters[i].CounterName, 
                     counters.Counters[i].InstanceName,
-                    null, null));                
+                    counters.Counters[i].Min, 
+                    counters.Counters[i].Max
+                    ));                
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];
