@@ -21,12 +21,14 @@ namespace MetricAgent
             var agentLoopDelay = 1;
 
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
             var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
             var countName = processes.Processes[0].Name + " count";
             var uptimeName = processes.Processes[0].Name + " uptime";
             var exe = processes.Processes[0].Exe;
-            _source = new CompositeSource(new PerformanceCounterDataSource(), new ProcessCountingSource(countName, uptimeName, exe));
 
+            _source = new ProcessCountingSource(countName, uptimeName, exe);
+            
             for (int i = 1; i < processes.Processes.Count; i++ )
             {
                 countName = processes.Processes[i].Name + " count";
@@ -34,6 +36,19 @@ namespace MetricAgent
                 exe = processes.Processes[i].Exe;
 
                 _source = new CompositeSource(_source, new ProcessCountingSource(countName, uptimeName, exe));
+            }
+
+            var counters = config.Sections["performanceCounterSource"] as PerformanceCounterDataSourceConfiguration;
+
+            for (int i = 0; i < counters.Counters.Count; i++)
+            {
+                var counterName = counters.Counters[i].CategoryName + "-" + counters.Counters[i].CounterName; // todo: config section needs a friendly name
+                _source = new CompositeSource(_source, new PerformanceCounterDataSource(
+                    counterName, 
+                    counters.Counters[i].CategoryName, 
+                    counters.Counters[i].CounterName, 
+                    counters.Counters[i].InstanceName,
+                    null, null));                
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];

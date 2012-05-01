@@ -5,9 +5,9 @@ namespace Sources
     public class ProcessCountingSourceConfiguration : ConfigurationSection
     {
         [ConfigurationProperty("processes")]
-        public ExampleThingElementCollection Processes
+        public ProcessElementCollection Processes
         {
-            get { return (ExampleThingElementCollection)base["processes"]; }
+            get { return (ProcessElementCollection)base["processes"]; }
         }
     }
 
@@ -20,7 +20,7 @@ namespace Sources
 
         }
 
-        [ConfigurationProperty("exe")]
+        [ConfigurationProperty("exe", IsRequired = true)]
         public string Exe
         {
             get { return (string)base["exe"]; }
@@ -30,36 +30,8 @@ namespace Sources
 
     [ConfigurationCollection(typeof(ProcessElement),
     CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class ExampleThingElementCollection : ConfigurationElementCollection
+    public class ProcessElementCollection : ConfigurationElementCollection
     {
-        //#region Constructors
-        //static ExampleThingElementCollection()
-        //{
-        //    m_properties = new ConfigurationPropertyCollection();
-        //}
-
-        //public ExampleThingElementCollection()
-        //{
-        //}
-        //#endregion
-
-        //#region Fields
-        //private static ConfigurationPropertyCollection m_properties;
-        //#endregion
-
-        //#region Properties
-        //protected override ConfigurationPropertyCollection Properties
-        //{
-        //    get { return m_properties; }
-        //}
-
-        //public override ConfigurationElementCollectionType CollectionType
-        //{
-        //    get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
-        //}
-        //#endregion
-
-        #region Indexers
         public ProcessElement this[int index]
         {
             get { return (ProcessElement)base.BaseGet(index); }
@@ -77,9 +49,7 @@ namespace Sources
         {
             get { return (ProcessElement)base.BaseGet(name); }
         }
-        #endregion
 
-        #region Overrides
         protected override ConfigurationElement CreateNewElement()
         {
             return new ProcessElement();
@@ -89,7 +59,6 @@ namespace Sources
         {
             return (element as ProcessElement).Name;
         }
-        #endregion
     }
 
 }

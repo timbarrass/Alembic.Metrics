@@ -34,7 +34,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanBeUpdated_WithPerfCounterMetricData()
         {
-            var source = new PerformanceCounterDataSource();
+            var source = new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null);
             var lookup = SamplePerformanceData();
             var mockSource = MockRepository.GenerateMock<IDataSource>();
             mockSource.Expect(x => x.Spec).Return(source.Spec);
@@ -52,7 +52,7 @@ namespace Tests
         [Test]
         public void PerformanceCounterDataSource_ProvidesASpec()
         {
-            var source = new PerformanceCounterDataSource();
+            var source = new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null);
 
             var expectedMetrics = new[] { "Committed", "Processor" };
 
@@ -66,7 +66,7 @@ namespace Tests
         [Test]
         public void CompositeSource_ProvidesASpec()
         {
-            var source = new CompositeSource(new PerformanceCounterDataSource(), new PerformanceCounterDataSource());
+            var source = new CompositeSource(new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null), new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null));
 
             var expectedMetrics = new[] { "Committed", "Processor", "Committed", "Processor" };
 
