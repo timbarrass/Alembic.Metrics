@@ -9,7 +9,7 @@ using Data;
 
 namespace Sinks
 {
-    public class CircularDataSink : IDataSink
+    public class CircularDataSink : IDataSink, IEnumerable<IMetricData>
     {
         private object _padlock = new object();
 
@@ -128,6 +128,7 @@ namespace Sinks
             {
                 if (_queue.Count == _maxCount)
                     _queue.Dequeue();
+                
                 _queue.Enqueue(item);
             }
 
@@ -163,8 +164,6 @@ namespace Sinks
 
                 decimal value = Convert.ToDecimal(arg);
 
-                //  Here's is where you format your number
-
                 if (value > 1000)
                 {
                     return (value / 1000).ToString() + "k";
@@ -172,6 +171,16 @@ namespace Sinks
 
                 return value.ToString();
             }
+        }
+
+        public IEnumerator<IMetricData> GetEnumerator()
+        {
+            return _data.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _data.GetEnumerator();
         }
     }
 }

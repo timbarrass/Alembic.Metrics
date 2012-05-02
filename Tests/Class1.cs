@@ -54,7 +54,7 @@ namespace Tests
         {
             var source = new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null);
 
-            var expectedMetrics = new[] { "Committed", "Processor" };
+            var expectedMetrics = new[] { "test" };
 
             var i = 0;
             foreach(var expectedMetric in expectedMetrics)
@@ -66,9 +66,9 @@ namespace Tests
         [Test]
         public void CompositeSource_ProvidesASpec()
         {
-            var source = new CompositeSource(new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null), new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null));
+            var source = new CompositeSource(new PerformanceCounterDataSource("test1", "Memory", "Committed Bytes", null, null), new PerformanceCounterDataSource("test2", "Memory", "Committed Bytes", null, null));
 
-            var expectedMetrics = new[] { "Committed", "Processor", "Committed", "Processor" };
+            var expectedMetrics = new[] { "test1", "test2" };
 
             var i = 0;
             foreach (var expectedMetric in expectedMetrics)
@@ -82,7 +82,7 @@ namespace Tests
         {
             var source = new ProcessCountingSource("count", "uptime", "chrome");
 
-            var expectedMetrics = new[] { "Processes" };
+            var expectedMetrics = new[] { "count" };
 
             var i = 0;
             foreach (var expectedMetric in expectedMetrics)
@@ -131,6 +131,24 @@ namespace Tests
 
             sink.VerifyAllExpectations();
             source.VerifyAllExpectations();
+        }
+
+        [Test]
+        public void CircularDataSink_IsEnumerable()
+        {
+            var sink = new CircularDataSink(10, new List<MetricSpecification>());
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now));
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now));
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now));
+
+            var total = 0d;
+            var iter = sink.GetEnumerator();
+            while(iter.MoveNext())
+            {
+                total += iter.Current.Values["metric"].Value;
+            }
+
+            Assert.AreEqual(7d, total);
         }
     }
 

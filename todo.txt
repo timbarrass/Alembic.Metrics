@@ -1,0 +1,5 @@
+. Separate plotting responsibility from data sink
+. Ensure update MetricData confirms to spec
+. Enable enumeration of sink
+. Check service installation, uninstallation
+. Sketch out remote interface

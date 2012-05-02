@@ -13,9 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sources", "Sources\Sources.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Now", "Now\Now.csproj", "{445C6FC0-6972-4FC2-B21C-ABAD80F3299D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA3F1A44-6648-45ED-A23D-B7629968CC02}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC1EFDDF-849A-45CC-A324-7A931F70871C}"
 	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
+		todo.txt = todo.txt
 	EndProjectSection
 EndProject
 Global
