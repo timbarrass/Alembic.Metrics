@@ -1,5 +1,7 @@
 . Separate plotting responsibility from data sink
-. Ensure update MetricData confirms to spec
-. Enable enumeration of sink
+. Typed MetricData and generic sink
+/ Enable enumeration of sink
 . Check service installation, uninstallation
 . Sketch out remote interface
+. Enable new source plugins
+/ Uptime needs to handle case where process goes while querying for times

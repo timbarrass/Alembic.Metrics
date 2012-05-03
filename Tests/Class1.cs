@@ -150,6 +150,24 @@ namespace Tests
 
             Assert.AreEqual(7d, total);
         }
+
+        [Test]
+        public void GenericCircularDataSink_IsEnumerable()
+        {
+            var sink = new CircularDataSink<MetricData>(10, new List<MetricSpecification>());
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now));
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now));
+            sink.Update(new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now));
+
+            var total = 0d;
+            var iter = sink.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                total += iter.Current.Values["metric"].Value;
+            }
+
+            Assert.AreEqual(7d, total);
+        }
     }
 
     public class BreakingDataSink : IDataSink

@@ -45,7 +45,16 @@ namespace Sources
             var uptime = 0d;
             foreach(var process in processes)
             {
-                uptime += new TimeSpan(DateTime.Now.Ticks - process.StartTime.Ticks).TotalSeconds;
+                try
+                {
+                    uptime += new TimeSpan(DateTime.Now.Ticks - process.StartTime.Ticks).TotalSeconds;
+                }
+                catch(InvalidOperationException ex)
+                {
+                    // _assume_ this is because the process has gone away between getting the process 
+                    // list and making the query. Ignore.
+                }
+
                 count++;
             }
 
