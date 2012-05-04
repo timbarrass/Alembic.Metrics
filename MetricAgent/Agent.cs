@@ -66,16 +66,10 @@ namespace MetricAgent
 
         private void Graph()
         {
-            // Work in an rrd plotter here -- but we should be able to pass an sink
-            // into an object of some interface type here and have it plot the data (will
-            // inevitably need to be linked to the sink, as it'll need to query the
-            // sink for data?)
-
             // hack -- have the sink be able to plot for now as it has all the right refs
             while (true)
             {
                 Thread.Sleep(_loopDelay * 10);
-                //Thread.Sleep(_loopDelay);
 
                 lock (_padlock)
                 {

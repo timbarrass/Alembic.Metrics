@@ -78,6 +78,14 @@ namespace Tests
         }
 
         [Test]
+        public void SqlServerDataSource_CanBeInstantiated()
+        {
+            var source = new SqlServerDataSource();
+
+            Assert.IsInstanceOf<IDataSource>(source);
+        }
+
+        [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
             var source = new ProcessCountingSource("count", "uptime", "chrome");
@@ -170,6 +178,20 @@ namespace Tests
         }
     }
 
+    public class SqlServerDataSource : IDataSource
+    {
+        public ICollection<MetricSpecification> Spec
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        // want this one to return a list of IMetricData
+        public IMetricData Query()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class BreakingDataSink : IDataSink
     {
         public void Update(IMetricData perfMetricData)
@@ -182,6 +204,8 @@ namespace Tests
             throw new NotImplementedException();
         }
     }
+
+
 }
 
 /*

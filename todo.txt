@@ -1,7 +1,12 @@
 . Separate plotting responsibility from data sink
-. Typed MetricData and generic sink
+/ Typed MetricData and generic sink
 / Enable enumeration of sink
-. Check service installation, uninstallation
+1 Check service installation, uninstallation
 . Sketch out remote interface
 . Enable new source plugins
 / Uptime needs to handle case where process goes while querying for times
+2 have source.Query return an IEnumerable<IMetricData> (require sorted on timestamp?)
+3 have sink.Update accept an IEnumerable<IMetricData>
+. generic SqlServer database source -- get timeseries data
+. move to async source query, register handlers with sink
+. multithread source query
