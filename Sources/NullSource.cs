@@ -13,9 +13,9 @@ namespace Sources
             get { return EmptySpecList; }
         }
 
-        public IMetricData Query()
+        public IEnumerable<IMetricData >Query()
         {
-            return new NullMetricData();
+            return new List<NullMetricData>();
         }
     }
 }

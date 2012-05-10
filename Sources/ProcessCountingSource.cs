@@ -35,7 +35,7 @@ namespace Sources
             get { return _spec; }
         }
 
-        public IMetricData Query()
+        public IEnumerable<IMetricData> Query()
         {
             var values = new Dictionary<string, double?>();
 
@@ -61,7 +61,7 @@ namespace Sources
             values[_processCountName] = processes.Length;
             values[_processUptimeName] = count == 0 ? 0 : uptime / count;
 
-            return new MetricData(values, DateTime.Now);
+            return new List<IMetricData> { new MetricData(values, DateTime.Now) };
         }
     }
 }

@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompositeSource.cs" />
     <Compile Include="IDataSource.cs" />
     <Compile Include="NullSource.cs" />
     <Compile Include="PerformanceCounterDataSource.cs" />

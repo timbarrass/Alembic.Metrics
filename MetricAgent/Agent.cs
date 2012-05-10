@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using Data;
 using Sinks;
 using Sources;
@@ -7,9 +8,9 @@ namespace MetricAgent
 {
     public class Agent
     {
-        private IDataSource _source;
+        private IList<IDataSource> _sources;
 
-        private IDataSink _sink;
+        private IList<IDataSink> _sinks;
 
         private object _padlock = new object();
 
@@ -24,26 +25,31 @@ namespace MetricAgent
         /// <summary>
         /// Instantiate an Agent
         /// </summary>
-        /// <param name="source">The data source to query</param>
-        /// <param name="sink">The data sink to update</param>
+        /// <param name="sources">The data sources to query</param>
+        /// <param name="sinks">The data sinks to update</param>
         /// <param name="loopDelay">Seconds to wait before updating again. This does *not* account for time taken to query and update.</param>
-        public Agent(IDataSource source, IDataSink sink, int loopDelay)
+        public Agent(IList<IDataSource> sources, IList<IDataSink> sinks, int loopDelay)
         {
-            _source = source;
-            _sink = sink;
+            _sources = sources;
+            _sinks = sinks;
             _loopDelay = loopDelay * 1000;
         }
 
-        internal IMetricData Query()
+        internal IEnumerable<IMetricData> Query(IDataSource source)
         {
-            return _source.Query();
+            return source.Query();
         }
 
         internal void Update()
         {
-            var metricData = Query();
+            var index = 0;
 
-            _sink.Update(metricData);
+            foreach (var source in _sources)
+            {
+                var metricData = Query(source);
+
+                _sinks[index].Update(metricData);
+            }
         }
 
         private void Process()
@@ -79,7 +85,10 @@ namespace MetricAgent
                     }
                 }
 
-                _sink.Plot();
+                foreach (var sink in _sinks)
+                {
+                    sink.Plot();
+                }
             }
         }
 

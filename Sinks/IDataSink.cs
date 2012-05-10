@@ -1,10 +1,11 @@
-﻿using Data;
+﻿using System.Collections.Generic;
+using Data;
 
 namespace Sinks
 {
     public interface IDataSink<T>
     {
-        void Update(T perfMetricData);
+        void Update(IEnumerable<T> perfMetricData);
 
         // hack -- temp
         void Plot();
@@ -12,7 +13,7 @@ namespace Sinks
 
     public interface IDataSink
     {
-        void Update(IMetricData perfMetricData);
+        void Update(IEnumerable<IMetricData> perfMetricData);
 
         // hack -- temp
         void Plot();

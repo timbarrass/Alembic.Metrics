@@ -28,11 +28,14 @@ namespace Sinks
             _spec = spec;
         }
 
-        public void Update(T perfMetricData)
+        public void Update(IEnumerable<T> perfMetricData)
         {
             lock (_padlock)
             {
-                _data.Add(perfMetricData);
+                foreach (var metric in perfMetricData)
+                {
+                    _data.Add(metric);
+                }
             }
         }
 
@@ -174,11 +177,14 @@ namespace Sinks
             _spec = spec;
         }
 
-        public void Update(IMetricData perfMetricData)
+        public void Update(IEnumerable<IMetricData> perfMetricData)
         {
             lock (_padlock)
             {
-                _data.Add(perfMetricData);
+                foreach (var metricData in perfMetricData)
+                {
+                    _data.Add(metricData);
+                }
             }
         }
 

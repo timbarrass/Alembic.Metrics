@@ -6,6 +6,6 @@ namespace Sources
     public interface IDataSource
     {
         ICollection<MetricSpecification> Spec { get; }
-        IMetricData Query();
+        IEnumerable<IMetricData> Query();
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Configuration.Install;
 using System.ServiceProcess;
+using System.Threading;
 using Sinks;
 using Sources;
 
@@ -12,9 +14,9 @@ namespace MetricAgent
     {
         private Agent _agent;
 
-        private IDataSource _source;
+        private List<IDataSource> _sources = new List<IDataSource>();
 
-        private IDataSink _sink;
+        private List<IDataSink> _sinks = new List<IDataSink>();
 
         public Program()
         {
@@ -22,7 +24,7 @@ namespace MetricAgent
 
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
-            _source = new NullSource();
+            //_source = new NullSource();
 
             var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
             
@@ -32,7 +34,10 @@ namespace MetricAgent
                 var uptimeName = processes.Processes[i].Name + " uptime";
                 var exe = processes.Processes[i].Exe;
 
-                _source = new CompositeSource(_source, new ProcessCountingSource(countName, uptimeName, exe));
+                var source = new ProcessCountingSource(countName, uptimeName, exe);
+
+                _sources.Add(source);
+                _sinks.Add(new CircularDataSink(600, source.Spec));
             }
 
             var counters = config.Sections["performanceCounterSource"] as PerformanceCounterDataSourceConfiguration;
@@ -40,21 +45,23 @@ namespace MetricAgent
             for (int i = 0; i < counters.Counters.Count; i++)
             {
                 var counterName = counters.Counters[i].Name;
-                _source = new CompositeSource(_source, new PerformanceCounterDataSource(
-                    counterName, 
-                    counters.Counters[i].CategoryName, 
-                    counters.Counters[i].CounterName, 
-                    counters.Counters[i].InstanceName,
-                    counters.Counters[i].Min, 
-                    counters.Counters[i].Max
-                    ));                
+     
+                var source = new PerformanceCounterDataSource(
+                                 counterName,
+                                 counters.Counters[i].CategoryName,
+                                 counters.Counters[i].CounterName,
+                                 counters.Counters[i].InstanceName,
+                                 counters.Counters[i].Min,
+                                 counters.Counters[i].Max
+                                 );
+                
+                _sources.Add(source);
+                _sinks.Add(new CircularDataSink(600, source.Spec));
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];
 
-            _sink = new CircularDataSink(600, _source.Spec);
-
-            _agent = new Agent(_source, _sink, agentLoopDelay);
+            _agent = new Agent(_sources, _sinks, agentLoopDelay);
 
             ServiceName = "Metric Agent";
         }

@@ -32,19 +32,10 @@ namespace Sources
                 _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, InstanceName = instanceName };
             }
 
-            //_committedName = "Committed B on " + Environment.MachineName;
-            //_processorName = "Total CPU use on " + Environment.MachineName;
-
             _spec = new[]
                 {
                     new MetricSpecification(_counterName, min, max)
                 };
-
-            //_spec = new[]
-            //    {
-            //        new MetricSpecification(_committedName, 0f, null), 
-            //        new MetricSpecification(_processorName, 0f, 100f),
-            //    };
         }
 
         public PerformanceCounterDataSource(string name,string categoryName, string counterName, float? min, float? max)
@@ -53,19 +44,10 @@ namespace Sources
 
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
 
-            //_committedName = "Committed B on " + Environment.MachineName;
-            //_processorName = "Total CPU use on " + Environment.MachineName;
-
             _spec = new[]
                 {
                     new MetricSpecification(_counterName, min, max)
                 };
-
-            //_spec = new[]
-            //    {
-            //        new MetricSpecification(_committedName, 0f, null), 
-            //        new MetricSpecification(_processorName, 0f, 100f),
-            //    };
         }
 
         public ICollection<MetricSpecification> Spec
@@ -73,18 +55,14 @@ namespace Sources
             get { return _spec; }
         }
 
-        public IMetricData Query()
+        public IEnumerable<IMetricData> Query()
         {
             var values = new Dictionary<string, double?>
                             {
                                 { _counterName, _counter.NextValue() }
                             };
-                             //{
-                             //    { _committedName, committedBytes.NextValue() },
-                             //    { _processorName, processorTime.NextValue() },
-                             //};
-            
-            return new MetricData(values, DateTime.Now);
+
+            return new List<IMetricData> { new MetricData(values, DateTime.Now) };
         }
     }
 }
