@@ -48,7 +48,7 @@ namespace MetricAgent
             {
                 var metricData = Query(source);
 
-                _sinks[index].Update(metricData);
+                _sinks[index++].Update(metricData);
             }
         }
 
