@@ -20,3 +20,6 @@ Copyright (c) 2011 Tim Barrass tim.barrass@gmail.com All rights reserved.
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+jQuery 1.4.3 (jquery.org) and fancybox 1.3.4 (fancybox.net) are  included 
+under the MIT license, with details at: http://jquery.org/license .
