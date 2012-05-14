@@ -59,6 +59,18 @@ namespace MetricAgent
                 _sinks.Add(new CircularDataSink(600, source.Spec));
             }
 
+            var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
+
+            for (int i = 0; i < databases.Databases.Count; i++)
+            {
+                var connectionString = databases.Databases[i].ConnectionString;
+
+                var source = new SqlServerDataSource(connectionString);
+
+                _sources.Add(source);
+                _sinks.Add(new CircularDataSink(600, source.Spec));
+            }
+
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];
 
             _agent = new Agent(_sources, _sinks, agentLoopDelay);
