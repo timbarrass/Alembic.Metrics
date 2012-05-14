@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using Data;
 using MetricAgent;
@@ -66,9 +67,31 @@ namespace Tests
         [Test]
         public void SqlServerDataSource_CanBeInstantiated()
         {
-            var source = new SqlServerDataSource();
+            var connString =
+                string.Join(";",
+                    @"Data Source=.\SQLEXPRESS",
+                    @"Initial catalog=Alembic.Metrics.Dev",
+                    @"Integrated Security=True");
+
+            var source = new SqlServerDataSource(connString);
 
             Assert.IsInstanceOf<IDataSource>(source);
+        }
+
+        [Test]
+        public void SqlServerDataSource_QueriesADatabase()
+        {
+            var connString =
+                string.Join(";",
+                    @"Data Source=.\SQLEXPRESS",
+                    @"Initial catalog=Alembic.Metrics.Dev",
+                    @"Integrated Security=True");
+
+            var source = new SqlServerDataSource(connString);
+
+            var timeseries = source.Query();
+
+            Assert.AreEqual(8, timeseries.Count());
         }
 
         [Test]
@@ -167,8 +190,30 @@ namespace Tests
         }
     }
 
+    /// <summary>
+    /// Coupled to SqlServerDataSource specifically as a type safe way of handling
+    /// returned metrics
+    /// </summary>
+    public class TimeseriesPoint
+    {
+        public DateTime Timestamp;
+
+        public decimal Value;
+    }
+
+    /// <summary>
+    /// Primarily intended as an example sql data source. More conrete classes should
+    /// be implemented for each specific source
+    /// </summary>
     public class SqlServerDataSource : IDataSource
     {
+        private DataContext _context;
+
+        public SqlServerDataSource(string connectionString)
+        {
+            _context = new DataContext(connectionString);
+        }
+
         public ICollection<MetricSpecification> Spec
         {
             get { throw new NotImplementedException(); }
@@ -177,7 +222,18 @@ namespace Tests
         // want this one to return a list of IMetricData
         public IEnumerable<IMetricData> Query()
         {
-            throw new NotImplementedException();
+            var timeseries = _context.ExecuteQuery<TimeseriesPoint>("select * from ExampleData");
+
+            var returnSeries = new List<MetricData>();
+
+            foreach(var point in timeseries)
+            {
+                var metricData = new MetricData(new Dictionary<string, double?> {{ "Value", (double?)point.Value }}, point.Timestamp);
+                
+                returnSeries.Add(metricData);
+            }
+
+            return returnSeries;
         }
     }
 
