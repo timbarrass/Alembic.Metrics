@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using Data;
 using MetricAgent;
@@ -64,20 +66,7 @@ namespace Tests
         }
 
         [Test]
-        public void SqlServerDataSource_CanBeInstantiated()
-        {
-            var connString =
-                string.Join(";",
-                    @"Data Source=.\SQLEXPRESS",
-                    @"Initial catalog=Alembic.Metrics.Dev",
-                    @"Integrated Security=True");
-
-            var source = new SqlServerDataSource(connString);
-
-            Assert.IsInstanceOf<IDataSource>(source);
-        }
-
-        [Test]
+        // Very much not a unit test: todo, mock out the datacontext
         public void SqlServerDataSource_QueriesADatabase()
         {
             var connString =
@@ -86,7 +75,16 @@ namespace Tests
                     @"Initial catalog=Alembic.Metrics.Dev",
                     @"Integrated Security=True");
 
-            var source = new SqlServerDataSource(connString);
+             var spec = new[]
+                        {
+                            new MetricSpecification("SqlServer", null, null)
+                        };
+
+            var query = "select * from ExampleData";
+
+            var context = new DataContext(connString);
+
+            var source = new SqlServerDataSource(context, spec, query);
 
             var timeseries = source.Query();
 
@@ -205,11 +203,3 @@ namespace Tests
 
 
 }
-
-/*
- * Some agent that's configurable, talks to a source, updates a sink
- * Some source that can return data and spec the data it's returned
- * (Data should be self describing?)
- * Some sink that can take a set of data and write it out
- * (Wrap specific underlying tech, thinly?)
-*/

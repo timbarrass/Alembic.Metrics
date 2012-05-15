@@ -13,10 +13,22 @@ namespace Sources
 
     public class DatabaseElement : ConfigurationElement
     {
+        [ConfigurationProperty("name", IsRequired = true)]
+        public string Name
+        {
+            get { return (string)base["name"]; }
+        }
+
         [ConfigurationProperty("connectionString", IsRequired = true)]
         public string ConnectionString
         {
             get { return (string)base["connectionString"]; }
+        }
+
+        [ConfigurationProperty("query", IsRequired = true)]
+        public string Query
+        {
+            get { return (string)base["query"]; }
         }
     }
 

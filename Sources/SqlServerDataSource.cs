@@ -1,28 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.Linq;
 using Data;
 
 namespace Sources
 {
     /// <summary>
     /// Primarily intended as an example sql data source. More conrete classes should
-    /// be implemented for each specific source
+    /// be implemented for each specific source.
+    /// 
+    /// Best to wrap in a builder, and have the builder construct sources suitable for
+    /// specific purposes.
     /// </summary>
     public class SqlServerDataSource : IDataSource
     {
         private DataContext _context;
 
+        private string _query;
+
         private ICollection<MetricSpecification> _spec;
 
-        public SqlServerDataSource(string connectionString)
+        public SqlServerDataSource(DataContext context, IEnumerable<MetricSpecification> spec, string query)
         {
-            _context = new DataContext(connectionString);
+            _context = context;
 
-            _spec = new[]
-                        {
-                            new MetricSpecification("SqlServer", null, null)
-                        };
+            _spec = spec.ToArray();
+
+            _query = query;
         }
 
         public ICollection<MetricSpecification> Spec
@@ -33,7 +38,7 @@ namespace Sources
         // want this one to return a list of IMetricData
         public IEnumerable<IMetricData> Query()
         {
-            var timeseries = _context.ExecuteQuery<TimeseriesPoint>("select * from ExampleData");
+            var timeseries = _context.ExecuteQuery<TimeseriesPoint>(_query);
 
             var returnSeries = new List<MetricData>();
 
@@ -56,6 +61,6 @@ namespace Sources
     {
         public DateTime Timestamp;
 
-        public decimal Value;
+        public double Value;
     }
 }
