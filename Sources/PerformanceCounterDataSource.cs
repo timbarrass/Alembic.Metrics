@@ -13,14 +13,20 @@ namespace Sources
 
         private string _counterName;
 
-        //private PerformanceCounter committedBytes = new PerformanceCounter { CategoryName = "Memory", CounterName = "Committed Bytes" };
-        //private PerformanceCounter processorTime = new PerformanceCounter { CategoryName = "Processor", CounterName = "% Processor Time", InstanceName = "_Total" };
+        private int _delay;
 
-        //private string _committedName;
-        //private string _processorName;
-
-        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, float? min, float? max)
+        public int Delay
         {
+            get
+            {
+                return _delay;
+            }
+        }
+
+        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay)
+        {
+            _delay = delay * 1000;
+
             _counterName = name;
 
             if (string.IsNullOrEmpty(instanceName))

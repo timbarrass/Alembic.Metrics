@@ -12,13 +12,13 @@ namespace MetricAgent
 
         private IList<IDataSink> _sinks;
 
-        private object _padlock = new object();
+        private object _padlock = new object(); // locks out cancel message -- rename
 
         private bool _cancelled = false;
 
         private int _loopDelay = 5000;
 
-        private Thread _worker;
+        private List<Processor> _workers = new List<Processor>();
 
         private Thread _plotter;
 
@@ -27,47 +27,16 @@ namespace MetricAgent
         /// </summary>
         /// <param name="sources">The data sources to query</param>
         /// <param name="sinks">The data sinks to update</param>
-        /// <param name="loopDelay">Seconds to wait before updating again. This does *not* account for time taken to query and update.</param>
-        public Agent(IList<IDataSource> sources, IList<IDataSink> sinks, int loopDelay)
+        public Agent(IList<IDataSource> sources, IList<IDataSink> sinks, int plotterDelay)
         {
             _sources = sources;
             _sinks = sinks;
-            _loopDelay = loopDelay * 1000;
+            _loopDelay = plotterDelay;
         }
 
         internal IEnumerable<IMetricData> Query(IDataSource source)
         {
             return source.Query();
-        }
-
-        internal void Update()
-        {
-            var index = 0;
-
-            foreach (var source in _sources)
-            {
-                var metricData = Query(source);
-
-                _sinks[index++].Update(metricData);
-            }
-        }
-
-        private void Process()
-        {
-            while(true)
-            {
-                Thread.Sleep(_loopDelay);
-
-                lock(_padlock)
-                {
-                    if(_cancelled)
-                    {
-                        break;
-                    }
-                }
-
-                Update();
-            }
         }
 
         private void Graph()
@@ -98,8 +67,16 @@ namespace MetricAgent
             {
                 _cancelled = false;
 
-                _worker = new Thread(Process);
-                _worker.Start();
+                int index = 0;
+
+                foreach(var source in _sources)
+                {
+                    var sink = _sinks[index++];
+
+                    var processor = new Processor() { Source = source, Sink = sink, Delay = source.Delay };
+                    processor.Start();
+                    _workers.Add(processor);
+                }
 
                 _plotter = new Thread(Graph);
                 _plotter.Start();
@@ -112,11 +89,69 @@ namespace MetricAgent
             {
                 _cancelled = true;
 
-                _worker.Join();
+                foreach (var worker in _workers)
+                {
+                    worker.Stop();
+                }
+
                 _plotter.Join();
             }
         }
+    }
 
-        public int LoopDelay { get { return _loopDelay; } }
+    class Processor
+    {
+        public IDataSource Source { get; set; }
+
+        public IDataSink Sink { get; set; }
+
+        public int Delay { get; set; }
+
+        private bool _cancelled;
+
+        private Thread _worker;
+
+        public void Stop()
+        {
+            lock(_padlock)
+            {
+                _cancelled = true;
+            }
+
+            _worker.Join();
+        }
+
+        public void Start()
+        {
+            _worker = new Thread(Process);
+            _worker.Start();
+        }
+
+        private void Process()
+        {
+            while (true)
+            {
+                Thread.Sleep(Delay);
+
+                lock (_padlock)
+                {
+                    if (_cancelled)
+                    {
+                        break;
+                    }
+                }
+
+                Update(Source, Sink);
+            }
+        }
+
+        private void Update(IDataSource source, IDataSink sink)
+        {
+            var metricData = source.Query();
+
+            sink.Update(metricData);
+        }
+
+        private object _padlock = new object();
     }
 }

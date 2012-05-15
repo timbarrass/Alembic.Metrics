@@ -13,6 +13,12 @@ namespace Sources
 
     public class CounterElement : ConfigurationElement
     {
+        [ConfigurationProperty("delay", IsRequired = true)]
+        public int Delay
+        {
+            get { return (int)base["delay"]; }
+        }
+        
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {

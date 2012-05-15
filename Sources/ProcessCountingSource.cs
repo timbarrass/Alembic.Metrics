@@ -15,13 +15,25 @@ namespace Sources
 
         private string _processUptimeName;
 
-        public ProcessCountingSource(string processCountFriendlyName, string processUptimeFriendlyName, string processToMonitor)
+        private int _delay;
+
+        public int Delay
+        {
+            get
+            {
+                return _delay;
+            }
+        }
+
+        public ProcessCountingSource(string processCountFriendlyName, string processUptimeFriendlyName, string processToMonitor, int delay)
         {
             _processToMonitor = processToMonitor;
 
             _processCountName = processCountFriendlyName;
 ;
             _processUptimeName = processUptimeFriendlyName;
+
+            _delay = delay * 1000;
 
             _spec = new List<MetricSpecification>
                 {

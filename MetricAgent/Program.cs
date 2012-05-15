@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Configuration.Install;
 using System.Data.Linq;
 using System.ServiceProcess;
-using System.Threading;
 using Data;
 using Sinks;
 using Sources;
@@ -34,9 +33,10 @@ namespace MetricAgent
             {
                 var countName = processes.Processes[i].Name + " count";
                 var uptimeName = processes.Processes[i].Name + " uptime";
+                var delay = processes.Processes[i].Delay;
                 var exe = processes.Processes[i].Exe;
 
-                var source = new ProcessCountingSource(countName, uptimeName, exe);
+                var source = new ProcessCountingSource(countName, uptimeName, exe, delay);
 
                 _sources.Add(source);
                 _sinks.Add(new CircularDataSink(600, source.Spec));
@@ -54,7 +54,8 @@ namespace MetricAgent
                                  counters.Counters[i].CounterName,
                                  counters.Counters[i].InstanceName,
                                  counters.Counters[i].Min,
-                                 counters.Counters[i].Max
+                                 counters.Counters[i].Max,
+                                 counters.Counters[i].Delay
                                  );
                 
                 _sources.Add(source);
@@ -68,11 +69,12 @@ namespace MetricAgent
                 var connectionString = databases.Databases[i].ConnectionString;
                 var query = databases.Databases[i].Query;
                 var name = databases.Databases[i].Name;
+                var delay = databases.Databases[i].Delay;
 
                 var context = new DataContext(connectionString);
                 var spec = new[] { new MetricSpecification(name, null, null) };
 
-                var source = new SqlServerDataSource(context, spec, query);
+                var source = new SqlServerDataSource(context, spec, query, delay);
 
                 _sources.Add(source);
                 _sinks.Add(new CircularDataSink(600, source.Spec));

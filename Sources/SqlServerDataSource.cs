@@ -21,7 +21,17 @@ namespace Sources
 
         private ICollection<MetricSpecification> _spec;
 
-        public SqlServerDataSource(DataContext context, IEnumerable<MetricSpecification> spec, string query)
+        private int _delay;
+
+        public int Delay
+        {
+            get
+            {
+                return _delay;
+            }
+        }
+
+        public SqlServerDataSource(DataContext context, IEnumerable<MetricSpecification> spec, string query, int delay)
         {
             _context = context;
 

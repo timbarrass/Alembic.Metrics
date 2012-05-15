@@ -17,5 +17,10 @@ namespace Sources
         {
             return new List<NullMetricData>();
         }
+
+        public int Delay
+        {
+            get { return 1000; }
+        }
     }
 }
