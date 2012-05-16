@@ -31,7 +31,7 @@ namespace MetricAgent
         {
             _sources = sources;
             _sinks = sinks;
-            _loopDelay = plotterDelay;
+            _loopDelay = plotterDelay * 1000;
         }
 
         internal IEnumerable<IMetricData> Query(IDataSource source)
