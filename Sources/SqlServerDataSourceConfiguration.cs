@@ -67,7 +67,7 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}", (element as DatabaseElement).ConnectionString);
+            return string.Format("{0}", (element as DatabaseElement).Name);
         }
     }
 
