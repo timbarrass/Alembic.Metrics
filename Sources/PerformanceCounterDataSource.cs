@@ -23,6 +23,8 @@ namespace Sources
             }
         }
 
+        public string Name { get { return _counterName; } }
+
         public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay)
         {
             _delay = delay * 1000;

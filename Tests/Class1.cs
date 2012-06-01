@@ -42,9 +42,9 @@ namespace Tests
             mockSource.Expect(x => x.Spec).Return(source.Spec);
             var mockData = MockRepository.GenerateMock<IMetricData>();
 
-            IDataSink sink = new CircularDataSink(10, mockSource.Spec);
+            var sink = new CircularDataSink<IMetricData>(10, "test", mockSource.Spec);
 
-            sink.Update(new List<IMetricData> { mockData });
+            sink.Update("test", new List<IMetricData> { mockData });
 
             mockData.VerifyAllExpectations();
 
@@ -116,7 +116,7 @@ namespace Tests
 
             var sink = new BreakingDataSink();
 
-            var agent = new Agent(new List<IDataSource> { source }, new List<IDataSink> { sink }, 10);
+            var agent = new Agent(new List<IDataSource> { source }, new List<IDataSink<IMetricData>> { sink }, 10);
 
             // test an internal method -- not intended to be part of public interface
             var actual = agent.Query(source);
@@ -150,13 +150,13 @@ namespace Tests
         [Test]
         public void CircularDataSink_IsEnumerable()
         {
-            var sink = new CircularDataSink(10, new List<MetricSpecification>());
-            sink.Update(new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now) });
-            sink.Update(new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now) });
-            sink.Update(new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now) });
+            var sink = new CircularDataSink<IMetricData>(10, "test", new List<MetricSpecification>());
+            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now) });
+            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now) });
+            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now) });
 
             var total = 0d;
-            var iter = sink.GetEnumerator();
+            var iter = sink.GetEnumerator("test");
             while(iter.MoveNext())
             {
                 total += iter.Current.Values["metric"].Value;
@@ -168,8 +168,8 @@ namespace Tests
         [Test]
         public void GenericCircularDataSink_IsEnumerable()
         {
-            var sink = new CircularDataSink<MetricData>(10, new List<MetricSpecification>());
-            sink.Update(new[]
+            var sink = new CircularDataSink<MetricData>(10, "test", new List<MetricSpecification>());
+            sink.Update("test", new[]
                             {
                                 new MetricData(new Dictionary<string, double?> {{"metric", 1.0}}, DateTime.Now),
                                 new MetricData(new Dictionary<string, double?> {{"metric", 2.0}}, DateTime.Now),
@@ -177,7 +177,35 @@ namespace Tests
                             });
 
             var total = 0d;
-            var iter = sink.GetEnumerator();
+            var iter = sink.GetEnumerator("test");
+            while (iter.MoveNext())
+            {
+                total += iter.Current.Values["metric"].Value;
+            }
+
+            Assert.AreEqual(7d, total);
+        }
+
+        [Test]
+        public void GenericCircularDataSink_SupportsABufferPerSpec()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                                new MetricSpecification("test2", null, null),
+                            };
+            
+            var sink = new CircularDataSink<MetricData>(10, "test", specs);
+
+            sink.Update("test1", new []
+                            {
+                                new MetricData(new Dictionary<string, double?> {{"metric", 1.0}}, DateTime.Now),
+                                new MetricData(new Dictionary<string, double?> {{"metric", 2.0}}, DateTime.Now),
+                                new MetricData(new Dictionary<string, double?> {{"metric", 4.0}}, DateTime.Now),
+                            });
+
+            var total = 0d;
+            var iter = sink.GetEnumerator("test1");
             while (iter.MoveNext())
             {
                 total += iter.Current.Values["metric"].Value;
@@ -188,9 +216,15 @@ namespace Tests
     }
 
 
-    public class BreakingDataSink : IDataSink
+    public class BreakingDataSink : IDataSink<IMetricData>
     {
-        public void Update(IEnumerable<IMetricData> perfMetricData)
+
+        public void Update(string specName, IEnumerable<IMetricData> perfMetricData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Plot(string specName)
         {
             throw new NotImplementedException();
         }

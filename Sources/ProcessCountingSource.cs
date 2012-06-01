@@ -25,6 +25,11 @@ namespace Sources
             }
         }
 
+        public string Name
+        {
+            get { return _processToMonitor + "-metrics"; }
+        }
+
         public ProcessCountingSource(string processCountFriendlyName, string processUptimeFriendlyName, string processToMonitor, int delay)
         {
             _processToMonitor = processToMonitor;

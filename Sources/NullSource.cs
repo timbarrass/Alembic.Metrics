@@ -22,5 +22,10 @@ namespace Sources
         {
             get { return 1000; }
         }
+
+        public string Name
+        {
+            get { return "NullSource"; }
+        }
     }
 }

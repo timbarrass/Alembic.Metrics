@@ -31,6 +31,11 @@ namespace Sources
             }
         }
 
+        public string Name
+        {
+            get { return _spec.First().Name; }
+        }
+
         public SqlServerDataSource(DataContext context, IEnumerable<MetricSpecification> spec, string query, int delay)
         {
             _context = context;

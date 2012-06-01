@@ -5,17 +5,11 @@ namespace Sinks
 {
     public interface IDataSink<T>
     {
-        void Update(IEnumerable<T> perfMetricData);
+        void Update(string specName, IEnumerable<T> perfMetricData);
 
         // hack -- temp
-        void Plot();
-    }
+        void Plot(string specName);
 
-    public interface IDataSink
-    {
-        void Update(IEnumerable<IMetricData> perfMetricData);
-
-        // hack -- temp
         void Plot();
     }
 }

@@ -17,15 +17,13 @@ namespace MetricAgent
 
         private List<IDataSource> _sources = new List<IDataSource>();
 
-        private List<IDataSink> _sinks = new List<IDataSink>();
+        private List<IDataSink<IMetricData>> _sinks = new List<IDataSink<IMetricData>>();
 
         public Program()
         {
             var agentLoopDelay = 1;
 
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            //_source = new NullSource();
 
             var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
             
@@ -39,7 +37,7 @@ namespace MetricAgent
                 var source = new ProcessCountingSource(countName, uptimeName, exe, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink(600, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
             }
 
             var counters = config.Sections["performanceCounterSource"] as PerformanceCounterDataSourceConfiguration;
@@ -59,7 +57,7 @@ namespace MetricAgent
                                  );
                 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink(600, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
             }
 
             var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
@@ -77,7 +75,7 @@ namespace MetricAgent
                 var source = new SqlServerDataSource(context, spec, query, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink(600, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];

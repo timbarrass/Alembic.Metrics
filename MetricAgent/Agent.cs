@@ -10,7 +10,7 @@ namespace MetricAgent
     {
         private IList<IDataSource> _sources;
 
-        private IList<IDataSink> _sinks;
+        private IList<IDataSink<IMetricData>> _sinks;
 
         private object _padlock = new object(); // locks out cancel message -- rename
 
@@ -27,7 +27,7 @@ namespace MetricAgent
         /// </summary>
         /// <param name="sources">The data sources to query</param>
         /// <param name="sinks">The data sinks to update</param>
-        public Agent(IList<IDataSource> sources, IList<IDataSink> sinks, int plotterDelay)
+        public Agent(IList<IDataSource> sources, IList<IDataSink<IMetricData>> sinks, int plotterDelay)
         {
             _sources = sources;
             _sinks = sinks;
@@ -71,7 +71,7 @@ namespace MetricAgent
 
                 foreach(var source in _sources)
                 {
-                    var sink = _sinks[index++];
+                    var sink = _sinks[index++]; // simple sink lookup
 
                     var processor = new Processor() { Source = source, Sink = sink, Delay = source.Delay };
                     processor.Start();
@@ -103,7 +103,7 @@ namespace MetricAgent
     {
         public IDataSource Source { get; set; }
 
-        public IDataSink Sink { get; set; }
+        public IDataSink<IMetricData> Sink { get; set; }
 
         public int Delay { get; set; }
 
@@ -145,11 +145,11 @@ namespace MetricAgent
             }
         }
 
-        private void Update(IDataSource source, IDataSink sink)
+        private void Update(IDataSource source, IDataSink<IMetricData> sink)
         {
             var metricData = source.Query();
 
-            sink.Update(metricData);
+            sink.Update(source.Name, metricData);
         }
 
         private object _padlock = new object();

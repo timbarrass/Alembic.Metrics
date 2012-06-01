@@ -8,5 +8,6 @@ namespace Sources
         ICollection<MetricSpecification> Spec { get; }
         IEnumerable<IMetricData> Query();
         int Delay { get; }
+        string Name { get; }
     }
 }
