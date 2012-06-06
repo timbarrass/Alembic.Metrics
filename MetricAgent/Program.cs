@@ -30,15 +30,29 @@ namespace MetricAgent
             for (int i = 0; i < processes.Processes.Count; i++ )
             {
                 var countName = processes.Processes[i].Name + " count";
-                var uptimeName = processes.Processes[i].Name + " uptime";
                 var delay = processes.Processes[i].Delay;
                 var exe = processes.Processes[i].Exe;
 
-                var source = new ProcessCountingSource(countName, uptimeName, exe, delay);
+                var source = new ProcessCountingSource(countName, exe, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
             }
+
+            var uptimeProcesses = config.Sections["processUptimeSource"] as ProcessUptimeSourceConfiguration;
+
+            for (int i = 0; i < uptimeProcesses.Processes.Count; i++)
+            {
+                var uptimeName = uptimeProcesses.Processes[i].Name + " uptime";
+                var delay = uptimeProcesses.Processes[i].Delay;
+                var exe = uptimeProcesses.Processes[i].Exe;
+
+                var source = new ProcessUptimeSource(uptimeName, exe, delay);
+
+                _sources.Add(source);
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new[] { source.Spec }));
+            }
+
 
             var counters = config.Sections["performanceCounterSource"] as PerformanceCounterDataSourceConfiguration;
 
@@ -57,7 +71,7 @@ namespace MetricAgent
                                  );
                 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
             }
 
             var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
@@ -70,12 +84,12 @@ namespace MetricAgent
                 var delay = databases.Databases[i].Delay;
 
                 var context = new DataContext(connectionString);
-                var spec = new[] { new MetricSpecification(name, null, null) };
+                var spec = new MetricSpecification(name, null, null);
 
                 var source = new SqlServerDataSource(context, spec, query, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, source.Name, source.Spec));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];

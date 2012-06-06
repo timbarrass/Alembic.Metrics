@@ -13,3 +13,4 @@
 / generic SqlServer database source -- get timeseries data
 . move to async source query, register handlers with sink
 / multithread source query
+. CircularDataSink should validate name of metric supplied against known specs

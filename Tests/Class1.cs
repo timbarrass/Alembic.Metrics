@@ -42,7 +42,7 @@ namespace Tests
             mockSource.Expect(x => x.Spec).Return(source.Spec);
             var mockData = MockRepository.GenerateMock<IMetricData>();
 
-            var sink = new CircularDataSink<IMetricData>(10, "test", mockSource.Spec);
+            var sink = new CircularDataSink<IMetricData>(10, new [] { mockSource.Spec });
 
             sink.Update("test", new List<IMetricData> { mockData });
 
@@ -61,7 +61,7 @@ namespace Tests
             var i = 0;
             foreach(var expectedMetric in expectedMetrics)
             {
-                Assert.AreEqual(expectedMetric, source.Spec.ElementAt(i++).Name);
+                Assert.AreEqual(expectedMetric, source.Spec.Name);
             }
         }
 
@@ -75,10 +75,7 @@ namespace Tests
                     @"Initial catalog=Alembic.Metrics.Dev",
                     @"Integrated Security=True");
 
-             var spec = new[]
-                        {
-                            new MetricSpecification("SqlServer", null, null)
-                        };
+             var spec = new MetricSpecification("SqlServer", null, null);
 
             var query = "select * from ExampleData";
 
@@ -94,15 +91,47 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
-            var source = new ProcessCountingSource("count", "uptime", "chrome", 1);
+            var source = new ProcessCountingSource("count", "chrome", 1);
 
             var expectedMetrics = new[] { "count" };
 
             var i = 0;
             foreach (var expectedMetric in expectedMetrics)
             {
-                Assert.AreEqual(expectedMetric, source.Spec.ElementAt(i++).Name);
+                Assert.AreEqual(expectedMetric, source.Spec.Name);
             }
+
+            //Assert.Fail(); // want a pure counting source here
+        }
+
+        public void ProcessUptimeSource_ProvidesASpec()
+        {
+            var source = new ProcessUptimeSource("uptime", "chrome", 1);
+
+            var expectedMetrics = new[] { "count" };
+
+            var i = 0;
+            foreach (var expectedMetric in expectedMetrics)
+            {
+                Assert.AreEqual(expectedMetric, source.Spec.Name);
+            }
+
+            //Assert.Fail(); // want a pure uptime source here
+        }
+
+        // also -- want source to handle only a single spec, not multiple specs
+
+        [Test]
+        public void ProcessCountingSource_CanBeQueriedBySource()
+        {
+            var source = new ProcessCountingSource("count", "chrome", 1);
+
+            var expectedMetrics = new[] { "count" };
+
+            var res = source.Query();
+
+            // No assert, no test
+            //Assert.Fail();
         }
 
         [Test]
@@ -150,13 +179,18 @@ namespace Tests
         [Test]
         public void CircularDataSink_IsEnumerable()
         {
-            var sink = new CircularDataSink<IMetricData>(10, "test", new List<MetricSpecification>());
-            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now) });
-            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now) });
-            sink.Update("test", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now) });
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<IMetricData>(10, specs);
+            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now) });
+            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now) });
+            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now) });
 
             var total = 0d;
-            var iter = sink.GetEnumerator("test");
+            var iter = sink.GetEnumerator("test1");
             while(iter.MoveNext())
             {
                 total += iter.Current.Values["metric"].Value;
@@ -168,8 +202,13 @@ namespace Tests
         [Test]
         public void GenericCircularDataSink_IsEnumerable()
         {
-            var sink = new CircularDataSink<MetricData>(10, "test", new List<MetricSpecification>());
-            sink.Update("test", new[]
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs);
+            sink.Update("test1", new[]
                             {
                                 new MetricData(new Dictionary<string, double?> {{"metric", 1.0}}, DateTime.Now),
                                 new MetricData(new Dictionary<string, double?> {{"metric", 2.0}}, DateTime.Now),
@@ -177,7 +216,7 @@ namespace Tests
                             });
 
             var total = 0d;
-            var iter = sink.GetEnumerator("test");
+            var iter = sink.GetEnumerator("test1");
             while (iter.MoveNext())
             {
                 total += iter.Current.Values["metric"].Value;
@@ -195,7 +234,7 @@ namespace Tests
                                 new MetricSpecification("test2", null, null),
                             };
             
-            var sink = new CircularDataSink<MetricData>(10, "test", specs);
+            var sink = new CircularDataSink<MetricData>(10, specs);
 
             sink.Update("test1", new []
                             {

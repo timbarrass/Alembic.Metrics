@@ -149,7 +149,7 @@ namespace MetricAgent
         {
             var metricData = source.Query();
 
-            sink.Update(source.Name, metricData);
+            sink.Update(source.Spec.Name, metricData);
         }
 
         private object _padlock = new object();

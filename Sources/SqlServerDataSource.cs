@@ -19,7 +19,7 @@ namespace Sources
 
         private string _query;
 
-        private ICollection<MetricSpecification> _spec;
+        private MetricSpecification _spec;
 
         private int _delay;
 
@@ -33,21 +33,21 @@ namespace Sources
 
         public string Name
         {
-            get { return _spec.First().Name; }
+            get { return _spec.Name; }
         }
 
-        public SqlServerDataSource(DataContext context, IEnumerable<MetricSpecification> spec, string query, int delay)
+        public SqlServerDataSource(DataContext context, MetricSpecification spec, string query, int delay)
         {
             _context = context;
 
-            _spec = spec.ToArray();
+            _spec = spec;
 
             _query = query;
 
             _delay = delay * 1000;
         }
 
-        public ICollection<MetricSpecification> Spec
+        public MetricSpecification Spec
         {
             get { return _spec; }
         }
@@ -66,7 +66,7 @@ namespace Sources
 
             foreach(var point in timeseries)
             {
-                var metricData = new MetricData(new Dictionary<string, double?> {{ "SqlServer", (double?)point.Value }}, point.Timestamp);
+                var metricData = new MetricData(new Dictionary<string, double?> {{ Spec.Name, (double?)point.Value }}, point.Timestamp);
                 
                 returnSeries.Add(metricData);
             }

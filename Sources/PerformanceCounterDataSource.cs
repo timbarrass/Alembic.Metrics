@@ -7,7 +7,7 @@ namespace Sources
 {
     public class PerformanceCounterDataSource : IDataSource
     {
-        private MetricSpecification[] _spec;
+        private MetricSpecification _spec;
 
         private PerformanceCounter _counter;
 
@@ -40,10 +40,7 @@ namespace Sources
                 _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, InstanceName = instanceName };
             }
 
-            _spec = new[]
-                {
-                    new MetricSpecification(_counterName, min, max)
-                };
+            _spec = new MetricSpecification(_counterName, min, max);
         }
 
         public PerformanceCounterDataSource(string name,string categoryName, string counterName, float? min, float? max)
@@ -52,13 +49,10 @@ namespace Sources
 
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
 
-            _spec = new[]
-                {
-                    new MetricSpecification(_counterName, min, max)
-                };
+            _spec = new MetricSpecification(_counterName, min, max);
         }
 
-        public ICollection<MetricSpecification> Spec
+        public MetricSpecification Spec
         {
             get { return _spec; }
         }

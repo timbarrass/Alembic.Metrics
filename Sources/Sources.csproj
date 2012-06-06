@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProcessUptimeSourceConfiguration.cs" />
+    <Compile Include="ProcessUptimeSource.cs" />
     <Compile Include="IDataSource.cs" />
     <Compile Include="NullSource.cs" />
     <Compile Include="PerformanceCounterDataSource.cs" />

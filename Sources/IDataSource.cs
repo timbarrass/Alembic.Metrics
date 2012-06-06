@@ -5,7 +5,7 @@ namespace Sources
 {
     public interface IDataSource
     {
-        ICollection<MetricSpecification> Spec { get; }
+        MetricSpecification Spec { get; }
         IEnumerable<IMetricData> Query();
         int Delay { get; }
         string Name { get; }

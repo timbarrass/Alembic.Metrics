@@ -23,13 +23,13 @@ namespace Sinks
         /// Each sink is configured to accept data from multiple sources (represented by spec) but will
         /// remember the same number of points for each.
         /// </summary>
-        public CircularDataSink(int pointsToKeep, string sourceName, ICollection<MetricSpecification> sourceSpecifications)
+        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications)
         {
             _pointsToKeep = pointsToKeep;
 
             foreach (var spec in sourceSpecifications)
             {
-                _data[sourceName] = new SlidingBuffer<T>(_pointsToKeep);
+                _data[spec.Name] = new SlidingBuffer<T>(_pointsToKeep);
             }
 
             _sourceSpecifications = sourceSpecifications;

@@ -6,11 +6,11 @@ namespace Sources
 {
     public class NullSource : IDataSource
     {
-        public static readonly List<MetricSpecification> EmptySpecList = new List<MetricSpecification>(); // should be non-updateable
+        public static readonly MetricSpecification NullSpecification = null; // should be non-updateable
 
-        public ICollection<MetricSpecification> Spec
+        public MetricSpecification Spec
         {
-            get { return EmptySpecList; }
+            get { return NullSpecification; }
         }
 
         public IEnumerable<IMetricData >Query()
