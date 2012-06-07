@@ -5,7 +5,7 @@ namespace Data
 {
     public interface IMetricData
     {
-        Dictionary<string, double?> Values { get; }
+        double? Data { get; }
         DateTime Timestamp { get; }
     }
 }

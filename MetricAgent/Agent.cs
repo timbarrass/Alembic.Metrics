@@ -57,6 +57,8 @@ namespace MetricAgent
                 foreach (var sink in _sinks)
                 {
                     sink.Plot();
+
+                    sink.Write();
                 }
             }
         }

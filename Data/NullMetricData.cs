@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Data
 {
     public class NullMetricData : IMetricData
     {
-        public static readonly Dictionary<string, double?> EmptyValueMap = new Dictionary<string, double?>();
-
-        public Dictionary<string, double?> Values
+        public double? Data
         {
-            get { return EmptyValueMap; }
+            get { return null; }
         }
 
         public DateTime Timestamp

@@ -7,6 +7,8 @@ namespace Sinks
     {
         void Update(string specName, IEnumerable<T> perfMetricData);
 
+        void Write();
+
         // hack -- temp
         void Plot(string specName);
 

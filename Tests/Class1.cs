@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.IO;
 using System.Linq;
 using Data;
 using MetricAgent;
@@ -9,6 +9,7 @@ using Sinks;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Sources;
+using Stores;
 
 namespace Tests
 {
@@ -25,12 +26,9 @@ namespace Tests
             var specElement = new MetricSpecification(name, expectedMin, expectedMax);
         }
 
-        private Dictionary<string, double?> SamplePerformanceData()
+        private IEnumerable<double?> SamplePerformanceData()
         {
-            var firstName = "committed";
-            var secondName = "processor";
-
-            return new Dictionary<string, double?> { { firstName, 1.0 }, { secondName, 1.0 }, };
+            return new List<double?> { { 1.0 }, { 2.0 }, };
         }
 
         [Test]
@@ -137,8 +135,7 @@ namespace Tests
         [Test]
         public void MetricAgent_ReadsFromSource()
         {
-            var underlyingData = SamplePerformanceData();
-            var perfMetricData = new MetricData(underlyingData, DateTime.Now);
+            var perfMetricData = new MetricData(1.0, DateTime.Now);
 
             var source = MockRepository.GenerateMock<IDataSource>();
             source.Expect(x => x.Query()).Return(new List<IMetricData> { perfMetricData });
@@ -185,15 +182,16 @@ namespace Tests
                             };
 
             var sink = new CircularDataSink<IMetricData>(10, specs);
-            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 1.0 } }, DateTime.Now) });
-            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 2.0 } }, DateTime.Now) });
-            sink.Update("test1", new List<IMetricData> { new MetricData(new Dictionary<string, double?> { { "metric", 4.0 } }, DateTime.Now) });
+            sink.Update("test1", new List<IMetricData> { new MetricData( 1.0, DateTime.Now) });
+            sink.Update("test1", new List<IMetricData> { new MetricData( 2.0, DateTime.Now) });
+            sink.Update("test1", new List<IMetricData> { new MetricData( 4.0, DateTime.Now) });
 
             var total = 0d;
             var iter = sink.GetEnumerator("test1");
             while(iter.MoveNext())
             {
-                total += iter.Current.Values["metric"].Value;
+                if(iter.Current.Data.HasValue)
+                    total += iter.Current.Data.Value;
             }
 
             Assert.AreEqual(7d, total);
@@ -210,16 +208,17 @@ namespace Tests
             var sink = new CircularDataSink<MetricData>(10, specs);
             sink.Update("test1", new[]
                             {
-                                new MetricData(new Dictionary<string, double?> {{"metric", 1.0}}, DateTime.Now),
-                                new MetricData(new Dictionary<string, double?> {{"metric", 2.0}}, DateTime.Now),
-                                new MetricData(new Dictionary<string, double?> {{"metric", 4.0}}, DateTime.Now),
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now),
+                                new MetricData( 4.0, DateTime.Now),
                             });
 
             var total = 0d;
             var iter = sink.GetEnumerator("test1");
             while (iter.MoveNext())
             {
-                total += iter.Current.Values["metric"].Value;
+                if(iter.Current.Data.HasValue)
+                    total += iter.Current.Data.Value;
             }
 
             Assert.AreEqual(7d, total);
@@ -238,27 +237,78 @@ namespace Tests
 
             sink.Update("test1", new []
                             {
-                                new MetricData(new Dictionary<string, double?> {{"metric", 1.0}}, DateTime.Now),
-                                new MetricData(new Dictionary<string, double?> {{"metric", 2.0}}, DateTime.Now),
-                                new MetricData(new Dictionary<string, double?> {{"metric", 4.0}}, DateTime.Now),
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now),
+                                new MetricData( 4.0, DateTime.Now),
                             });
 
             var total = 0d;
             var iter = sink.GetEnumerator("test1");
             while (iter.MoveNext())
             {
-                total += iter.Current.Values["metric"].Value;
+                if(iter.Current.Data.HasValue)
+                    total += iter.Current.Data.Value;
             }
 
             Assert.AreEqual(7d, total);
         }
+
+        [Test]
+        public void CircularDataSink_CanPersistData()
+        {
+            var mockStore = MockRepository.GenerateMock<IDataStore<MetricData>>();
+            mockStore.Expect(x => x.Write(null, null)).IgnoreArguments();
+
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs, mockStore);
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now),
+                                new MetricData( 4.0, DateTime.Now),
+                            });
+
+            sink.Write();
+
+            mockStore.VerifyAllExpectations();
+        }
+
+        [Test, Category("CollaborationTest"), Ignore]
+        public void FileSystemDataStore_CanPersistSimpleData()
+        {
+            var testData = new[] { new TestSerializable { Message = "Hello" } };
+
+            var store = new FileSystemDataStore<TestSerializable>();
+
+            store.Write("testData", testData);
+
+            var ret = store.Read("testData");
+
+            Assert.AreEqual(testData.First().Message, ret.First().Message);
+
+            File.Delete("testData.am");
+        }
     }
 
+    [Serializable]
+    public class TestSerializable
+    {
+        public string Message;
+    }
 
     public class BreakingDataSink : IDataSink<IMetricData>
     {
 
         public void Update(string specName, IEnumerable<IMetricData> perfMetricData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write()
         {
             throw new NotImplementedException();
         }
@@ -272,6 +322,8 @@ namespace Tests
         {
             throw new NotImplementedException();
         }
+
+        
     }
 
 

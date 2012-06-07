@@ -46,8 +46,6 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
-            var values = new Dictionary<string, double?>();
-
             var processes = Process.GetProcessesByName(_processToMonitor);
 
             var count = 0;
@@ -67,9 +65,7 @@ namespace Sources
                 count++;
             }
 
-            values[_processUptimeName] = count == 0 ? 0 : uptime / count;
-
-            return new List<IMetricData> { new MetricData(values, DateTime.Now) };
+            return new List<IMetricData> { new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now) };
         }
     }
 }

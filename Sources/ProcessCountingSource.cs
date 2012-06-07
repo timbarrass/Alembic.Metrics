@@ -46,13 +46,9 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
-            var values = new Dictionary<string, double?>();
-
             var processes = Process.GetProcessesByName(_processToMonitor);
 
-            values[_processCountName] = processes.Length;
-
-            return new List<IMetricData> { new MetricData(values, DateTime.Now) };
+            return new List<IMetricData> { new MetricData( processes.Length, DateTime.Now) };
         }
     }
 }

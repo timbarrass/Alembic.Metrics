@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 namespace Data
 {
+    [Serializable]
     public class MetricData : IMetricData
     {
-        public MetricData(Dictionary<string, double?> values, DateTime timestamp)
+        public MetricData(double? values, DateTime timestamp)
         {
-            Values = values;
+            Data = values;
             Timestamp = timestamp;
         }
 
-        public Dictionary<string, double?> Values { get; private set; }
+        public double? Data { get; private set; }
 
         public DateTime Timestamp { get; private set; }
 

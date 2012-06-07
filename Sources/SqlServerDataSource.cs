@@ -66,7 +66,7 @@ namespace Sources
 
             foreach(var point in timeseries)
             {
-                var metricData = new MetricData(new Dictionary<string, double?> {{ Spec.Name, (double?)point.Value }}, point.Timestamp);
+                var metricData = new MetricData( point.Value, point.Timestamp);
                 
                 returnSeries.Add(metricData);
             }

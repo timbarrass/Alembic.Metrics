@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
+using Stores;
 
 namespace Sinks
 {
@@ -18,6 +19,8 @@ namespace Sinks
         private Dictionary<string, SlidingBuffer<T>> _data = new Dictionary<string, SlidingBuffer<T>>();
 
         private ICollection<MetricSpecification> _sourceSpecifications;
+
+        private IDataStore<T> _store;
 
         /// <summary>
         /// Each sink is configured to accept data from multiple sources (represented by spec) but will
@@ -33,6 +36,11 @@ namespace Sinks
             }
 
             _sourceSpecifications = sourceSpecifications;
+        }
+
+        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications, IDataStore<T> store) : this(pointsToKeep, sourceSpecifications)
+        {
+            _store = store;
         }
 
         public void Update(string specName, IEnumerable<T> perfMetricData)
@@ -64,7 +72,7 @@ namespace Sinks
                 {
                     foreach (var spec in _sourceSpecifications)
                     {
-                        yvals[spec] = _data[specName].Select(y => y.Values[spec.Name]).ToArray<double?>();
+                        yvals[spec] = _data[specName].Select(y => y.Data).ToArray<double?>();
                     }
                 }
             }
@@ -136,6 +144,18 @@ namespace Sinks
             chart.SaveImage(Path.ChangeExtension(chartName.Replace(":", "-"), "png"), ChartImageFormat.Png);
         }
 
+        public void Write()
+        {
+            lock (_padlock)
+            {
+                foreach (var specName in _data.Keys)
+                {
+                    _store.Write(specName, _data[specName]);
+                }
+            }
+        }
+
+        [Serializable]
         private class SlidingBuffer<T> : IEnumerable<T>
         {
             private readonly Queue<T> _queue;

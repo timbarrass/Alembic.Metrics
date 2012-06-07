@@ -8,6 +8,7 @@ using System.ServiceProcess;
 using Data;
 using Sinks;
 using Sources;
+using Stores;
 
 namespace MetricAgent
 {
@@ -23,6 +24,8 @@ namespace MetricAgent
         {
             var agentLoopDelay = 1;
 
+            var store = new FileSystemDataStore<IMetricData>();
+
             var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
@@ -36,7 +39,7 @@ namespace MetricAgent
                 var source = new ProcessCountingSource(countName, exe, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
             }
 
             var uptimeProcesses = config.Sections["processUptimeSource"] as ProcessUptimeSourceConfiguration;
@@ -50,7 +53,7 @@ namespace MetricAgent
                 var source = new ProcessUptimeSource(uptimeName, exe, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new[] { source.Spec }));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store));
             }
 
 
@@ -71,7 +74,7 @@ namespace MetricAgent
                                  );
                 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
             }
 
             var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
@@ -89,7 +92,7 @@ namespace MetricAgent
                 var source = new SqlServerDataSource(context, spec, query, delay);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }));
+                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];

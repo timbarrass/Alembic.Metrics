@@ -59,12 +59,7 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
-            var values = new Dictionary<string, double?>
-                            {
-                                { _counterName, _counter.NextValue() }
-                            };
-
-            return new List<IMetricData> { new MetricData(values, DateTime.Now) };
+            return new List<IMetricData> { new MetricData( _counter.NextValue(), DateTime.Now) };
         }
     }
 }
