@@ -15,9 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Now", "Now\Now.csproj", "{4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC1EFDDF-849A-45CC-A324-7A931F70871C}"
 	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
 		todo.txt = todo.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stores", "Stores\Stores.csproj", "{F8DA3277-92D8-470F-BD8C-31378775B21E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
