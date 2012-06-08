@@ -290,7 +290,7 @@ namespace Tests
 
             Assert.AreEqual(testData.First().Message, ret.First().Message);
 
-            File.Delete("testData.am");
+            File.Delete("testData.am.gz");
         }
     }
 
