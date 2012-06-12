@@ -3,6 +3,7 @@ using System.Threading;
 using Data;
 using Sinks;
 using Sources;
+using Plotters;
 
 namespace MetricAgent
 {
@@ -11,6 +12,8 @@ namespace MetricAgent
         private IList<IDataSource> _sources;
 
         private IList<IDataSink<IMetricData>> _sinks;
+
+        private IList<IDataPlotter> _plotters; 
 
         private object _padlock = new object(); // locks out cancel message -- rename
 
@@ -27,10 +30,11 @@ namespace MetricAgent
         /// </summary>
         /// <param name="sources">The data sources to query</param>
         /// <param name="sinks">The data sinks to update</param>
-        public Agent(IList<IDataSource> sources, IList<IDataSink<IMetricData>> sinks, int plotterDelay)
+        public Agent(IList<IDataSource> sources, IList<IDataSink<IMetricData>> sinks, IList<IDataPlotter> plotters, int plotterDelay)
         {
             _sources = sources;
             _sinks = sinks;
+            _plotters = plotters;
             _loopDelay = plotterDelay * 1000;
         }
 
@@ -54,10 +58,13 @@ namespace MetricAgent
                     }
                 }
 
+                foreach(var plotter in _plotters)
+                {
+                    plotter.Plot();
+                }
+
                 foreach (var sink in _sinks)
                 {
-                    sink.Plot();
-
                     sink.Write();
                 }
             }

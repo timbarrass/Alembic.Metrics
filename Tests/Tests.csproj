@@ -64,6 +64,10 @@
       <Project>{F60213E7-AE95-4712-ABBE-EEBCE258ABE1}</Project>
       <Name>MetricAgent</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Plotters\Plotters.csproj">
+      <Project>{167DF28F-4570-4D63-B444-580D35531B8F}</Project>
+      <Name>Plotters</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
       <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
       <Name>Sinks</Name>

@@ -10,7 +10,7 @@ using Stores;
 
 namespace Sinks
 {
-    public class CircularDataSink<T> : IDataSink<T> where T : IMetricData
+    public class CircularDataSink<T> : IDataSink<T>, ISnapshotProvider<T> where T : IMetricData
     {
         private object _padlock = new object();
 
@@ -43,6 +43,11 @@ namespace Sinks
             _store = store;
         }
 
+        public ICollection<MetricSpecification> Spec
+        {
+            get { return _sourceSpecifications; }
+        }
+
         public void Update(string specName, IEnumerable<T> perfMetricData)
         {
             lock (_padlock)
@@ -54,95 +59,6 @@ namespace Sinks
             }
         }
 
-        public IEnumerator<T> GetEnumerator(string specName)
-        {
-            return _data[specName].GetEnumerator();
-        }
-
-        public void Plot(string specName)
-        {
-            DateTime[] xvals;
-            var yvals = new Dictionary<MetricSpecification, double?[]>();
-
-            lock (_padlock)
-            {
-                xvals = _data[specName].Select(x => x.Timestamp).ToArray<DateTime>();
-
-                if (xvals.Length != 0)
-                {
-                    foreach (var spec in _sourceSpecifications)
-                    {
-                        yvals[spec] = _data[specName].Select(y => y.Data).ToArray<double?>();
-                    }
-                }
-            }
-
-            foreach (var spec in yvals.Keys)
-            {
-                GenerateChart(xvals, yvals[spec], spec.ExpectedMin, spec.ExpectedMax, spec.Name);
-            }
-        }
-
-        public void Plot()
-        {
-            foreach(var specName in _data.Keys)
-            {
-                Plot(specName);
-            }
-        }
-
-        private void GenerateChart(DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
-        {
-            chartName = Environment.MachineName + ": " + chartName;
-
-            var chart = new Chart();
-            chart.Size = new Size(400, 200);
-            chart.AntiAliasing = AntiAliasingStyles.None;
-            chart.Titles.Add(new Title(chartName, Docking.Top, new Font("Tahoma", 8), Color.Black));
-
-            var chartArea = new ChartArea();
-            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
-            chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisX.LabelStyle.Font = new Font("Tahoma", 7);
-            chartArea.AxisY.LabelStyle.Font = new Font("Tahoma", 7);
-            chartArea.IsSameFontSizeForAllAxes = true;
-
-            if (min.HasValue)
-            {
-                if (min.Value < (double?)Decimal.MinValue) min = (double?)Decimal.MinValue + 1;
-                chartArea.AxisY.Minimum = min.Value;
-            }
-            if (max.HasValue)
-            {
-                if (max.Value > (double?)Decimal.MaxValue) max = (double?)Decimal.MaxValue - 1;
-                chartArea.AxisY.Maximum = max.Value;
-            }
-
-            chartArea.AxisX.LabelAutoFitMaxFontSize = 7;
-            chartArea.AxisY.LabelAutoFitMaxFontSize = 7;
-            chart.ChartAreas.Add(chartArea);
-
-            var series = new Series();
-            series.Name = chartName;
-            series.ChartType = SeriesChartType.FastLine;
-            series.XValueType = ChartValueType.DateTime;
-            chart.Series.Add(series);
-
-            // bind the datapoints
-            chart.Series[chartName].Points.DataBindXY(xvals, yvals);
-
-            // copy the series and manipulate the copy
-            //chart.DataManipulator.CopySeriesValues("Series1", "Series2");
-            //chart.DataManipulator.FinancialFormula(FinancialFormula.WeightedMovingAverage, "Series2");
-            //chart.Series["Series2"].ChartType = SeriesChartType.FastLine;
-
-            // draw!
-            chart.Invalidate();
-
-            // write out a file
-            chart.SaveImage(Path.ChangeExtension(chartName.Replace(":", "-"), "png"), ChartImageFormat.Png);
-        }
 
         public void Write()
         {
@@ -152,6 +68,14 @@ namespace Sinks
                 {
                     _store.Write(specName, _data[specName]);
                 }
+            }
+        }
+
+        public IEnumerable<T> Snapshot(string label)
+        {
+            lock(_padlock)
+            {
+                return _data[label].ToArray(); // want a deep copy, not a reference
             }
         }
 

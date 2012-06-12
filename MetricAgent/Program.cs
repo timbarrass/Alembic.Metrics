@@ -6,6 +6,7 @@ using System.Configuration.Install;
 using System.Data.Linq;
 using System.ServiceProcess;
 using Data;
+using Plotters;
 using Sinks;
 using Sources;
 using Stores;
@@ -19,6 +20,8 @@ namespace MetricAgent
         private List<IDataSource> _sources = new List<IDataSource>();
 
         private List<IDataSink<IMetricData>> _sinks = new List<IDataSink<IMetricData>>();
+
+        private List<IDataPlotter> _plotters = new List<IDataPlotter>(); 
 
         public Program()
         {
@@ -37,9 +40,11 @@ namespace MetricAgent
                 var exe = processes.Processes[i].Exe;
 
                 var source = new ProcessCountingSource(countName, exe, delay);
+                var sink = new CircularDataSink<IMetricData>(600, new[] {source.Spec}, store);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
+                _sinks.Add(sink);
+                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
             var uptimeProcesses = config.Sections["processUptimeSource"] as ProcessUptimeSourceConfiguration;
@@ -51,9 +56,11 @@ namespace MetricAgent
                 var exe = uptimeProcesses.Processes[i].Exe;
 
                 var source = new ProcessUptimeSource(uptimeName, exe, delay);
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store));
+                _sinks.Add(sink);
+                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
 
@@ -72,9 +79,12 @@ namespace MetricAgent
                                  counters.Counters[i].Max,
                                  counters.Counters[i].Delay
                                  );
-                
+
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
+
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
+                _sinks.Add(sink);
+                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
             var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
@@ -90,14 +100,16 @@ namespace MetricAgent
                 var spec = new MetricSpecification(name, null, null);
 
                 var source = new SqlServerDataSource(context, spec, query, delay);
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
 
                 _sources.Add(source);
-                _sinks.Add(new CircularDataSink<IMetricData>(600, new [] { source.Spec }, store));
+                _sinks.Add(sink);
+                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
             var outputPath = ConfigurationSettings.AppSettings["outputPath"];
 
-            _agent = new Agent(_sources, _sinks, agentLoopDelay);
+            _agent = new Agent(_sources, _sinks, _plotters, agentLoopDelay);
 
             ServiceName = "Metric Agent";
         }

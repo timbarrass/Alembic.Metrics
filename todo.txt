@@ -14,3 +14,4 @@
 . move to async source query, register handlers with sink
 / multithread source query
 . CircularDataSink should validate name of metric supplied against known specs
+. For extracting plotter, etc, think in terms of sink-visitor? overkill, just need a vistiable/snapshottable interface

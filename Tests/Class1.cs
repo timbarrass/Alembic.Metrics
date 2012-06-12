@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Data;
 using MetricAgent;
+using Plotters;
 using Sinks;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -142,7 +143,7 @@ namespace Tests
 
             var sink = new BreakingDataSink();
 
-            var agent = new Agent(new List<IDataSource> { source }, new List<IDataSink<IMetricData>> { sink }, 10);
+            var agent = new Agent(new List<IDataSource> { source }, new List<IDataSink<IMetricData>> { sink }, new List<IDataPlotter>(), 10);
 
             // test an internal method -- not intended to be part of public interface
             var actual = agent.Query(source);
@@ -173,58 +174,58 @@ namespace Tests
         //    source.VerifyAllExpectations();
         //}
 
-        [Test]
-        public void CircularDataSink_IsEnumerable()
-        {
-            var specs = new[]
-                            {
-                                new MetricSpecification("test1", null, null),
-                            };
+        //[Test]
+        //public void CircularDataSink_IsEnumerable()
+        //{
+        //    var specs = new[]
+        //                    {
+        //                        new MetricSpecification("test1", null, null),
+        //                    };
 
-            var sink = new CircularDataSink<IMetricData>(10, specs);
-            sink.Update("test1", new List<IMetricData> { new MetricData( 1.0, DateTime.Now) });
-            sink.Update("test1", new List<IMetricData> { new MetricData( 2.0, DateTime.Now) });
-            sink.Update("test1", new List<IMetricData> { new MetricData( 4.0, DateTime.Now) });
+        //    var sink = new CircularDataSink<IMetricData>(10, specs);
+        //    sink.Update("test1", new List<IMetricData> { new MetricData( 1.0, DateTime.Now) });
+        //    sink.Update("test1", new List<IMetricData> { new MetricData( 2.0, DateTime.Now) });
+        //    sink.Update("test1", new List<IMetricData> { new MetricData( 4.0, DateTime.Now) });
 
-            var total = 0d;
-            var iter = sink.GetEnumerator("test1");
-            while(iter.MoveNext())
-            {
-                if(iter.Current.Data.HasValue)
-                    total += iter.Current.Data.Value;
-            }
+        //    var total = 0d;
+        //    var iter = sink.GetEnumerator("test1");
+        //    while(iter.MoveNext())
+        //    {
+        //        if(iter.Current.Data.HasValue)
+        //            total += iter.Current.Data.Value;
+        //    }
 
-            Assert.AreEqual(7d, total);
-        }
+        //    Assert.AreEqual(7d, total);
+        //}
 
-        [Test]
-        public void GenericCircularDataSink_IsEnumerable()
-        {
-            var specs = new[]
-                            {
-                                new MetricSpecification("test1", null, null),
-                            };
+        //[Test]
+        //public void GenericCircularDataSink_IsEnumerable()
+        //{
+        //    var specs = new[]
+        //                    {
+        //                        new MetricSpecification("test1", null, null),
+        //                    };
 
-            var sink = new CircularDataSink<MetricData>(10, specs);
-            sink.Update("test1", new[]
-                            {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now),
-                                new MetricData( 4.0, DateTime.Now),
-                            });
+        //    var sink = new CircularDataSink<MetricData>(10, specs);
+        //    sink.Update("test1", new[]
+        //                    {
+        //                        new MetricData( 1.0, DateTime.Now),
+        //                        new MetricData( 2.0, DateTime.Now),
+        //                        new MetricData( 4.0, DateTime.Now),
+        //                    });
 
-            var total = 0d;
-            var iter = sink.GetEnumerator("test1");
-            while (iter.MoveNext())
-            {
-                if(iter.Current.Data.HasValue)
-                    total += iter.Current.Data.Value;
-            }
+        //    var total = 0d;
+        //    var iter = sink.GetEnumerator("test1");
+        //    while (iter.MoveNext())
+        //    {
+        //        if(iter.Current.Data.HasValue)
+        //            total += iter.Current.Data.Value;
+        //    }
 
-            Assert.AreEqual(7d, total);
-        }
+        //    Assert.AreEqual(7d, total);
+        //}
 
-        [Test]
+        [Test, Ignore("Needs updating to use snapshotProvider interface, not enumerator")]
         public void GenericCircularDataSink_SupportsABufferPerSpec()
         {
             var specs = new[]
@@ -243,17 +244,17 @@ namespace Tests
                             });
 
             var total = 0d;
-            var iter = sink.GetEnumerator("test1");
-            while (iter.MoveNext())
-            {
-                if(iter.Current.Data.HasValue)
-                    total += iter.Current.Data.Value;
-            }
+            //var iter = sink.GetEnumerator("test1");
+            //while (iter.MoveNext())
+            //{
+            //    if(iter.Current.Data.HasValue)
+            //        total += iter.Current.Data.Value;
+            //}
 
             Assert.AreEqual(7d, total);
         }
 
-        [Test]
+        [Test]      
         public void CircularDataSink_CanPersistData()
         {
             var mockStore = MockRepository.GenerateMock<IDataStore<MetricData>>();
@@ -277,7 +278,7 @@ namespace Tests
             mockStore.VerifyAllExpectations();
         }
 
-        [Test, Category("CollaborationTest"), Ignore]
+        [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
         public void FileSystemDataStore_CanPersistSimpleData()
         {
             var testData = new[] { new TestSerializable { Message = "Hello" } };
@@ -291,6 +292,58 @@ namespace Tests
             Assert.AreEqual(testData.First().Message, ret.First().Message);
 
             File.Delete("testData.am.gz");
+        }
+
+        [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
+        public void SinglePlotter_VisitsSinksAndExtractsData()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs);
+
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
+                            });
+
+            var visitor = new SinglePlotter<MetricData>(sink, specs[0]);
+
+            visitor.Plot();
+
+            //Assert.AreEqual(7.0d, visitor.Total);
+        }
+
+        [Test]
+        public void CircularDataSink_SupportsDataSnapshot()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs);
+
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
+                            });
+            
+            var snapshot = sink.Snapshot("test1");
+
+            var total = 0.0d;
+            foreach(var dataPoint in snapshot)
+            {
+                total += dataPoint.Data.Value;
+            }
+
+            Assert.AreEqual(7.0d, total);
         }
     }
 
