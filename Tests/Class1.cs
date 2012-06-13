@@ -143,7 +143,9 @@ namespace Tests
 
             var sink = new BreakingDataSink();
 
-            var agent = new Agent(new List<IDataSource> { source }, new List<IDataSink<IMetricData>> { sink }, new List<IDataPlotter>(), 10);
+            var _sinksToUpdate = new Dictionary<IDataSource, IList<IDataSink<IMetricData>>>() { { source, new List<IDataSink<IMetricData>> { sink } } };
+
+            var agent = new Agent(_sinksToUpdate, new List<IDataPlotter>(), 10);
 
             // test an internal method -- not intended to be part of public interface
             var actual = agent.Query(source);
@@ -316,6 +318,38 @@ namespace Tests
             visitor.Plot();
 
             //Assert.AreEqual(7.0d, visitor.Total);
+        }
+
+        [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
+        public void MultiPlotter_VisitsSinksAndExtractsData()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                                new MetricSpecification("test2", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs);
+
+            var firstTimestamp = DateTime.Now;
+
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, firstTimestamp),
+                                new MetricData( 2.0, firstTimestamp.AddMinutes(5)),
+                                new MetricData( 4.0, firstTimestamp.AddMinutes(10)),
+                            });
+            sink.Update("test2", new[]
+                            {
+                                new MetricData( 2.0, firstTimestamp),
+                                new MetricData( 2.5, firstTimestamp.AddMinutes(5)),
+                                new MetricData( 3.0, firstTimestamp.AddMinutes(10)),
+                            });
+
+
+            var visitor = new MultiPlotter<MetricData>(sink, specs, "aggregated test data");
+
+            visitor.Plot();
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Data;
 using Sinks;
@@ -9,9 +10,7 @@ namespace MetricAgent
 {
     public class Agent
     {
-        private IList<IDataSource> _sources;
-
-        private IList<IDataSink<IMetricData>> _sinks;
+        private IEnumerable<IDataSink<IMetricData>> _sinks;
 
         private IList<IDataPlotter> _plotters; 
 
@@ -25,16 +24,31 @@ namespace MetricAgent
 
         private Thread _plotter;
 
+        private IDictionary<IDataSource, IList<IDataSink<IMetricData>>> _sinksToUpdate;
+
         /// <summary>
         /// Instantiate an Agent
         /// </summary>
         /// <param name="sources">The data sources to query</param>
         /// <param name="sinks">The data sinks to update</param>
-        public Agent(IList<IDataSource> sources, IList<IDataSink<IMetricData>> sinks, IList<IDataPlotter> plotters, int plotterDelay)
+        public Agent(IDictionary<IDataSource, IList<IDataSink<IMetricData>>> sinksToUpdate, IList<IDataPlotter> plotters, int plotterDelay)
         {
-            _sources = sources;
-            _sinks = sinks;
+            _sinksToUpdate = sinksToUpdate;
+
+            var sinks = new List<IDataSink<IMetricData>>();
+
+            foreach(var list in _sinksToUpdate.Values)
+            {
+                foreach (var sink in list)
+                {
+                    sinks.Add(sink);
+                }
+            }
+
+            _sinks = sinks.Distinct();
+
             _plotters = plotters;
+            
             _loopDelay = plotterDelay * 1000;
         }
 
@@ -76,13 +90,9 @@ namespace MetricAgent
             {
                 _cancelled = false;
 
-                int index = 0;
-
-                foreach(var source in _sources)
+                foreach(var source in _sinksToUpdate.Keys)
                 {
-                    var sink = _sinks[index++]; // simple sink lookup
-
-                    var processor = new Processor() { Source = source, Sink = sink, Delay = source.Delay };
+                    var processor = new Processor() { Source = source, Sinks = _sinksToUpdate[source], Delay = source.Delay };
                     processor.Start();
                     _workers.Add(processor);
                 }
@@ -112,7 +122,7 @@ namespace MetricAgent
     {
         public IDataSource Source { get; set; }
 
-        public IDataSink<IMetricData> Sink { get; set; }
+        public IList<IDataSink<IMetricData>> Sinks { get; set; }
 
         public int Delay { get; set; }
 
@@ -150,15 +160,18 @@ namespace MetricAgent
                     }
                 }
 
-                Update(Source, Sink);
+                Update(Source, Sinks);
             }
         }
 
-        private void Update(IDataSource source, IDataSink<IMetricData> sink)
+        private void Update(IDataSource source, IList<IDataSink<IMetricData>> sinks)
         {
             var metricData = source.Query();
 
-            sink.Update(source.Spec.Name, metricData);
+            foreach (var sink in sinks)
+            {
+                sink.Update(source.Spec.Name, metricData);
+            }
         }
 
         private object _padlock = new object();

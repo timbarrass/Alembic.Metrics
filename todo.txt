@@ -1,4 +1,5 @@
-. Separate plotting responsibility from data sink
+! in example app create MAP of source : sinks that need to be updated from source
+/ Separate plotting responsibility from data sink
 / Typed MetricData and generic sink
 / Enable enumeration of sink
 / Check service installation, uninstallation [need to be admin?]

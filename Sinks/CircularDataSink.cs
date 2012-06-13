@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms.DataVisualization.Charting;
 using Data;
 using Stores;
 
@@ -62,13 +59,13 @@ namespace Sinks
 
         public void Write()
         {
-            lock (_padlock)
-            {
-                foreach (var specName in _data.Keys)
-                {
-                    _store.Write(specName, _data[specName]);
-                }
-            }
+            //lock (_padlock)
+            //{
+            //    foreach (var specName in _data.Keys)
+            //    {
+            //        _store.Write(specName, _data[specName]);
+            //    }
+            //}
         }
 
         public IEnumerable<T> Snapshot(string label)
