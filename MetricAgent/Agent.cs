@@ -5,6 +5,7 @@ using Data;
 using Sinks;
 using Sources;
 using Plotters;
+using Writers;
 
 namespace MetricAgent
 {
@@ -26,12 +27,14 @@ namespace MetricAgent
 
         private IDictionary<IDataSource, IList<IDataSink<IMetricData>>> _sinksToUpdate;
 
+        private IList<IDataWriter> _writers;
+
         /// <summary>
         /// Instantiate an Agent
         /// </summary>
         /// <param name="sources">The data sources to query</param>
         /// <param name="sinks">The data sinks to update</param>
-        public Agent(IDictionary<IDataSource, IList<IDataSink<IMetricData>>> sinksToUpdate, IList<IDataPlotter> plotters, int plotterDelay)
+        public Agent(IDictionary<IDataSource, IList<IDataSink<IMetricData>>> sinksToUpdate, IList<IDataPlotter> plotters, IList<IDataWriter> writers, int plotterDelay)
         {
             _sinksToUpdate = sinksToUpdate;
 
@@ -48,7 +51,9 @@ namespace MetricAgent
             _sinks = sinks.Distinct();
 
             _plotters = plotters;
-            
+
+            _writers = writers;
+
             _loopDelay = plotterDelay * 1000;
         }
 
@@ -77,9 +82,9 @@ namespace MetricAgent
                     plotter.Plot();
                 }
 
-                foreach (var sink in _sinks)
+                foreach (var writer in _writers)
                 {
-                    sink.Write();
+                    writer.Write();
                 }
             }
         }

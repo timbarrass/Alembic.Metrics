@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using Sources;
 using Stores;
+using Writers;
 
 namespace Tests
 {
@@ -145,7 +146,7 @@ namespace Tests
 
             var _sinksToUpdate = new Dictionary<IDataSource, IList<IDataSink<IMetricData>>>() { { source, new List<IDataSink<IMetricData>> { sink } } };
 
-            var agent = new Agent(_sinksToUpdate, new List<IDataPlotter>(), 10);
+            var agent = new Agent(_sinksToUpdate, new List<IDataPlotter>(), new List<IDataWriter>(), 10);
 
             // test an internal method -- not intended to be part of public interface
             var actual = agent.Query(source);
@@ -256,30 +257,6 @@ namespace Tests
             Assert.AreEqual(7d, total);
         }
 
-        [Test]      
-        public void CircularDataSink_CanPersistData()
-        {
-            var mockStore = MockRepository.GenerateMock<IDataStore<MetricData>>();
-            mockStore.Expect(x => x.Write(null, null)).IgnoreArguments();
-
-            var specs = new[]
-                            {
-                                new MetricSpecification("test1", null, null),
-                            };
-
-            var sink = new CircularDataSink<MetricData>(10, specs, mockStore);
-            sink.Update("test1", new[]
-                            {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now),
-                                new MetricData( 4.0, DateTime.Now),
-                            });
-
-            sink.Write();
-
-            mockStore.VerifyAllExpectations();
-        }
-
         [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
         public void FileSystemDataStore_CanPersistSimpleData()
         {
@@ -319,6 +296,33 @@ namespace Tests
 
             //Assert.AreEqual(7.0d, visitor.Total);
         }
+
+        [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
+        public void SingleWriter_VisitsSinksAndExtractsData()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<IMetricData>(10, specs);
+
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
+                            });
+
+            var store = new FileSystemDataStore<IMetricData>();
+
+            var visitor = new SingleWriter<IMetricData>(sink, specs[0], store);
+
+            visitor.Write();
+
+            //Assert.AreEqual(7.0d, visitor.Total);
+        }
+
 
         [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
         public void MultiPlotter_VisitsSinksAndExtractsData()

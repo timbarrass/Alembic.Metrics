@@ -15,8 +15,6 @@ namespace Plotters
     /// </summary>
     public class SinglePlotter<T> : IDataPlotter where T : IMetricData
     {
-        public double Total { get; set; }
-
         public SinglePlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
         {
             _snapshotProvider = snapshotProvider;

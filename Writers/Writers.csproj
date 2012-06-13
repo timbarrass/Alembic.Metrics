@@ -1,31 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F60213E7-AE95-4712-ABBE-EEBCE258ABE1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MetricAgent</RootNamespace>
-    <AssemblyName>MetricAgent</AssemblyName>
+    <RootNamespace>Writers</RootNamespace>
+    <AssemblyName>Writers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,11 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,42 +39,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agent.cs" />
-    <Compile Include="Program.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="IDataWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SingleWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
+      <Project>{a777d09d-157b-4230-aeec-c0e4742cd5c9}</Project>
       <Name>Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Plotters\Plotters.csproj">
-      <Project>{167df28f-4570-4d63-b444-580d35531b8f}</Project>
-      <Name>Plotters</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
-      <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
+      <Project>{4ece58e8-cbbe-46ea-bb0b-3e09445387c1}</Project>
       <Name>Sinks</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sources\Sources.csproj">
-      <Project>{87791A59-4075-408B-B44F-805C373C9EA8}</Project>
-      <Name>Sources</Name>
     </ProjectReference>
     <ProjectReference Include="..\Stores\Stores.csproj">
       <Project>{f8da3277-92d8-470f-bd8c-31378775b21e}</Project>
       <Name>Stores</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Writers\Writers.csproj">
-      <Project>{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}</Project>
-      <Name>Writers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

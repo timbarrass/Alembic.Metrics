@@ -11,6 +11,7 @@ using Plotters;
 using Sinks;
 using Sources;
 using Stores;
+using Writers;
 
 namespace MetricAgent
 {
@@ -22,6 +23,8 @@ namespace MetricAgent
 
         private List<IDataPlotter> _plotters = new List<IDataPlotter>(); 
 
+        private List<IDataWriter> _writers = new List<IDataWriter>(); 
+
         public Program()
         {
             var agentLoopDelay = 1;
@@ -32,7 +35,7 @@ namespace MetricAgent
 
             var processes = config.Sections["processCountingSource"] as ProcessCountingSourceConfiguration;
 
-            var _processCounterSources = new List<IDataSource>();
+            var processCounterSources = new List<IDataSource>();
 
             for (int i = 0; i < processes.Processes.Count; i++ )
             {
@@ -41,20 +44,21 @@ namespace MetricAgent
                 var exe = processes.Processes[i].Exe;
 
                 var source = new ProcessCountingSource(countName, exe, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] {source.Spec}, store);
+                var sink = new CircularDataSink<IMetricData>(600, new[] {source.Spec});
 
-                _processCounterSources.Add(source);
+                processCounterSources.Add(source);
                 if(! _sinksToUpdate.ContainsKey(source))
                 {
                     _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
                 }
                 _sinksToUpdate[source].Add(sink);
                 _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
+                _writers.Add(new SingleWriter<IMetricData>(sink, source.Spec, store));
             }
 
-            var processCounterSpecs = _processCounterSources.Select(x => x.Spec).ToArray();
+            var processCounterSpecs = processCounterSources.Select(x => x.Spec).ToArray();
             var processCounterSink = new CircularDataSink<IMetricData>(600, processCounterSpecs); 
-            foreach(var source in _processCounterSources)
+            foreach(var source in processCounterSources)
             {
                 _sinksToUpdate[source].Add(processCounterSink);
             }
@@ -69,7 +73,7 @@ namespace MetricAgent
                 var exe = uptimeProcesses.Processes[i].Exe;
 
                 var source = new ProcessUptimeSource(uptimeName, exe, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
 
                 if (!_sinksToUpdate.ContainsKey(source))
                 {
@@ -96,7 +100,7 @@ namespace MetricAgent
                                  counters.Counters[i].Delay
                                  );
 
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
 
                 if (!_sinksToUpdate.ContainsKey(source))
                 {
@@ -119,7 +123,7 @@ namespace MetricAgent
                 var spec = new MetricSpecification(name, null, null);
 
                 var source = new SqlServerDataSource(context, spec, query, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec }, store);
+                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
 
                 if (!_sinksToUpdate.ContainsKey(source))
                 {
@@ -129,7 +133,7 @@ namespace MetricAgent
                 _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
-            _agent = new Agent(_sinksToUpdate, _plotters, agentLoopDelay);
+            _agent = new Agent(_sinksToUpdate, _plotters, _writers, agentLoopDelay);
 
             ServiceName = "Metric Agent";
         }

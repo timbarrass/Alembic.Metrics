@@ -17,8 +17,6 @@ namespace Sinks
 
         private ICollection<MetricSpecification> _sourceSpecifications;
 
-        private IDataStore<T> _store;
-
         /// <summary>
         /// Each sink is configured to accept data from multiple sources (represented by spec) but will
         /// remember the same number of points for each.
@@ -33,11 +31,6 @@ namespace Sinks
             }
 
             _sourceSpecifications = sourceSpecifications;
-        }
-
-        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications, IDataStore<T> store) : this(pointsToKeep, sourceSpecifications)
-        {
-            _store = store;
         }
 
         public ICollection<MetricSpecification> Spec
@@ -56,24 +49,17 @@ namespace Sinks
             }
         }
 
-
-        public void Write()
-        {
-            //lock (_padlock)
-            //{
-            //    foreach (var specName in _data.Keys)
-            //    {
-            //        _store.Write(specName, _data[specName]);
-            //    }
-            //}
-        }
-
         public IEnumerable<T> Snapshot(string label)
         {
             lock(_padlock)
             {
                 return _data[label].ToArray(); // want a deep copy, not a reference
             }
+        }
+
+        IEnumerable<T> ISnapshotProvider<T>.Snapshot(string label)
+        {
+            return Snapshot(label);
         }
 
         [Serializable]

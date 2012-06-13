@@ -80,6 +80,10 @@
       <Project>{f8da3277-92d8-470f-bd8c-31378775b21e}</Project>
       <Name>Stores</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Writers\Writers.csproj">
+      <Project>{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}</Project>
+      <Name>Writers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
