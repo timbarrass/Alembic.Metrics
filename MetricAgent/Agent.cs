@@ -29,11 +29,6 @@ namespace MetricAgent
 
         private IList<IDataWriter> _writers;
 
-        /// <summary>
-        /// Instantiate an Agent
-        /// </summary>
-        /// <param name="sources">The data sources to query</param>
-        /// <param name="sinks">The data sinks to update</param>
         public Agent(IDictionary<IDataSource, IList<IDataSink<IMetricData>>> sinksToUpdate, IList<IDataPlotter> plotters, IList<IDataWriter> writers, int plotterDelay)
         {
             _sinksToUpdate = sinksToUpdate;

@@ -36,7 +36,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanBeUpdated_WithPerfCounterMetricData()
         {
-            var source = new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null);
+            var source = new PerformanceCounterDataSource("id", "test", "Memory", "Committed Bytes", null, null);
             var lookup = SamplePerformanceData();
             var mockSource = MockRepository.GenerateMock<IDataSource>();
             mockSource.Expect(x => x.Spec).Return(source.Spec);
@@ -54,7 +54,7 @@ namespace Tests
         [Test]
         public void PerformanceCounterDataSource_ProvidesASpec()
         {
-            var source = new PerformanceCounterDataSource("test", "Memory", "Committed Bytes", null, null);
+            var source = new PerformanceCounterDataSource("id", "test", "Memory", "Committed Bytes", null, null);
 
             var expectedMetrics = new[] { "test" };
 
@@ -81,7 +81,7 @@ namespace Tests
 
             var context = new DataContext(connString);
 
-            var source = new SqlServerDataSource(context, spec, query, 1);
+            var source = new SqlServerDataSource("id", context, spec, query, 1);
 
             var timeseries = source.Query();
 
@@ -91,7 +91,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
-            var source = new ProcessCountingSource("count", "chrome", 1);
+            var source = new ProcessCountingSource("count", "count", "chrome", 1);
 
             var expectedMetrics = new[] { "count" };
 
@@ -106,7 +106,7 @@ namespace Tests
 
         public void ProcessUptimeSource_ProvidesASpec()
         {
-            var source = new ProcessUptimeSource("uptime", "chrome", 1);
+            var source = new ProcessUptimeSource("id", "uptime", "chrome", 1);
 
             var expectedMetrics = new[] { "count" };
 
@@ -124,7 +124,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_CanBeQueriedBySource()
         {
-            var source = new ProcessCountingSource("count", "chrome", 1);
+            var source = new ProcessCountingSource("id", "count", "chrome", 1);
 
             var expectedMetrics = new[] { "count" };
 

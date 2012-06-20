@@ -15,6 +15,8 @@ namespace Sources
 
         private int _delay;
 
+        private string _id;
+
         public int Delay
         {
             get
@@ -24,6 +26,14 @@ namespace Sources
         }
 
         public string Name { get { return _counterName; } }
+
+        public string Id { get { return _id; } }
+
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay) 
+            : this(name, categoryName, counterName, instanceName, min, max, delay)
+        {
+            _id = id;
+        }
 
         public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay)
         {
@@ -43,14 +53,17 @@ namespace Sources
             _spec = new MetricSpecification(_counterName, min, max);
         }
 
-        public PerformanceCounterDataSource(string name,string categoryName, string counterName, float? min, float? max)
+        public PerformanceCounterDataSource(string id, string name,string categoryName, string counterName, float? min, float? max)
         {
+            _id = id;
+
             _counterName = name;
 
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
 
             _spec = new MetricSpecification(_counterName, min, max);
         }
+
 
         public MetricSpecification Spec
         {

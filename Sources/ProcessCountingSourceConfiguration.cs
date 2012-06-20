@@ -31,6 +31,12 @@ namespace Sources
         {
             get { return (string)base["exe"]; }
         }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+        }
     }
 
 
@@ -63,7 +69,7 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return (element as ProcessElement).Name;
+            return (element as ProcessElement).Id;
         }
     }
 

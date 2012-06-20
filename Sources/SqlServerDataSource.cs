@@ -23,6 +23,8 @@ namespace Sources
 
         private int _delay;
 
+        private string _id;
+
         public int Delay
         {
             get
@@ -36,8 +38,15 @@ namespace Sources
             get { return _spec.Name; }
         }
 
-        public SqlServerDataSource(DataContext context, MetricSpecification spec, string query, int delay)
+        public string Id
         {
+            get { return _id; }
+        }
+
+        public SqlServerDataSource(string id, DataContext context, MetricSpecification spec, string query, int delay)
+        {
+            _id = id;
+
             _context = context;
 
             _spec = spec;

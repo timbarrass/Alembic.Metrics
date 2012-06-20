@@ -25,6 +25,12 @@ namespace Sources
             get { return (string)base["name"]; }
         }
 
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+        }
+
         [ConfigurationProperty("categoryName", IsRequired = true)]
         public string CategoryName
         {
@@ -86,7 +92,7 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}-{1}-{2}", (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
+            return string.Format("{0}-{1}-{2}-{3}", (element as CounterElement).Id, (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
         }
     }
 

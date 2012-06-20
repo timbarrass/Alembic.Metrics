@@ -9,5 +9,6 @@ namespace Sources
         IEnumerable<IMetricData> Query();
         int Delay { get; }
         string Name { get; }
+        string Id { get; }
     }
 }

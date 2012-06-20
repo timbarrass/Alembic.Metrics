@@ -15,6 +15,8 @@ namespace Sources
 
         private int _delay;
 
+        private string _id;
+
         public int Delay
         {
             get
@@ -28,13 +30,20 @@ namespace Sources
             get { return _processToMonitor + "-metrics"; }
         }
 
-        public ProcessUptimeSource(string processUptimeFriendlyName, string processToMonitor, int delay)
+        public string Id
+        {
+            get { return _id; }
+        }
+
+        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, int delay)
         {
             _processToMonitor = processToMonitor;
 ;
             _processUptimeName = processUptimeFriendlyName;
 
             _delay = delay * 1000;
+
+            _id = id;
 
             _spec = new MetricSpecification(_processUptimeName, 0, null);
         }

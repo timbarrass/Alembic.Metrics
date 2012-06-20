@@ -25,6 +25,8 @@ namespace MetricAgent
 
         private List<IDataWriter> _writers = new List<IDataWriter>(); 
 
+        private List<IDataSink<IMetricData>> _sinks = new List<IDataSink<IMetricData>>(); 
+
         public Program()
         {
             var agentLoopDelay = 1;
@@ -39,21 +41,18 @@ namespace MetricAgent
 
             for (int i = 0; i < processes.Processes.Count; i++ )
             {
+                var id = processes.Processes[i].Id;
                 var countName = processes.Processes[i].Name + " count";
                 var delay = processes.Processes[i].Delay;
                 var exe = processes.Processes[i].Exe;
 
-                var source = new ProcessCountingSource(countName, exe, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] {source.Spec});
+                var source = new ProcessCountingSource(id, countName, exe, delay);
 
                 processCounterSources.Add(source);
-                if(! _sinksToUpdate.ContainsKey(source))
+                if (!_sinksToUpdate.ContainsKey(source))
                 {
                     _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
                 }
-                _sinksToUpdate[source].Add(sink);
-                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
-                _writers.Add(new SingleWriter<IMetricData>(sink, source.Spec, store));
             }
 
             var processCounterSpecs = processCounterSources.Select(x => x.Spec).ToArray();
@@ -68,19 +67,14 @@ namespace MetricAgent
 
             for (int i = 0; i < uptimeProcesses.Processes.Count; i++)
             {
+                var id = uptimeProcesses.Processes[i].Id;
                 var uptimeName = uptimeProcesses.Processes[i].Name + " uptime";
                 var delay = uptimeProcesses.Processes[i].Delay;
                 var exe = uptimeProcesses.Processes[i].Exe;
 
-                var source = new ProcessUptimeSource(uptimeName, exe, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
+                var source = new ProcessUptimeSource(id, uptimeName, exe, delay);
 
-                if (!_sinksToUpdate.ContainsKey(source))
-                {
-                    _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
-                }
-                _sinksToUpdate[source].Add(sink);
-                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
+                _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
             }
 
 
@@ -88,9 +82,11 @@ namespace MetricAgent
 
             for (int i = 0; i < counters.Counters.Count; i++)
             {
+                var id = counters.Counters[i].Id;
                 var counterName = counters.Counters[i].Name;
      
                 var source = new PerformanceCounterDataSource(
+                                 id,
                                  counterName,
                                  counters.Counters[i].CategoryName,
                                  counters.Counters[i].CounterName,
@@ -100,20 +96,14 @@ namespace MetricAgent
                                  counters.Counters[i].Delay
                                  );
 
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
-
-                if (!_sinksToUpdate.ContainsKey(source))
-                {
-                    _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
-                }
-                _sinksToUpdate[source].Add(sink);
-                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
+                _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
             }
 
             var databases = config.Sections["databaseSource"] as SqlServerDataSourceConfiguration;
 
             for (int i = 0; i < databases.Databases.Count; i++)
             {
+                var id = databases.Databases[i].Id;
                 var connectionString = databases.Databases[i].ConnectionString;
                 var query = databases.Databases[i].Query;
                 var name = databases.Databases[i].Name;
@@ -122,15 +112,33 @@ namespace MetricAgent
                 var context = new DataContext(connectionString);
                 var spec = new MetricSpecification(name, null, null);
 
-                var source = new SqlServerDataSource(context, spec, query, delay);
-                var sink = new CircularDataSink<IMetricData>(600, new[] { source.Spec });
+                var source = new SqlServerDataSource(id, context, spec, query, delay);
 
-                if (!_sinksToUpdate.ContainsKey(source))
+                _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
+            }
+
+            var sinks = config.Sections["sinks"] as CircularDataSinkConfiguration;
+
+            for(int i = 0; i < sinks.Sinks.Count; i++ )
+            {
+                var id = sinks.Sinks[i].Id;
+                var points = sinks.Sinks[i].Points;
+
+                var sources = _sinksToUpdate.Where(x => x.Key.Id.Equals(id));
+
+                foreach(var source in sources)
                 {
-                    _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
+                    var sink = new CircularDataSink<IMetricData>(points, new [] { source.Key.Spec });
+
+                    if (!_sinksToUpdate.ContainsKey(source.Key))
+                    {
+                        _sinksToUpdate[source.Key] = new List<IDataSink<IMetricData>>();
+                    }
+                    
+                    _sinksToUpdate[source.Key].Add(sink);
+                    _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Key.Spec));
+                    _writers.Add(new SingleWriter<IMetricData>(sink, source.Key.Spec, store));
                 }
-                _sinksToUpdate[source].Add(sink);
-                _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Spec));
             }
 
             _agent = new Agent(_sinksToUpdate, _plotters, _writers, agentLoopDelay);

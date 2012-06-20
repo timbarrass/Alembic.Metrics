@@ -9,5 +9,12 @@ namespace Sources
         {
             get { return (ProcessElementCollection)base["processes"]; }
         }
+
+        [ConfigurationProperty("id")]
+        public ProcessElementCollection Id
+        {
+            get { return (ProcessElementCollection)base["id"]; }
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-! in example app create MAP of source : sinks that need to be updated from source
+/ in example app create MAP of source : sinks that need to be updated from source
 / Separate plotting responsibility from data sink
 / Typed MetricData and generic sink
 / Enable enumeration of sink
@@ -8,11 +8,11 @@
 / Uptime needs to handle case where process goes while querying for times
 / have source.Query return an IEnumerable<IMetricData> (require sorted on timestamp?)
 / have sink.Update accept an IEnumerable<IMetricData>
-1 have sinks maintain a buffer per source (set of specs) [breaks direct IEnumerator implementation, but should be able to get an enumerator for a buffer]
+/ have sinks maintain a buffer per source (set of specs) [breaks direct IEnumerator implementation, but should be able to get an enumerator for a buffer]
 . make sinks configurable -- link with source, start with number of points remembered
 . have sink recall latest recent timestamp, and not reimport data before then (wasteful)
 / generic SqlServer database source -- get timeseries data
 . move to async source query, register handlers with sink
 / multithread source query
 . CircularDataSink should validate name of metric supplied against known specs
-. For extracting plotter, etc, think in terms of sink-visitor? overkill, just need a vistiable/snapshottable interface
+/ For extracting plotter, etc, think in terms of sink-visitor? overkill, just need a vistiable/snapshottable interface

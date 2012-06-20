@@ -27,5 +27,10 @@ namespace Sources
         {
             get { return "NullSource"; }
         }
+
+        public string Id
+        {
+            get { return Name; }
+        }
     }
 }

@@ -19,6 +19,12 @@ namespace Sources
             get { return (int)base["delay"]; }
         }
 
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+        }
+
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
@@ -67,7 +73,8 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}", (element as DatabaseElement).Name);
+            //return base.GetElementKey(element);
+            return string.Format("{0}", (element as DatabaseElement).Id);
         }
     }
 
