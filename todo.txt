@@ -24,3 +24,4 @@
 . PROPER LOGGING
 . More sophisticiated "unknown" recording and plotting
 . rationalise, ensure test coverage, look over each class in detail
+. configure plotters independently based on sinks, as sinks are with sources?
