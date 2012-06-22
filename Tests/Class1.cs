@@ -383,6 +383,35 @@ namespace Tests
 
             Assert.AreEqual(7.0d, total);
         }
+
+        [Test]
+        public void CircularDataSink_IgnoreDataOlderThanMostRecentLastUpdate()
+        {
+            var specs = new[]
+                            {
+                                new MetricSpecification("test1", null, null),
+                            };
+
+            var sink = new CircularDataSink<MetricData>(10, specs);
+
+            sink.Update("test1", new[]
+                            {
+                                new MetricData( 1.0, DateTime.Now),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
+                                new MetricData( 1.0, DateTime.Now.AddMinutes(5))
+                            });
+
+            var snapshot = sink.Snapshot("test1");
+
+            var total = 0.0d;
+            foreach (var dataPoint in snapshot)
+            {
+                total += dataPoint.Data.Value;
+            }
+
+            Assert.AreEqual(7.0d, total);            
+        }
     }
 
     [Serializable]

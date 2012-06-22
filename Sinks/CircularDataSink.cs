@@ -17,6 +17,8 @@ namespace Sinks
 
         private ICollection<MetricSpecification> _sourceSpecifications;
 
+        private DateTime _lastUpdate;
+
         /// <summary>
         /// Each sink is configured to accept data from multiple sources (represented by spec) but will
         /// remember the same number of points for each.
@@ -44,7 +46,11 @@ namespace Sinks
             {
                 foreach (var metric in perfMetricData)
                 {
-                    _data[specName].Add(metric);
+                    if (metric.Timestamp > _lastUpdate)
+                    {
+                        _data[specName].Add(metric);
+                        _lastUpdate = metric.Timestamp;
+                    }
                 }
             }
         }

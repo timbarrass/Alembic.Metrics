@@ -9,10 +9,16 @@
 / have source.Query return an IEnumerable<IMetricData> (require sorted on timestamp?)
 / have sink.Update accept an IEnumerable<IMetricData>
 / have sinks maintain a buffer per source (set of specs) [breaks direct IEnumerator implementation, but should be able to get an enumerator for a buffer]
-. make sinks configurable -- link with source, start with number of points remembered
-. have sink recall latest recent timestamp, and not reimport data before then (wasteful)
+/ make sinks configurable -- link with source, start with number of points remembered
 / generic SqlServer database source -- get timeseries data
 . move to async source query, register handlers with sink
 / multithread source query
 . CircularDataSink should validate name of metric supplied against known specs
 / For extracting plotter, etc, think in terms of sink-visitor? overkill, just need a vistiable/snapshottable interface
+/ have sink recall latest recent timestamp, and not reimport data before then (wasteful)
+. file locking around persisted sinks 
+. reconstitute sink from file 
+. configure sink based on source name 
+. configure sink based on file (new file-based source?) 
+. PROPER LOGGING
+. More sophisticiated "unknown" recording and plotting

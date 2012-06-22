@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.Data.SqlClient;
 using System.Linq;
 using Data;
 
@@ -66,8 +67,18 @@ namespace Sources
         {
             var start = DateTime.Now;
 
-            var timeseries = _context.ExecuteQuery<TimeseriesPoint>(_query);
+            IEnumerable<TimeseriesPoint> timeseries;
 
+            try
+            {
+                timeseries = _context.ExecuteQuery<TimeseriesPoint>(_query);
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("{0}: SqlException thrown: {1}", Name, ex.Message);
+                timeseries = new List<TimeseriesPoint>() { new TimeseriesPoint { Timestamp = DateTime.Now, Value = 0.0 } };
+            }
+            
             var queryEnd = DateTime.Now;
             var queryDuration = new TimeSpan(queryEnd.Ticks - start.Ticks).TotalMilliseconds;
 
