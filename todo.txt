@@ -20,5 +20,7 @@
 . reconstitute sink from file 
 . configure sink based on source name 
 . configure sink based on file (new file-based source?) 
+. multiple source per sink
 . PROPER LOGGING
 . More sophisticiated "unknown" recording and plotting
+. rationalise, ensure test coverage, look over each class in detail
