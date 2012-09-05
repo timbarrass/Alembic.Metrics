@@ -290,7 +290,7 @@ namespace Tests
                                 new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
                             });
 
-            var visitor = new SinglePlotter<MetricData>(sink, specs[0]);
+            var visitor = new SinglePlotter<MetricData>("", sink, specs[0]);
 
             visitor.Plot();
 
@@ -316,7 +316,7 @@ namespace Tests
 
             var store = new FileSystemDataStore<IMetricData>();
 
-            var visitor = new SingleWriter<IMetricData>(sink, specs[0], store);
+            var visitor = new SingleWriter<IMetricData>("", sink, specs[0], store);
 
             visitor.Write();
 

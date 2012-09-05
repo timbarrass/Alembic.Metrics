@@ -15,10 +15,11 @@ namespace Plotters
     /// </summary>
     public class SinglePlotter<T> : IDataPlotter where T : IMetricData
     {
-        public SinglePlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
+        public SinglePlotter(string outputDirectory, ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
         {
             _snapshotProvider = snapshotProvider;
             _spec = spec;
+            _directory = outputDirectory;
         }
 
         public void Plot()
@@ -93,11 +94,15 @@ namespace Plotters
             chart.Invalidate();
 
             // write out a file
-            chart.SaveImage(Path.ChangeExtension(chartName.Replace(":", "-"), "png"), ChartImageFormat.Png);
+            var path = Path.Combine(_directory, chartName.Replace(":", "-"));
+            path = Path.ChangeExtension(path, "png");
+            chart.SaveImage(path, ChartImageFormat.Png);
         }
 
         private ISnapshotProvider<T> _snapshotProvider;
 
         private MetricSpecification _spec;
+
+        private string _directory;
     }
 }

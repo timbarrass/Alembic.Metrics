@@ -136,8 +136,8 @@ namespace MetricAgent
                     }
                     
                     _sinksToUpdate[source.Key].Add(sink);
-                    _plotters.Add(new SinglePlotter<IMetricData>(sink, source.Key.Spec));
-                    _writers.Add(new SingleWriter<IMetricData>(sink, source.Key.Spec, store));
+                    _plotters.Add(new SinglePlotter<IMetricData>(@"c:\temp", sink, source.Key.Spec));
+                    _writers.Add(new SingleWriter<IMetricData>(@"c:\temp", sink, source.Key.Spec, store));
                 }
             }
 
