@@ -144,15 +144,19 @@ namespace MetricAgent
             _agent = new Agent(_sinksToUpdate, _plotters, _writers, agentLoopDelay);
 
             ServiceName = "Metric Agent";
+
+            CanHandlePowerEvent = false;
+            CanHandleSessionChangeEvent = false;
+            CanPauseAndContinue = false;
+            CanShutdown = false;
+            CanStop = true;
         }
 
         static void Main(string[] args)
         {
             Console.WriteLine("This app is intended to be run as a windows service.");
 
-            var app = new Program();
-
-            app.OnStart(args);
+            ServiceBase.Run(new Program());
         }
 
         protected override void OnStart(string[] args)

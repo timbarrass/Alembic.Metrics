@@ -90,7 +90,7 @@ namespace MetricAgent
             {
                 _cancelled = false;
 
-                foreach(var source in _sinksToUpdate.Keys)
+                foreach (var source in _sinksToUpdate.Keys)
                 {
                     var processor = new Processor() { Source = source, Sinks = _sinksToUpdate[source], Delay = source.Delay };
                     processor.Start();
@@ -113,7 +113,7 @@ namespace MetricAgent
                     worker.Stop();
                 }
 
-                _plotter.Join();
+                //_plotter.Join();
             }
         }
     }
@@ -137,20 +137,26 @@ namespace MetricAgent
                 _cancelled = true;
             }
 
-            _worker.Join();
+            //_worker.Join();
         }
 
         public void Start()
         {
             _worker = new Thread(Process);
+            _worker.IsBackground = true;
             _worker.Start();
         }
 
         private void Process()
         {
+            bool firstStart = true;
+
             while (true)
             {
-                Thread.Sleep(Delay);
+                if(!firstStart)
+                    Thread.Sleep(Delay);
+
+                firstStart = false;
 
                 lock (_padlock)
                 {
