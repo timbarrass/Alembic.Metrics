@@ -18,7 +18,9 @@ namespace Plotters
         public SinglePlotter(string outputDirectory, ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
         {
             _snapshotProvider = snapshotProvider;
+
             _spec = spec;
+            
             _directory = outputDirectory;
         }
 

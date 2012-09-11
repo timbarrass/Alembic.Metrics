@@ -10,13 +10,20 @@ namespace Plotters
 {
     public class MultiPlotter<T> : IDataPlotter where T : IMetricData
     {
-        public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name)
+        public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name, string outputPath)
         {
             _snapshotProvider = snapshotProvider;
 
             _specs = specs;
 
             _name = name;
+
+            _directory = outputPath;
+        }
+
+        public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name)
+            : this(snapshotProvider, specs, name, ".")
+        {
         }
 
         public void Plot()
@@ -36,7 +43,9 @@ namespace Plotters
         {
             chart.Invalidate();
 
-            chart.SaveImage(Path.ChangeExtension(chartName.Replace(":", "-"), "png"), ChartImageFormat.Png);
+            var path = Path.Combine(_directory, chartName.Replace(":", "-"));
+            path = Path.ChangeExtension(path, "png");
+            chart.SaveImage(path, ChartImageFormat.Png);
         }
 
         private void Plot(Chart chart, ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
@@ -104,5 +113,7 @@ namespace Plotters
         private readonly ISnapshotProvider<T> _snapshotProvider;
 
         private readonly string _name;
+
+        private readonly string _directory;
     }
 }

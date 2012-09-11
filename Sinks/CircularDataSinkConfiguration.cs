@@ -25,6 +25,12 @@ namespace Sinks
         {
             get { return (int)base["points"]; }
         }
+
+        [ConfigurationProperty("outputPath", IsRequired = true)]
+        public string OutputPath
+        {
+            get { return (string)base["outputPath"]; }
+        }
     }
 
     [ConfigurationCollection(typeof(SourceElement),

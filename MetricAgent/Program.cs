@@ -123,6 +123,7 @@ namespace MetricAgent
             {
                 var id = sinks.Sinks[i].Id;
                 var points = sinks.Sinks[i].Points;
+                var directory = sinks.Sinks[i].OutputPath;
 
                 var sources = _sinksToUpdate.Where(x => x.Key.Id.Equals(id));
 
@@ -136,8 +137,8 @@ namespace MetricAgent
                     }
                     
                     _sinksToUpdate[source.Key].Add(sink);
-                    _plotters.Add(new SinglePlotter<IMetricData>(@"c:\temp", sink, source.Key.Spec));
-                    _writers.Add(new SingleWriter<IMetricData>(@"c:\temp", sink, source.Key.Spec, store));
+                    _plotters.Add(new SinglePlotter<IMetricData>(directory, sink, source.Key.Spec));
+                    _writers.Add(new SingleWriter<IMetricData>(directory, sink, source.Key.Spec, store));
                 }
             }
 
