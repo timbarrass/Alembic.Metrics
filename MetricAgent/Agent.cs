@@ -57,22 +57,36 @@ namespace MetricAgent
             return source.Query();
         }
 
-        private void Graph()
+        private bool WaitUntilCancelled(int maxWait)
         {
-            // hack -- have the sink be able to plot for now as it has all the right refs
-            while (true)
-            {
-                Thread.Sleep(_loopDelay * 10);
+            int duration = 0;
+            int waitDuration = 100;
 
+            while (duration < maxWait)
+            {
                 lock (_padlock)
                 {
                     if (_cancelled)
                     {
-                        break;
+                        return true;
                     }
                 }
 
-                foreach(var plotter in _plotters)
+                Thread.Sleep(waitDuration);
+
+                duration += waitDuration;
+            }
+
+            return false;
+        }
+
+        private void Graph()
+        {
+            while (true)
+            {
+                if (WaitUntilCancelled(_loopDelay * 10)) break;
+
+                foreach(var plotter in _plotters) 
                 {
                     plotter.Plot();
                 }
@@ -98,6 +112,7 @@ namespace MetricAgent
                 }
 
                 _plotter = new Thread(Graph);
+                _plotter.IsBackground = true;
                 _plotter.Start();
             }
         }
@@ -112,9 +127,9 @@ namespace MetricAgent
                 {
                     worker.Stop();
                 }
-
-                //_plotter.Join();
             }
+
+            _plotter.Join();
         }
     }
 
@@ -137,7 +152,7 @@ namespace MetricAgent
                 _cancelled = true;
             }
 
-            //_worker.Join();
+            _worker.Join();
         }
 
         public void Start()
@@ -147,24 +162,41 @@ namespace MetricAgent
             _worker.Start();
         }
 
+        private bool WaitUntilCancelled(int maxWait)
+        {
+            int duration = 0;
+            int waitDuration = 100;
+
+            while (duration < maxWait)
+            {
+                lock (_padlock)
+                {
+                    if (_cancelled)
+                    {
+                        return true;
+                    }
+                }
+
+                Thread.Sleep(waitDuration);
+
+                duration += waitDuration;
+            }
+
+            return false;
+        }
+
         private void Process()
         {
             bool firstStart = true;
 
             while (true)
             {
-                if(!firstStart)
-                    Thread.Sleep(Delay);
-
-                firstStart = false;
-
-                lock (_padlock)
+                if (!firstStart)
                 {
-                    if (_cancelled)
-                    {
-                        break;
-                    }
+                    if (WaitUntilCancelled(Delay)) break;
                 }
+                    
+                firstStart = false;
 
                 Update(Source, Sinks);
             }
