@@ -155,9 +155,19 @@ namespace MetricAgent
 
         static void Main(string[] args)
         {
-            Console.WriteLine("This app is intended to be run as a windows service.");
+            var service = new Program();
 
-            ServiceBase.Run(new Program());
+            if (Environment.UserInteractive)
+            {
+                service.OnStart(args);
+                Console.WriteLine("Running as console app ... press a key to stop");
+                Console.Read();
+                service.OnStop();
+            }
+            else
+            {
+                ServiceBase.Run(service);
+            }
         }
 
         protected override void OnStart(string[] args)
