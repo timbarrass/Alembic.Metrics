@@ -4,6 +4,7 @@ using System.Data.Linq;
 using System.Data.SqlClient;
 using System.Linq;
 using Data;
+using log4net;
 
 namespace Sources
 {
@@ -16,6 +17,8 @@ namespace Sources
     /// </summary>
     public class SqlServerDataSource : IDataSource
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(SqlServerDataSource).Name);
+
         private DataContext _context;
 
         private string _query;
@@ -65,6 +68,8 @@ namespace Sources
         // want this one to return a list of IMetricData
         public IEnumerable<IMetricData> Query()
         {
+            Log.Debug("Querying " + Name);
+
             var start = DateTime.Now;
 
             IEnumerable<TimeseriesPoint> timeseries;
@@ -75,7 +80,7 @@ namespace Sources
             }
             catch (SqlException ex)
             {
-                Console.WriteLine("{0}: SqlException thrown: {1}", Name, ex.Message);
+                Log.Warn(Name + ": SqlException thrown: " + ex.Message);
                 timeseries = new List<TimeseriesPoint>() { new TimeseriesPoint { Timestamp = DateTime.Now, Value = 0.0 } };
             }
             
@@ -95,7 +100,8 @@ namespace Sources
             var processDuration = new TimeSpan(processEnd.Ticks - queryEnd.Ticks).TotalMilliseconds;
             var totalDuration = new TimeSpan(processEnd.Ticks - start.Ticks).TotalMilliseconds;
 
-            Console.WriteLine("Query started {0}, ended {1} [{2}] {3} [{4}] [{5}]", start, queryEnd, queryDuration, processEnd, processDuration, totalDuration);
+            var perfLogMessage = string.Format("Query started {0}, ended {1} [{2}] {3} [{4}] [{5}]", start, queryEnd, queryDuration, processEnd, processDuration, totalDuration);
+            Log.Debug(perfLogMessage);
 
             return returnSeries;
         }

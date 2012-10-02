@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
+using log4net;
 
 namespace Sources
 {
     public class ProcessUptimeSource : IDataSource
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessUptimeSource).Name);
+
         private MetricSpecification _spec;
 
         private string _processToMonitor;
@@ -55,6 +58,8 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
+            Log.Debug("Querying " + Name);
+
             var processes = Process.GetProcessesByName(_processToMonitor);
 
             var count = 0;

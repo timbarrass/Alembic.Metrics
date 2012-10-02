@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
+using log4net;
 
 namespace Sources
 {
     public class PerformanceCounterDataSource : IDataSource
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(PerformanceCounterDataSource).Name);
+
         private MetricSpecification _spec;
 
         private PerformanceCounter _counter;
@@ -72,6 +75,8 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
+            Log.Debug("Querying " + Name);
+
             return new List<IMetricData> { new MetricData( _counter.NextValue(), DateTime.Now) };
         }
     }

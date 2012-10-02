@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
+using log4net;
 
 namespace Sources
 {
     public class ProcessCountingSource : IDataSource
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessCountingSource).Name);
+
         private MetricSpecification _spec;
 
         private string _processToMonitor;
@@ -55,6 +58,8 @@ namespace Sources
 
         public IEnumerable<IMetricData> Query()
         {
+            Log.Debug("Querying " + Name);
+
             var processes = Process.GetProcessesByName(_processToMonitor);
 
             return new List<IMetricData> { new MetricData( processes.Length, DateTime.Now) };
