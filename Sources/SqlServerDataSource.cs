@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlClient;
-using System.Linq;
 using Data;
 using log4net;
 
 namespace Sources
 {
     /// <summary>
-    /// Primarily intended as an example sql data source. More conrete classes should
+    /// Primarily intended as an example sql data source. More concrete classes should
     /// be implemented for each specific source.
     /// 
     /// Best to wrap in a builder, and have the builder construct sources suitable for

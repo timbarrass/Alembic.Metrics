@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Data;
 using Sinks;
@@ -11,13 +10,11 @@ namespace MetricAgent
 {
     public class Agent
     {
-        private IEnumerable<IDataSink<IMetricData>> _sinks;
+        private EventWaitHandle _cancellation = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         private IList<IDataPlotter> _plotters; 
 
         private object _padlock = new object(); // locks out cancel message -- rename
-
-        private bool _cancelled = false;
 
         private int _loopDelay = 5000;
 
@@ -33,18 +30,6 @@ namespace MetricAgent
         {
             _sinksToUpdate = sinksToUpdate;
 
-            var sinks = new List<IDataSink<IMetricData>>();
-
-            foreach(var list in _sinksToUpdate.Values)
-            {
-                foreach (var sink in list)
-                {
-                    sinks.Add(sink);
-                }
-            }
-
-            _sinks = sinks.Distinct();
-
             _plotters = plotters;
 
             _writers = writers;
@@ -57,35 +42,16 @@ namespace MetricAgent
             return source.Query();
         }
 
-        private bool WaitUntilCancelled(int maxWait)
+        private bool WaitUnlessCancelled(int duration)
         {
-            int duration = 0;
-            int waitDuration = 100;
-
-            while (duration < maxWait)
-            {
-                lock (_padlock)
-                {
-                    if (_cancelled)
-                    {
-                        return true;
-                    }
-                }
-
-                Thread.Sleep(waitDuration);
-
-                duration += waitDuration;
-            }
-
-            return false;
+            var ret = _cancellation.WaitOne(duration);
+            return !ret;
         }
 
         private void Graph()
         {
-            while (true)
+            while (WaitUnlessCancelled(_loopDelay * 10))
             {
-                if (WaitUntilCancelled(_loopDelay * 10)) break;
-
                 foreach(var plotter in _plotters) 
                 {
                     plotter.Plot();
@@ -102,8 +68,6 @@ namespace MetricAgent
         {
             lock(_padlock)
             {
-                _cancelled = false;
-
                 foreach (var source in _sinksToUpdate.Keys)
                 {
                     var processor = new Processor() { Source = source, Sinks = _sinksToUpdate[source], Delay = source.Delay };
@@ -121,7 +85,7 @@ namespace MetricAgent
         {
             lock(_padlock)
             {
-                _cancelled = true;
+                _cancellation.Set();
 
                 foreach (var worker in _workers)
                 {
@@ -129,19 +93,20 @@ namespace MetricAgent
                 }
             }
 
+            _cancellation.Set();
             _plotter.Join();
         }
     }
 
     class Processor
     {
+        private EventWaitHandle _cancellation = new EventWaitHandle(false, EventResetMode.AutoReset);
+
         public IDataSource Source { get; set; }
 
         public IList<IDataSink<IMetricData>> Sinks { get; set; }
 
         public int Delay { get; set; }
-
-        private bool _cancelled;
 
         private Thread _worker;
 
@@ -149,7 +114,7 @@ namespace MetricAgent
         {
             lock(_padlock)
             {
-                _cancelled = true;
+                _cancellation.Set();
             }
 
             _worker.Join();
@@ -162,42 +127,15 @@ namespace MetricAgent
             _worker.Start();
         }
 
-        private bool WaitUntilCancelled(int maxWait)
+        private bool WaitUnlessCancelled(int duration)
         {
-            int duration = 0;
-            int waitDuration = 100;
-
-            while (duration < maxWait)
-            {
-                lock (_padlock)
-                {
-                    if (_cancelled)
-                    {
-                        return true;
-                    }
-                }
-
-                Thread.Sleep(waitDuration);
-
-                duration += waitDuration;
-            }
-
-            return false;
+            return !_cancellation.WaitOne(duration);
         }
 
         private void Process()
         {
-            bool firstStart = true;
-
-            while (true)
+            while (WaitUnlessCancelled(Delay))
             {
-                if (!firstStart)
-                {
-                    if (WaitUntilCancelled(Delay)) break;
-                }
-                    
-                firstStart = false;
-
                 Update(Source, Sinks);
             }
         }
