@@ -21,9 +21,11 @@
 . configure sink based on source name 
 . configure sink based on file (new file-based source?) 
 . multiple source per sink
-. PROPER LOGGING
+/ PROPER LOGGING
 . More sophisticiated "unknown" recording and plotting
 . rationalise, ensure test coverage, look over each class in detail
 . configure plotters independently based on sinks, as sinks are with sources?
-! review crosscutting aspects -- logging and exeption handling
-! update WaitUntilCancelled -- should be signal-driven
+/ review crosscutting aspects -- logging and exeption handling
+/ update WaitUntilCancelled -- should be signal-driven
+. more selective isolation of exceptions thrown in query
+. isolation from selected exceptions thrown in write

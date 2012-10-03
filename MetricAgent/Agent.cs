@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Data;
 using Sinks;
 using Sources;
 using Plotters;
 using Writers;
+using log4net;
 
 namespace MetricAgent
 {
@@ -19,7 +21,7 @@ namespace MetricAgent
         private int _loopDelay = 5000;
 
         private List<Processor> _workers = new List<Processor>();
-
+        
         private Thread _plotter;
 
         private IDictionary<IDataSource, IList<IDataSink<IMetricData>>> _sinksToUpdate;
@@ -142,8 +144,10 @@ namespace MetricAgent
 
         private void Update(IDataSource source, IList<IDataSink<IMetricData>> sinks)
         {
-            var metricData = source.Query();
+            IEnumerable<IMetricData> metricData;
 
+            if (!source.TryQuery(out metricData)) return;
+            
             foreach (var sink in sinks)
             {
                 sink.Update(source.Spec.Name, metricData);
@@ -151,5 +155,36 @@ namespace MetricAgent
         }
 
         private object _padlock = new object();
+    }
+
+    static class QueryExtensions
+    {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
+
+        public static bool TryQuery(this IDataSource source, out IEnumerable<IMetricData> metricData)
+        {
+            try
+            {
+                metricData = source.Query();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(String.Format("Failed to query {0}: {1}", source.Name, ex.FormatMessage()));
+
+                metricData = null;
+
+                return false;
+            }
+        }
+    }
+
+    static class ExceptionExtensions
+    {
+        public static string FormatMessage(this Exception ex)
+        {
+            return ex.Message.Replace('\r', ' ').Replace('\n', ' ');
+        }
     }
 }
