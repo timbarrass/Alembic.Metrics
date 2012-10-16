@@ -29,3 +29,4 @@
 / update WaitUntilCancelled -- should be signal-driven
 . more selective isolation of exceptions thrown in query
 . isolation from selected exceptions thrown in write
+. add try - catch to Agent.Graph to isolate app from write errors
