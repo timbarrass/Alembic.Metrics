@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Configuration.Install;
 using System.Data.Linq;
 using System.Linq;
 using System.ServiceProcess;
@@ -18,18 +16,6 @@ namespace MetricAgent
 {
     class Program : ServiceBase
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
-
-        private Agent _agent;
-
-        private Dictionary<IDataSource, IList<IDataSink<IMetricData>>> _sinksToUpdate = new Dictionary<IDataSource, IList<IDataSink<IMetricData>>>(); 
-
-        private List<IDataPlotter> _plotters = new List<IDataPlotter>(); 
-
-        private List<IDataWriter> _writers = new List<IDataWriter>(); 
-
-        private List<IDataSink<IMetricData>> _sinks = new List<IDataSink<IMetricData>>(); 
-
         public Program()
         {
             ServiceName = "Metric Agent";
@@ -37,7 +23,7 @@ namespace MetricAgent
             CanHandlePowerEvent = false;
             CanHandleSessionChangeEvent = false;
             CanPauseAndContinue = false;
-            CanShutdown = false;
+            CanShutdown = true;
             CanStop = true;
         }
 
@@ -198,32 +184,44 @@ namespace MetricAgent
 
             Log.Info("========================================================================");
         }
-    }
 
-    [RunInstaller(true)]
-    public class MyProjectInstaller : Installer
-    {
-        private ServiceInstaller serviceInstaller1;
-        private ServiceProcessInstaller processInstaller;
-
-        public MyProjectInstaller()
+        protected override void OnShutdown()
         {
-            // Instantiate installers for process and services.
-            processInstaller = new ServiceProcessInstaller();
-            serviceInstaller1 = new ServiceInstaller();
-
-            // The services run under the system account.
-            processInstaller.Account = ServiceAccount.LocalSystem;
-
-            // The services are started manually.
-            serviceInstaller1.StartType = ServiceStartMode.Manual;
-
-            // ServiceName must equal those on ServiceBase derived classes.            
-            serviceInstaller1.ServiceName = "Metric Agent";
-
-            // Add installers to collection. Order is not important.
-            Installers.Add(serviceInstaller1);
-            Installers.Add(processInstaller);
+            OnStop();
         }
+
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
+
+        private Agent _agent;
+
+        private Dictionary<IDataSource, IList<IDataSink<IMetricData>>> _sinksToUpdate = new Dictionary<IDataSource, IList<IDataSink<IMetricData>>>();
+
+        private List<IDataPlotter> _plotters = new List<IDataPlotter>();
+
+        private List<IDataWriter> _writers = new List<IDataWriter>();
+
+        private List<IDataSink<IMetricData>> _sinks = new List<IDataSink<IMetricData>>(); 
     }
+
+    //[RunInstaller(true)]
+    //public class MetricAgentInstaller : Installer
+    //{
+    //    private ServiceInstaller serviceInstaller1;
+    //    private ServiceProcessInstaller processInstaller;
+
+    //    public MetricAgentInstaller()
+    //    {
+    //        processInstaller = new ServiceProcessInstaller();
+    //        serviceInstaller1 = new ServiceInstaller();
+
+    //        processInstaller.Account = ServiceAccount.LocalSystem;
+
+    //        serviceInstaller1.StartType = ServiceStartMode.Automatic;
+
+    //        serviceInstaller1.ServiceName = "Metric Agent";
+
+    //        Installers.Add(serviceInstaller1);
+    //        Installers.Add(processInstaller);
+    //    }
+    //}
 }

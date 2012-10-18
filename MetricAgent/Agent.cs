@@ -12,11 +12,11 @@ namespace MetricAgent
 {
     public class Agent
     {
-        private EventWaitHandle _cancellation = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private EventWaitHandle _cancel = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         private IList<IDataPlotter> _plotters; 
 
-        private object _padlock = new object(); // locks out cancel message -- rename
+        private object _cancellationLock = new object();
 
         private int _loopDelay = 5000;
 
@@ -46,7 +46,7 @@ namespace MetricAgent
 
         private bool WaitUnlessCancelled(int duration)
         {
-            var ret = _cancellation.WaitOne(duration);
+            var ret = _cancel.WaitOne(duration);
             return !ret;
         }
 
@@ -68,7 +68,7 @@ namespace MetricAgent
 
         public void Start()
         {
-            lock(_padlock)
+            lock(_cancellationLock)
             {
                 foreach (var source in _sinksToUpdate.Keys)
                 {
@@ -85,9 +85,9 @@ namespace MetricAgent
 
         public void Stop()
         {
-            lock(_padlock)
+            lock(_cancellationLock)
             {
-                _cancellation.Set();
+                _cancel.Set();
 
                 foreach (var worker in _workers)
                 {
@@ -95,88 +95,8 @@ namespace MetricAgent
                 }
             }
 
-            _cancellation.Set();
+            _cancel.Set();
             _plotter.Join();
-        }
-    }
-
-    class Processor
-    {
-        private EventWaitHandle _cancellation = new EventWaitHandle(false, EventResetMode.AutoReset);
-
-        public IDataSource Source { get; set; }
-
-        public IList<IDataSink<IMetricData>> Sinks { get; set; }
-
-        public int Delay { get; set; }
-
-        private Thread _worker;
-
-        public void Stop()
-        {
-            lock(_padlock)
-            {
-                _cancellation.Set();
-            }
-
-            _worker.Join();
-        }
-
-        public void Start()
-        {
-            _worker = new Thread(Process);
-            _worker.IsBackground = true;
-            _worker.Start();
-        }
-
-        private bool WaitUnlessCancelled(int duration)
-        {
-            return !_cancellation.WaitOne(duration);
-        }
-
-        private void Process()
-        {
-            while (WaitUnlessCancelled(Delay))
-            {
-                Update(Source, Sinks);
-            }
-        }
-
-        private void Update(IDataSource source, IList<IDataSink<IMetricData>> sinks)
-        {
-            IEnumerable<IMetricData> metricData;
-
-            if (!source.TryQuery(out metricData)) return;
-            
-            foreach (var sink in sinks)
-            {
-                sink.Update(source.Spec.Name, metricData);
-            }
-        }
-
-        private object _padlock = new object();
-    }
-
-    static class QueryExtensions
-    {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
-
-        public static bool TryQuery(this IDataSource source, out IEnumerable<IMetricData> metricData)
-        {
-            try
-            {
-                metricData = source.Query();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(String.Format("Failed to query {0}: {1}", source.Name, ex.FormatMessage()));
-
-                metricData = null;
-
-                return false;
-            }
         }
     }
 
