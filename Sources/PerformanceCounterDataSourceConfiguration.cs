@@ -49,6 +49,12 @@ namespace Sources
             get { return (string)base["instanceName"]; }
         }
 
+        [ConfigurationProperty("machineName"), DefaultSettingValue(null)]
+        public string MachineName
+        {
+            get { return (string)base["machineName"]; }
+        }
+
         [ConfigurationProperty("min"), DefaultSettingValue(null)]
         public float? Min
         {

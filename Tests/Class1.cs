@@ -91,7 +91,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
-            var source = new ProcessCountingSource("count", "count", "chrome", 1);
+            var source = new ProcessCountingSource("count", "count", "chrome", null, 1);
 
             var expectedMetrics = new[] { "count" };
 
@@ -106,7 +106,7 @@ namespace Tests
 
         public void ProcessUptimeSource_ProvidesASpec()
         {
-            var source = new ProcessUptimeSource("id", "uptime", "chrome", 1);
+            var source = new ProcessUptimeSource("id", "uptime", "chrome", null, 1);
 
             var expectedMetrics = new[] { "count" };
 
@@ -124,7 +124,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_CanBeQueriedBySource()
         {
-            var source = new ProcessCountingSource("id", "count", "chrome", 1);
+            var source = new ProcessCountingSource("id", "count", "chrome", null, 1);
 
             var expectedMetrics = new[] { "count" };
 

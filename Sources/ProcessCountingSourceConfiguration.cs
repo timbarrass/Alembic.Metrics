@@ -37,6 +37,12 @@ namespace Sources
         {
             get { return (string)base["id"]; }
         }
+
+        [ConfigurationProperty("machineName", DefaultValue = null)]
+        public string MachineName
+        {
+            get { return (string)base["machineName"]; }
+        }
     }
 
 

@@ -20,6 +20,8 @@ namespace Sources
 
         private string _id;
 
+        private string _machineName;
+
         public int Delay
         {
             get
@@ -38,7 +40,7 @@ namespace Sources
             get { return _id; }
         }
 
-        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, int delay)
+        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine, int delay)
         {
             _processToMonitor = processToMonitor;
 ;
@@ -47,6 +49,8 @@ namespace Sources
             _delay = delay * 1000;
 
             _id = id;
+
+            _machineName = machine;
 
             _spec = new MetricSpecification(_processUptimeName, 0, null);
         }
@@ -60,8 +64,16 @@ namespace Sources
         {
             Log.Debug("Querying " + Name);
 
-            var processes = Process.GetProcessesByName(_processToMonitor);
+            Process[] processes;
 
+            if (string.IsNullOrEmpty(_machineName))
+            {
+                processes = Process.GetProcessesByName(_processToMonitor);
+            }
+            else
+            {
+                processes = Process.GetProcessesByName(_processToMonitor, _machineName);
+            }
             var count = 0;
             var uptime = 0d;
             foreach(var process in processes)

@@ -20,6 +20,8 @@ namespace Sources
 
         private string _id;
 
+        private string _machineName = Environment.MachineName;
+
         public int Delay
         {
             get
@@ -38,7 +40,7 @@ namespace Sources
             get { return _id;  }
         }
 
-        public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, int delay)
+        public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, string machine, int delay)
         {
             _processToMonitor = processToMonitor;
 
@@ -47,6 +49,8 @@ namespace Sources
             _delay = delay * 1000;
 
             _id = id;
+
+            _machineName = machine;
 
             _spec = new MetricSpecification(_processCountName, 0, null);
         }
@@ -60,7 +64,16 @@ namespace Sources
         {
             Log.Debug("Querying " + Name);
 
-            var processes = Process.GetProcessesByName(_processToMonitor);
+            Process[] processes;
+
+            if (string.IsNullOrEmpty(_machineName))
+            {
+                processes = Process.GetProcessesByName(_processToMonitor);
+            }
+            else
+            {
+                processes = Process.GetProcessesByName(_processToMonitor, _machineName);
+            }
 
             return new List<IMetricData> { new MetricData( processes.Length, DateTime.Now) };
         }

@@ -32,25 +32,28 @@ namespace Sources
 
         public string Id { get { return _id; } }
 
-        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay) 
-            : this(name, categoryName, counterName, instanceName, min, max, delay)
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max, int delay) 
+            : this(name, categoryName, counterName, instanceName, machine, min, max, delay)
         {
             _id = id;
         }
 
-        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, float? min, float? max, int delay)
+        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max, int delay)
         {
             _delay = delay * 1000;
 
             _counterName = name;
 
+            if (string.IsNullOrEmpty(machine))
+                machine = Environment.MachineName;
+
             if (string.IsNullOrEmpty(instanceName))
             {
-                _counter = new PerformanceCounter {CategoryName = categoryName, CounterName = counterName};
+                _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, MachineName = machine };
             }
             else
             {
-                _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, InstanceName = instanceName };
+                _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, InstanceName = instanceName, MachineName = machine };
             }
 
             _spec = new MetricSpecification(_counterName, min, max);

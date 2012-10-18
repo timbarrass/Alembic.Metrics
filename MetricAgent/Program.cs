@@ -45,8 +45,9 @@ namespace MetricAgent
                 var countName = processes.Processes[i].Name + " count";
                 var delay = processes.Processes[i].Delay;
                 var exe = processes.Processes[i].Exe;
+                var machineName = processes.Processes[i].MachineName;
 
-                var source = new ProcessCountingSource(id, countName, exe, delay);
+                var source = new ProcessCountingSource(id, countName, exe, machineName, delay);
 
                 processCounterSources.Add(source);
                 if (!_sinksToUpdate.ContainsKey(source))
@@ -75,8 +76,9 @@ namespace MetricAgent
                 var uptimeName = uptimeProcesses.Processes[i].Name + " uptime";
                 var delay = uptimeProcesses.Processes[i].Delay;
                 var exe = uptimeProcesses.Processes[i].Exe;
+                var machineName = uptimeProcesses.Processes[i].MachineName;
 
-                var source = new ProcessUptimeSource(id, uptimeName, exe, delay);
+                var source = new ProcessUptimeSource(id, uptimeName, exe, machineName, delay);
 
                 _sinksToUpdate[source] = new List<IDataSink<IMetricData>>();
             }
@@ -96,6 +98,7 @@ namespace MetricAgent
                     counters.Counters[i].CategoryName,
                     counters.Counters[i].CounterName,
                     counters.Counters[i].InstanceName,
+                    counters.Counters[i].MachineName,
                     counters.Counters[i].Min,
                     counters.Counters[i].Max,
                     counters.Counters[i].Delay

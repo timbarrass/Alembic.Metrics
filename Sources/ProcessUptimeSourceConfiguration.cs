@@ -16,5 +16,11 @@ namespace Sources
             get { return (ProcessElementCollection)base["id"]; }
         }
 
+        [ConfigurationProperty("machineName", DefaultValue = null)]
+        public ProcessElementCollection MachineName
+        {
+            get { return (ProcessElementCollection)base["machineName"]; }
+        }
+
     }
 }
