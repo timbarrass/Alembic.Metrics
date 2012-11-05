@@ -30,3 +30,5 @@
 . more selective isolation of exceptions thrown in query
 . isolation from selected exceptions thrown in write
 . add try - catch to Agent.Graph to isolate app from write errors
+. consider whether SingleWriter should be a snapshot consumer
+. consider making snapshot a class in its own right

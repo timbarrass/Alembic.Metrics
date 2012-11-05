@@ -429,11 +429,9 @@ namespace Tests
 
             var specs = new[] { new MetricSpecification("test1", null, null) };
 
-            ISnapshotConsumer<IMetricData> sink = new CircularDataSink<IMetricData>(10, specs);
+            var reader = new SingleReader<IMetricData>("", store);
 
-            var reader = new SingleReader<IMetricData>("", sink, specs[0], store);
-
-            reader.Read();
+            reader.Snapshot("test1");
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Data;
 using Sinks;
 using Stores;
@@ -11,36 +12,33 @@ namespace Readers
     /// link between a Sink and a persistent medium.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SingleReader<T>
+    public class SingleReader<T> : ISnapshotProvider<T> where T : IMetricData
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SingleReader<T>).Name);
         
-        private IDataStore<IMetricData> _store;
+        private IDataStore<T> _store;
         
         private string _directory;
 
-        private MetricSpecification _spec;
-
-        private ISnapshotConsumer<IMetricData> _consumer;
-
-        public SingleReader(string directory, ISnapshotConsumer<IMetricData> consumer,  MetricSpecification spec, IDataStore<IMetricData> store)
+        public SingleReader(string directory, IDataStore<T> store)
         {
             _directory = directory;
 
             _store = store;
-
-            _consumer = consumer;
-
-            _spec = spec;
         }
 
-        public void Read()
+        private IEnumerable<T> Read(string label)
         {
-            var path = Path.Combine(_directory, _spec.Name);
+            var path = Path.Combine(_directory, label);
 
-            var snapshot = _store.Read(path);
+            Log.Debug("Reading from " + path);
 
-            _consumer.ResetWith(snapshot, _spec.Name);
+            return _store.Read(path);
+        }
+
+        public IEnumerable<T> Snapshot(string label)
+        {
+            return Read(label);
         }
     }
 }

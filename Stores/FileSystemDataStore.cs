@@ -70,6 +70,10 @@ namespace Stores
                         }
 
                     }
+                    catch(FileNotFoundException)
+                    {
+                        throw;
+                    }
                     catch (Exception ex)
                     {
                         if (attempt == allowedAttempts) throw;

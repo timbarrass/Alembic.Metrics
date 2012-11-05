@@ -145,12 +145,15 @@ namespace MetricAgent
                         _sinksToUpdate[source.Key] = new List<IDataSink<IMetricData>>();
                     }
 
-                    var reader = new SingleReader<IMetricData>(directory, sink, source.Key.Spec, store);
-                    reader.Read();
+                    var reader = new SingleReader<IMetricData>(directory, store);
+                    sink.ResetWith(reader.Snapshot(source.Key.Spec.Name), source.Key.Spec.Name);
 
                     _sinksToUpdate[source.Key].Add(sink);
-                    _plotters.Add(new SinglePlotter<IMetricData>(directory, sink, source.Key.Spec));
+
                     _writers.Add(new SingleWriter<IMetricData>(directory, sink, source.Key.Spec, store));
+
+                    //_plotters.Add(new SinglePlotter<IMetricData>(directory, sink, source.Key.Spec));
+                    _plotters.Add(new SinglePlotter<IMetricData>(directory, reader, source.Key.Spec));
                 }
             }
 
