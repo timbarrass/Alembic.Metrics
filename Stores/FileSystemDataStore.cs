@@ -70,12 +70,14 @@ namespace Stores
                         }
 
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         if (attempt == allowedAttempts) throw;
                         
                         // As for Write -- default to simplest backoff
                         Thread.Sleep(100);
+
+                        continue;
                     }
 
                     var bf = new BinaryFormatter();
@@ -89,6 +91,11 @@ namespace Stores
 
         private static string ZipFileName(string fileName)
         {
+            if (fileName.EndsWith(".am.gz"))
+            {
+                return fileName;
+            }
+
             var zipFileName = Path.ChangeExtension(fileName, ".am.gz");
             return zipFileName;
         }
