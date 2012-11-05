@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Data;
 using Sinks;
@@ -41,9 +40,12 @@ namespace Writers
         {
             var snapshot = _snapshotProvider.Snapshot(_spec.Name);
 
-            var path = Path.Combine(_directory, _spec.Name);
+            _store.Write(SnapshotPath, snapshot);
+        }
 
-            _store.Write(path, snapshot);
+        private string SnapshotPath
+        {
+            get { return Path.Combine(_directory, _spec.Name); }
         }
     }
 }

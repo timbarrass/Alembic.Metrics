@@ -6,6 +6,7 @@ using System.Linq;
 using Data;
 using MetricAgent;
 using Plotters;
+using Readers;
 using Sinks;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -412,6 +413,28 @@ namespace Tests
 
             Assert.AreEqual(7.0d, total);            
         }
+
+        [Test]
+        public void SingleReader_CanReadASnapshotFile()
+        {
+            var snapshot = new[]
+                {
+                    new MetricData(1.0, DateTime.Now),
+                    new MetricData(2.0, DateTime.Now.AddMinutes(5)),
+                    new MetricData(4.0, DateTime.Now.AddMinutes(10)),
+                };
+
+            var store = MockRepository.GenerateMock<IDataStore<IMetricData>>();
+            store.Expect(s => s.Read("")).IgnoreArguments().Return(snapshot);
+
+            var specs = new[] { new MetricSpecification("test1", null, null) };
+
+            ISnapshotConsumer<IMetricData> sink = new CircularDataSink<IMetricData>(10, specs);
+
+            var reader = new SingleReader<IMetricData>("", sink, specs[0], store);
+
+            reader.Read();
+        }
     }
 
     [Serializable]
@@ -445,6 +468,7 @@ namespace Tests
 
         
     }
+
 
 
 }

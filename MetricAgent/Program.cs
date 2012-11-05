@@ -6,6 +6,7 @@ using System.Linq;
 using System.ServiceProcess;
 using Data;
 using Plotters;
+using Readers;
 using Sinks;
 using Sources;
 using Stores;
@@ -143,6 +144,9 @@ namespace MetricAgent
                     {
                         _sinksToUpdate[source.Key] = new List<IDataSink<IMetricData>>();
                     }
+
+                    var reader = new SingleReader<IMetricData>(directory, sink, source.Key.Spec, store);
+                    reader.Read();
 
                     _sinksToUpdate[source.Key].Add(sink);
                     _plotters.Add(new SinglePlotter<IMetricData>(directory, sink, source.Key.Spec));

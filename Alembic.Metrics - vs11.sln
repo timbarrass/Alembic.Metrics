@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plotters", "Plotters\Plotte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Writers", "Writers\Writers.csproj", "{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readers", "Readers\Readers.csproj", "{6CBF5C9E-505E-4520-9810-27BC5BED216E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,18 @@ Global
 		{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}.Release|Win32.ActiveCfg = Release|Any CPU
 		{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}.Release|x86.ActiveCfg = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|Win32.ActiveCfg = Release|Any CPU
+		{6CBF5C9E-505E-4520-9810-27BC5BED216E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

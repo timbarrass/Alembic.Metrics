@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
-using Stores;
 
 namespace Sinks
 {
-    public class CircularDataSink<T> : IDataSink<T>, ISnapshotProvider<T> where T : IMetricData
+    public class CircularDataSink<T> : IDataSink<T>, ISnapshotProvider<T>, ISnapshotConsumer<T> where T : IMetricData
     {
         private object _padlock = new object();
 
@@ -30,6 +29,20 @@ namespace Sinks
             foreach (var spec in sourceSpecifications)
             {
                 _data[spec.Name] = new SlidingBuffer<T>(_pointsToKeep);
+            }
+
+            _sourceSpecifications = sourceSpecifications;
+        }
+
+        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications, IEnumerable<T> snapshot)
+        {
+            _pointsToKeep = pointsToKeep;
+
+            foreach (var spec in sourceSpecifications)
+            {
+                _data[spec.Name] = new SlidingBuffer<T>(_pointsToKeep);
+
+                ResetWith(snapshot, spec.Name);
             }
 
             _sourceSpecifications = sourceSpecifications;
@@ -125,6 +138,17 @@ namespace Sinks
                 }
 
                 return value.ToString();
+            }
+        }
+
+        public void ResetWith(IEnumerable<T> snapshot, string label)
+        {
+            lock (_padlock)
+            {
+                foreach (var item in snapshot)
+                {
+                    _data[label].Add(item);
+                }
             }
         }
     }

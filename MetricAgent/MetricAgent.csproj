@@ -70,6 +70,10 @@
       <Project>{167df28f-4570-4d63-b444-580d35531b8f}</Project>
       <Name>Plotters</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Readers\Readers.csproj">
+      <Project>{6CBF5C9E-505E-4520-9810-27BC5BED216E}</Project>
+      <Name>Readers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
       <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
       <Name>Sinks</Name>

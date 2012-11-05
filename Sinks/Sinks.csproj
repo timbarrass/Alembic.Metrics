@@ -49,6 +49,7 @@
     <Compile Include="CircularDataSinkConfiguration.cs" />
     <Compile Include="DataSinkException.cs" />
     <Compile Include="IDataSink.cs" />
+    <Compile Include="ISnapshotConsumer.cs" />
     <Compile Include="ISnapshotProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

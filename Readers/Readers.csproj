@@ -1,23 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B321348A-2767-411C-8B75-32CE4BC1EBBD}</ProjectGuid>
+    <ProjectGuid>{6CBF5C9E-505E-4520-9810-27BC5BED216E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>Tests</AssemblyName>
+    <RootNamespace>Readers</RootNamespace>
+    <AssemblyName>Readers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,69 +32,39 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\Externals\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Rhino.Mocks">
-      <HintPath>..\..\Externals\Rhino.Mocks-3.6\Rhino.Mocks.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\bin\Debug\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="SingleReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
-      <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
+      <Project>{a777d09d-157b-4230-aeec-c0e4742cd5c9}</Project>
       <Name>Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MetricAgent\MetricAgent.csproj">
-      <Project>{F60213E7-AE95-4712-ABBE-EEBCE258ABE1}</Project>
-      <Name>MetricAgent</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Plotters\Plotters.csproj">
-      <Project>{167DF28F-4570-4D63-B444-580D35531B8F}</Project>
-      <Name>Plotters</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Readers\Readers.csproj">
-      <Project>{6CBF5C9E-505E-4520-9810-27BC5BED216E}</Project>
-      <Name>Readers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
-      <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
+      <Project>{4ece58e8-cbbe-46ea-bb0b-3e09445387c1}</Project>
       <Name>Sinks</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sources\Sources.csproj">
-      <Project>{87791A59-4075-408B-B44F-805C373C9EA8}</Project>
+      <Project>{87791a59-4075-408b-b44f-805c373c9ea8}</Project>
       <Name>Sources</Name>
     </ProjectReference>
     <ProjectReference Include="..\Stores\Stores.csproj">
       <Project>{f8da3277-92d8-470f-bd8c-31378775b21e}</Project>
       <Name>Stores</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Writers\Writers.csproj">
-      <Project>{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}</Project>
-      <Name>Writers</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>echo In %25CD%25
-echo Copying to $(TargetDir)
-copy ..\..\..\Externals\rrdtool\*.dll $(TargetDir)</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
