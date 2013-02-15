@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -19,6 +20,10 @@ namespace Plotters
             _name = name;
 
             _directory = outputPath;
+
+            _fontCollection = new PrivateFontCollection();
+
+            _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
         public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name)
@@ -87,24 +92,37 @@ namespace Plotters
             chart.Series[chartName].Points.DataBindXY(xvals, yvals);
         }
 
-        private static Chart InitializeChart(string chartName)
+        private Chart InitializeChart(string chartName)
         {
+            var titleFont = new Font(
+                _fontCollection.Families[0].Name,
+                8,
+                FontStyle.Regular,
+                GraphicsUnit.Pixel);
+
+            var labelFont = new Font(
+                _fontCollection.Families[0].Name,
+                7,
+                FontStyle.Regular,
+                GraphicsUnit.Pixel);
+
             var chart = new Chart();
             chart.Size = new Size(400, 200);
             chart.AntiAliasing = AntiAliasingStyles.None;
-            chart.Titles.Add(new Title(chartName, Docking.Top, new Font("Tahoma", 8), Color.Black));
+            chart.Titles.Add(new Title(chartName, Docking.Top, titleFont, Color.Black));
 
             var chartArea = new ChartArea();
             chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
             chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
             chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisX.LabelStyle.Font = new Font("Tahoma", 7);
-            chartArea.AxisY.LabelStyle.Font = new Font("Tahoma", 7);
+            chartArea.AxisX.LabelStyle.Font = labelFont;
+            chartArea.AxisY.LabelStyle.Font = labelFont;
             chartArea.IsSameFontSizeForAllAxes = true;
 
             chartArea.AxisX.LabelAutoFitMaxFontSize = 7;
             chartArea.AxisY.LabelAutoFitMaxFontSize = 7;
             chart.ChartAreas.Add(chartArea);
+
             return chart;
         }
 
@@ -115,5 +133,7 @@ namespace Plotters
         private readonly string _name;
 
         private readonly string _directory;
+
+        private PrivateFontCollection _fontCollection;
     }
 }
