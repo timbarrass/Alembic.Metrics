@@ -38,14 +38,11 @@ namespace Writers
 
         public void Write()
         {
+            var snapshotPath = Path.Combine(_directory, _spec.Name);
+
             var snapshot = _snapshotProvider.Snapshot(_spec.Name);
 
-            _store.Write(SnapshotPath, snapshot);
-        }
-
-        private string SnapshotPath
-        {
-            get { return Path.Combine(_directory, _spec.Name); }
+            _store.Write(snapshotPath, snapshot);
         }
     }
 }

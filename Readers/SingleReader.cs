@@ -27,18 +27,13 @@ namespace Readers
             _store = store;
         }
 
-        private IEnumerable<T> Read(string label)
+        public IEnumerable<T> Snapshot(string label)
         {
             var path = Path.Combine(_directory, label);
 
             Log.Debug("Reading from " + path);
 
             return _store.Read(path);
-        }
-
-        public IEnumerable<T> Snapshot(string label)
-        {
-            return Read(label);
         }
     }
 }

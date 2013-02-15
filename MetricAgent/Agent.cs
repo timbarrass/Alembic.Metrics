@@ -72,7 +72,7 @@ namespace MetricAgent
             {
                 foreach (var source in _sinksToUpdate.Keys)
                 {
-                    var processor = new Processor() { Source = source, Sinks = _sinksToUpdate[source], Delay = source.Delay };
+                    var processor = new Processor { Source = source, Sinks = _sinksToUpdate[source], Delay = source.Delay };
                     processor.Start();
                     _workers.Add(processor);
                 }

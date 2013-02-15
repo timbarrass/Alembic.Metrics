@@ -103,11 +103,5 @@ namespace Stores
             var zipFileName = Path.ChangeExtension(fileName, ".am.gz");
             return zipFileName;
         }
-
-        private static string FileName(string name)
-        {
-            var fileName = Path.ChangeExtension(name, "am");
-            return fileName;
-        }
     }
 }
