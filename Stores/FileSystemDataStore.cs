@@ -9,6 +9,18 @@ namespace Stores
 {
     public class FileSystemDataStore<T> : IDataStore<T>
     {
+        public FileSystemDataStore()
+        {
+            _root = ".";
+        }
+
+        public FileSystemDataStore(string root)
+        {
+            _root = root;
+
+            Directory.CreateDirectory(root);
+        }
+
         public void Write(string name, IEnumerable<T> data)
         {
             var allowedAttempts = 3;
@@ -93,15 +105,28 @@ namespace Stores
             return ret;
         }
 
-        private static string ZipFileName(string fileName)
+        public bool Contains(string name)
         {
-            if (fileName.EndsWith(".am.gz"))
+            var fileName = ZipFileName(name);
+
+            return File.Exists(fileName);
+        }
+
+
+        private string ZipFileName(string name)
+        {
+            name = Path.Combine(_root, name);
+
+            if (name.EndsWith(".am.gz"))
             {
-                return fileName;
+                return name;
             }
 
-            var zipFileName = Path.ChangeExtension(fileName, ".am.gz");
+            var zipFileName = Path.ChangeExtension(name, ".am.gz");
+            
             return zipFileName;
         }
+
+        private string _root = ".";
     }
 }

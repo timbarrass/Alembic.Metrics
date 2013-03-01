@@ -259,22 +259,6 @@ namespace Tests
         }
 
         [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
-        public void FileSystemDataStore_CanPersistSimpleData()
-        {
-            var testData = new[] { new TestSerializable { Message = "Hello" } };
-
-            var store = new FileSystemDataStore<TestSerializable>();
-
-            store.Write("testData", testData);
-
-            var ret = store.Read("testData");
-
-            Assert.AreEqual(testData.First().Message, ret.First().Message);
-
-            File.Delete("testData.am.gz");
-        }
-
-        [Test, Category("CollaborationTest"), Ignore("Collaboration test, or higher")]
         public void SinglePlotter_VisitsSinksAndExtractsData()
         {
             var specs = new[]
@@ -466,7 +450,4 @@ namespace Tests
 
         
     }
-
-
-
 }
