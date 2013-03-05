@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Data;
+using Sinks;
 using Mono.Options;
-using Stores;
 
 namespace SnapshotConverter
 {
@@ -27,11 +27,13 @@ namespace SnapshotConverter
             theApp.Run(fileName);
         }
 
-        private void Run(string snapshotFile )
+        private void Run(string snapshotFile)
         {
-            var store = new FileSystemDataStore<IMetricData>();
+            var item = Path.GetFileName(snapshotFile).Replace(".am.gz", "");
 
-            var snapshot = store.Read(snapshotFile);
+            var store = new FileSystemDataStore(".", new MetricSpecification(item, float.MinValue, float.MaxValue));
+
+            var snapshot = store.Snapshot();
 
             Console.WriteLine("Timestamp\tValue");
 

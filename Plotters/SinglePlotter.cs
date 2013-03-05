@@ -14,9 +14,9 @@ namespace Plotters
     /// which is configured with a set of sinks mapped to a set of specs to request
     /// for each sink.
     /// </summary>
-    public class SinglePlotter<T> : IDataPlotter where T : IMetricData
+    public class SinglePlotter<T> : IDataPlotter
     {
-        public SinglePlotter(string outputDirectory, ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
+        public SinglePlotter(string outputDirectory, ISnapshotProvider snapshotProvider, MetricSpecification spec)
         {
             _snapshotProvider = snapshotProvider;
 
@@ -31,12 +31,14 @@ namespace Plotters
 
         public void Plot()
         {
-            Plot(_snapshotProvider, _spec);
+            Plot(_snapshotProvider);
         }
 
-        private void Plot(ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
+        private void Plot(ISnapshotProvider snapshotProvider)
         {
-            var snapshot = snapshotProvider.Snapshot(spec.Name);
+            var spec = snapshotProvider.Spec;
+
+            var snapshot = snapshotProvider.Snapshot();
 
             DateTime[] xvals;
             double?[] yvals = new double?[0];
@@ -118,7 +120,7 @@ namespace Plotters
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private ISnapshotProvider<T> _snapshotProvider;
+        private ISnapshotProvider _snapshotProvider;
 
         private MetricSpecification _spec;
 

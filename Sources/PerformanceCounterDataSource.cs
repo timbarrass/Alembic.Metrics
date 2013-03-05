@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
+using Sinks;
 using log4net;
 
 namespace Sources
 {
-    public class PerformanceCounterDataSource : IDataSource
+    public class PerformanceCounterDataSource : ISnapshotProvider
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PerformanceCounterDataSource).Name);
 
@@ -76,11 +77,16 @@ namespace Sources
             get { return _spec; }
         }
 
-        public IEnumerable<IMetricData> Query()
+        public Snapshot Snapshot()
         {
             Log.Debug("Querying " + Name);
 
-            return new List<IMetricData> { new MetricData( _counter.NextValue(), DateTime.Now) };
+            return new Snapshot { new MetricData( _counter.NextValue(), DateTime.Now) };
+        }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            throw new NotImplementedException();
         }
     }
 }

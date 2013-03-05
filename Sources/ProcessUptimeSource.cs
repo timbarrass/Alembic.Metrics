@@ -6,7 +6,7 @@ using log4net;
 
 namespace Sources
 {
-    public class ProcessUptimeSource : IDataSource
+    public class ProcessUptimeSource : ISnapshotProvider
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessUptimeSource).Name);
 
@@ -60,7 +60,7 @@ namespace Sources
             get { return _spec; }
         }
 
-        public IEnumerable<IMetricData> Query()
+        public Snapshot Snapshot()
         {
             Log.Debug("Querying " + Name);
 
@@ -91,7 +91,12 @@ namespace Sources
                 count++;
             }
 
-            return new List<IMetricData> { new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now) };
+            return new Snapshot { new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now) };
+        }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            throw new NotImplementedException();
         }
     }
 }

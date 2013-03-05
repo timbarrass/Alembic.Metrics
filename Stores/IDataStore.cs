@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+using Data;
 
 namespace Stores
 {
     public interface IDataStore<T>
     {
-        void Write(string name, IEnumerable<T> data);
+        void Write(string name, Snapshot<T> data);
 
-        IEnumerable<T> Read(string name);
+        Snapshot<T> Read(string name);
 
         bool Contains(string name);
     }

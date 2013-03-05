@@ -1,38 +1,48 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using Data;
 
-namespace Stores
+namespace Sinks
 {
-    public class FileSystemDataStore<T> : IDataStore<T>
+    public class FileSystemDataStore : ISnapshotConsumer, ISnapshotProvider
     {
-        public FileSystemDataStore()
-        {
-            _root = ".";
-        }
-
-        public FileSystemDataStore(string root)
+        public FileSystemDataStore(string root, MetricSpecification specification)
         {
             _root = root;
 
             Directory.CreateDirectory(root);
+
+            _spec = specification;
         }
 
-        public void Write(string name, IEnumerable<T> data)
+        public void ResetWith(Snapshot snapshot)
+        {
+            var zipFileName = ZipFileName(_spec.Name);
+
+            if (File.Exists(zipFileName))
+            {
+                File.Delete(zipFileName);
+            }
+
+            Update(snapshot);
+        }
+
+        public void Update(Snapshot snapshot)
         {
             var allowedAttempts = 3;
             var attempt = 1;
 
-            var zipFileName = ZipFileName(name);
+            var zipFileName = ZipFileName(_spec.Name);
 
             using (var os = new MemoryStream())
             {
                 var bf = new BinaryFormatter();
 
-                bf.Serialize(os, data);
+                bf.Serialize(os, snapshot);
 
                 while (attempt++ <= allowedAttempts)
                 {
@@ -58,14 +68,16 @@ namespace Stores
             }
         }
 
-        public IEnumerable<T> Read(string name)
+        public MetricSpecification Spec { get { return _spec; }}
+
+        public Snapshot Snapshot()
         {
             var allowedAttempts = 3;
             var attempt = 1;
 
-            var zipFileName = ZipFileName(name);
+            var zipFileName = ZipFileName(_spec.Name);
 
-            IEnumerable<T> ret = new List<T>();
+            var snapshot = new Snapshot();
 
             using (var gzo = new MemoryStream())
             {
@@ -86,7 +98,7 @@ namespace Stores
                     {
                         throw;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         if (attempt == allowedAttempts) throw;
                         
@@ -98,11 +110,16 @@ namespace Stores
 
                     var bf = new BinaryFormatter();
 
-                    ret = bf.Deserialize(gzo) as IEnumerable<T>;
+                    snapshot = bf.Deserialize(gzo) as Snapshot;
                 }
             }
 
-            return ret;
+            return snapshot;
+        }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            throw new NotImplementedException();
         }
 
         public bool Contains(string name)
@@ -128,5 +145,7 @@ namespace Stores
         }
 
         private string _root = ".";
+
+        private readonly MetricSpecification _spec;
     }
 }

@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Data
 {
     [Serializable]
-    public class MetricData : IMetricData
+    public struct MetricData
     {
-        public MetricData(double? values, DateTime timestamp)
+        public MetricData(double? value, DateTime timestamp)
         {
-            Data = values;
-            Timestamp = timestamp;
+            _data = value;
+            _timestamp = timestamp;
         }
 
-        public double? Data { get; private set; }
+        public double? Data { get { return _data; } }
 
-        public DateTime Timestamp { get; private set; }
+        public DateTime Timestamp { get { return _timestamp; } }
 
-        public virtual ICollection<MetricSpecification> Spec
-        {
-            get { throw new NotImplementedException(); }
-            private set { }
-        }
+        private readonly double? _data;
+
+        private readonly DateTime _timestamp;
     }
 }

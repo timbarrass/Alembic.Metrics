@@ -52,9 +52,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakingDataSink.cs" />
+    <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
+    <Compile Include="PerformanceCounterDataSourceTests.cs" />
+    <Compile Include="ProcessCountingSourceTests.cs" />
+    <Compile Include="ProcessUptimeSourceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sandbox.cs" />
+    <Compile Include="SqlServerDataSourceTests.cs" />
+    <Compile Include="TestSerializable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App\MetricAgent\MetricAgent.csproj">
@@ -69,10 +77,6 @@
       <Project>{167DF28F-4570-4D63-B444-580D35531B8F}</Project>
       <Name>Plotters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Readers\Readers.csproj">
-      <Project>{6CBF5C9E-505E-4520-9810-27BC5BED216E}</Project>
-      <Name>Readers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
       <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
       <Name>Sinks</Name>
@@ -80,14 +84,6 @@
     <ProjectReference Include="..\Sources\Sources.csproj">
       <Project>{87791A59-4075-408B-B44F-805C373C9EA8}</Project>
       <Name>Sources</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Stores\Stores.csproj">
-      <Project>{f8da3277-92d8-470f-bd8c-31378775b21e}</Project>
-      <Name>Stores</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Writers\Writers.csproj">
-      <Project>{7473EC0B-73C4-4EE5-A9E3-6E3BFB6D076D}</Project>
-      <Name>Writers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

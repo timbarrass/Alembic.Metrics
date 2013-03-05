@@ -9,9 +9,9 @@ using Sinks;
 
 namespace Plotters
 {
-    public class MultiPlotter<T> : IDataPlotter where T : IMetricData
+    public class MultiPlotter<T> : IDataPlotter
     {
-        public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name, string outputPath)
+        public MultiPlotter(ISnapshotProvider snapshotProvider, MetricSpecification[] specs, string name, string outputPath)
         {
             _snapshotProvider = snapshotProvider;
 
@@ -26,7 +26,7 @@ namespace Plotters
             _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
-        public MultiPlotter(ISnapshotProvider<T> snapshotProvider, MetricSpecification[] specs, string name)
+        public MultiPlotter(ISnapshotProvider snapshotProvider, MetricSpecification[] specs, string name)
             : this(snapshotProvider, specs, name, ".")
         {
         }
@@ -38,7 +38,7 @@ namespace Plotters
             
             foreach(var spec in _specs)
             {
-                Plot(chart, _snapshotProvider, spec);
+                Plot(chart, _snapshotProvider);
             }
 
             RenderChart(chart, chartName);
@@ -53,9 +53,11 @@ namespace Plotters
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private void Plot(Chart chart, ISnapshotProvider<T> snapshotProvider, MetricSpecification spec)
+        private void Plot(Chart chart, ISnapshotProvider snapshotProvider)
         {
-            var snapshot = snapshotProvider.Snapshot(spec.Name);
+            var spec = snapshotProvider.Spec;
+
+            var snapshot = snapshotProvider.Snapshot();
 
             DateTime[] xvals;
             double?[] yvals = new double?[0];
@@ -128,7 +130,7 @@ namespace Plotters
 
         private readonly MetricSpecification[] _specs;
 
-        private readonly ISnapshotProvider<T> _snapshotProvider;
+        private readonly ISnapshotProvider _snapshotProvider;
 
         private readonly string _name;
 

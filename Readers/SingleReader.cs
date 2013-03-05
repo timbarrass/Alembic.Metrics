@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Data;
 using Sinks;
@@ -16,24 +17,29 @@ namespace Readers
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SingleReader<T>).Name);
         
-        private IDataStore<T> _store;
+        private ISnapshotProvider<T> _store;
         
         private string _directory;
 
-        public SingleReader(string directory, IDataStore<T> store)
+        public SingleReader(string directory, ISnapshotProvider<T> store)
         {
             _directory = directory;
 
             _store = store;
         }
 
-        public IEnumerable<T> Snapshot(string label)
+        public Snapshot<T> Snapshot(string label)
         {
             var path = Path.Combine(_directory, label);
 
             Log.Debug("Reading from " + path);
 
-            return _store.Read(path);
+            return _store.Snapshot(path);
+        }
+
+        public Snapshot<T> Snapshot(string label, DateTime cutoff)
+        {
+            throw new NotImplementedException();
         }
     }
 }

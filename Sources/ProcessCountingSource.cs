@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
 using log4net;
 
 namespace Sources
 {
-    public class ProcessCountingSource : IDataSource
+    public class ProcessCountingSource : ISnapshotProvider
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessCountingSource).Name);
 
@@ -60,7 +59,7 @@ namespace Sources
             get { return _spec; }
         }
 
-        public IEnumerable<IMetricData> Query()
+        public Snapshot Snapshot()
         {
             Log.Debug("Querying " + Name);
 
@@ -75,7 +74,12 @@ namespace Sources
                 processes = Process.GetProcessesByName(_processToMonitor, _machineName);
             }
 
-            return new List<IMetricData> { new MetricData( processes.Length, DateTime.Now) };
+            return new Snapshot { new MetricData( processes.Length, DateTime.Now) };
+        }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            throw new NotImplementedException();
         }
     }
 }

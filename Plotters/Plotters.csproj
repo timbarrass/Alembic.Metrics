@@ -52,10 +52,6 @@
       <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
       <Name>Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Readers\Readers.csproj">
-      <Project>{6CBF5C9E-505E-4520-9810-27BC5BED216E}</Project>
-      <Name>Readers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
       <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
       <Name>Sinks</Name>

@@ -1,21 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using Data;
 
 namespace Sources
 {
-    public class NullSource : IDataSource
+    public class NullSource : ISnapshotProvider
     {
-        public static readonly MetricSpecification NullSpecification = null; // should be non-updateable
+        public static readonly MetricSpecification NullSpecification = new MetricSpecification(); // should be non-updateable
 
         public MetricSpecification Spec
         {
             get { return NullSpecification; }
         }
 
-        public IEnumerable<IMetricData >Query()
+        public Snapshot Snapshot()
         {
-            return new List<NullMetricData>();
+            return new Snapshot();
+        }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            return new Snapshot();
         }
 
         public int Delay

@@ -14,11 +14,11 @@ namespace Writers
 
         private MetricSpecification _spec;
 
-        private IDataStore<IMetricData> _store;
+        private ISnapshotConsumer<IMetricData> _store;
 
         private string _directory;
 
-        public SingleWriter(string outputDirectory, ISnapshotProvider<IMetricData> snapshotProvider, MetricSpecification spec, IDataStore<IMetricData> store )
+        public SingleWriter(string outputDirectory, ISnapshotProvider<IMetricData> snapshotProvider, MetricSpecification spec, ISnapshotConsumer<IMetricData> store )
         {
             _snapshotProvider = snapshotProvider;
 
@@ -42,7 +42,7 @@ namespace Writers
 
             var snapshot = _snapshotProvider.Snapshot(_spec.Name);
 
-            _store.Write(snapshotPath, snapshot);
+            _store.Update(snapshotPath, snapshot);
         }
     }
 }

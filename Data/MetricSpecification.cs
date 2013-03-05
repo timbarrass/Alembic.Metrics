@@ -1,18 +1,24 @@
 ﻿namespace Data
 {
-    public class MetricSpecification
+    public struct MetricSpecification
     {
         public MetricSpecification(string name, float? expectedMin, float? expectedMax)
         {
-            Name = name;
-            ExpectedMin = expectedMin;
-            ExpectedMax = expectedMax;
+            _name = name;
+            _expectedMin = expectedMin;
+            _expectedMax = expectedMax;
         }
 
-        public float? ExpectedMax { get; private set; }
+        public float? ExpectedMax { get { return _expectedMax; } }
 
-        public float? ExpectedMin { get; private set; }
+        public float? ExpectedMin { get { return _expectedMin; } }
 
-        public string Name { get; private set; }
+        public string Name { get { return _name; } }
+
+        private readonly float? _expectedMax;
+
+        private readonly float? _expectedMin;
+
+        private readonly string _name;
     }
 }

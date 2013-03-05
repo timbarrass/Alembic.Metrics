@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using log4net;
-
-using Sources;
 using Data;
 
 namespace MetricAgent
@@ -12,17 +8,17 @@ namespace MetricAgent
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
 
-        public static bool TryQuery(this IDataSource source, out IEnumerable<IMetricData> metricData)
+        public static bool TrySnapshot(this ISnapshotProvider source, out Snapshot metricData)
         {
             try
             {
-                metricData = source.Query();
+                metricData = source.Snapshot();
 
                 return true;
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("Failed to query {0}: {1}", source.Name, ex.FormatMessage()));
+                Log.Error(String.Format("Failed to query {0}: {1}", source.Spec.Name, ex.Message));
 
                 metricData = null;
 

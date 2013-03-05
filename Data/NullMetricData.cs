@@ -2,7 +2,7 @@
 
 namespace Data
 {
-    public class NullMetricData : IMetricData
+    public struct NullMetricData
     {
         public double? Data
         {

@@ -6,79 +6,89 @@ using Data;
 
 namespace Sinks
 {
-    public class CircularDataSink<T> : IDataSink<T>, ISnapshotProvider<T>, ISnapshotConsumer<T> where T : IMetricData
+    public class CircularDataSink : ISnapshotProvider, ISnapshotConsumer
     {
         private object _padlock = new object();
 
         private int _pointsToKeep = 10;
 
-        private Dictionary<string, SlidingBuffer<T>> _data = new Dictionary<string, SlidingBuffer<T>>();
+        private SlidingBuffer<MetricData> _data;
 
-        private ICollection<MetricSpecification> _sourceSpecifications;
+        private MetricSpecification _sourceSpecification;
 
-        private DateTime _lastUpdate;
+        private DateTime _lastUpdate = new DateTime();
 
         /// <summary>
         /// Each sink is configured to accept data from multiple sources (represented by spec) but will
         /// remember the same number of points for each.
         /// </summary>
-        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications)
+        public CircularDataSink(int pointsToKeep, MetricSpecification sourceSpecification)
         {
             _pointsToKeep = pointsToKeep;
 
-            foreach (var spec in sourceSpecifications)
-            {
-                _data[spec.Name] = new SlidingBuffer<T>(_pointsToKeep);
-            }
+            _data = CreateSlidingBuffer();
 
-            _sourceSpecifications = sourceSpecifications;
+            _lastUpdate = DateTime.MinValue;
+
+            _sourceSpecification = sourceSpecification;
         }
 
-        public CircularDataSink(int pointsToKeep, ICollection<MetricSpecification> sourceSpecifications, IEnumerable<T> snapshot)
+        private SlidingBuffer<MetricData> CreateSlidingBuffer()
         {
-            _pointsToKeep = pointsToKeep;
-
-            foreach (var spec in sourceSpecifications)
-            {
-                _data[spec.Name] = new SlidingBuffer<T>(_pointsToKeep);
-
-                ResetWith(snapshot, spec.Name);
-            }
-
-            _sourceSpecifications = sourceSpecifications;
+            return new SlidingBuffer<MetricData>(_pointsToKeep);
         }
 
-        public ICollection<MetricSpecification> Spec
+        public MetricSpecification Spec
         {
-            get { return _sourceSpecifications; }
+            get { return _sourceSpecification; }
         }
 
-        public void Update(string specName, IEnumerable<T> perfMetricData)
+        public void ResetWith(Snapshot snapshot)
+        {
+            lock(_padlock)
+            {
+                _data = CreateSlidingBuffer();
+
+                Update(snapshot);
+            }
+        }
+
+        public void Update(Snapshot snapshot)
         {
             lock (_padlock)
             {
-                foreach (var metric in perfMetricData)
+                foreach (var metric in snapshot)
                 {
                     if (metric.Timestamp > _lastUpdate)
                     {
-                        _data[specName].Add(metric);
+                        _data.Add(metric);
+
                         _lastUpdate = metric.Timestamp;
                     }
                 }
             }
         }
 
-        public IEnumerable<T> Snapshot(string label)
+        public Snapshot Snapshot()
         {
             lock(_padlock)
             {
-                return _data[label].ToArray(); // want a deep copy, not a reference
+                var snapshot = new Snapshot();
+                snapshot.AddRange(_data.ToArray()); // want a deep copy, not a reference
+
+                return snapshot;
             }
         }
 
-        IEnumerable<T> ISnapshotProvider<T>.Snapshot(string label)
+        public Snapshot Snapshot(DateTime cutoff)
         {
-            return Snapshot(label);
+            lock (_padlock)
+            {
+                var snapshot = new Snapshot();
+                snapshot.AddRange(_data.Where(d => d.Timestamp.Ticks >= cutoff.Ticks).ToArray());
+
+                return snapshot;
+            }
         }
 
         [Serializable]
@@ -138,17 +148,6 @@ namespace Sinks
                 }
 
                 return value.ToString();
-            }
-        }
-
-        public void ResetWith(IEnumerable<T> snapshot, string label)
-        {
-            lock (_padlock)
-            {
-                foreach (var item in snapshot)
-                {
-                    _data[label].Add(item);
-                }
             }
         }
     }

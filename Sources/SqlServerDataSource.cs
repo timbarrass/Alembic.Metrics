@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlClient;
 using Data;
+using Sinks;
 using log4net;
 
 namespace Sources
@@ -14,7 +15,7 @@ namespace Sources
     /// Best to wrap in a builder, and have the builder construct sources suitable for
     /// specific purposes.
     /// </summary>
-    public class SqlServerDataSource : IDataSource
+    public class SqlServerDataSource : ISnapshotProvider
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SqlServerDataSource).Name);
 
@@ -38,7 +39,7 @@ namespace Sources
 
         public string Name
         {
-            get { return _spec.Name; }
+            get { return _name; }
         }
 
         public string Id
@@ -52,6 +53,8 @@ namespace Sources
 
             _context = context;
 
+            _name = spec.Name;
+
             _spec = spec;
 
             _query = query;
@@ -64,8 +67,7 @@ namespace Sources
             get { return _spec; }
         }
 
-        // want this one to return a list of IMetricData
-        public IEnumerable<IMetricData> Query()
+        public Snapshot Snapshot()
         {
             Log.Debug("Querying " + Name);
 
@@ -86,7 +88,7 @@ namespace Sources
             var queryEnd = DateTime.Now;
             var queryDuration = new TimeSpan(queryEnd.Ticks - start.Ticks).TotalMilliseconds;
 
-            var returnSeries = new List<MetricData>();
+            var returnSeries = new Snapshot();
 
             foreach(var point in timeseries)
             {
@@ -104,6 +106,13 @@ namespace Sources
 
             return returnSeries;
         }
+
+        public Snapshot Snapshot(DateTime cutoff)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string _name;
     }
 
     /// <summary>
