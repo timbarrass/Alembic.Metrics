@@ -16,5 +16,15 @@ namespace Tests
 
                 Assert.AreEqual(expectedMetrics[0], source.Spec.Name);
         }
+
+        [Test]
+        public void PerformanceCounterDataSource_CanBeConfiguredFromAConfigItem()
+        {
+            var config = new CounterElement("id", "test", "Memory", "Committed Bytes", "", "localhost", null, null, 5);
+
+            var source = new PerformanceCounterDataSource(config);
+
+            Assert.AreEqual("test", source.Name);
+        }
     }
 }

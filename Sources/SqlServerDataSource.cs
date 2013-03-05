@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlClient;
 using Data;
-using Sinks;
 using log4net;
 
 namespace Sources
@@ -47,19 +46,36 @@ namespace Sources
             get { return _id; }
         }
 
-        public SqlServerDataSource(string id, DataContext context, MetricSpecification spec, string query, int delay)
+        public SqlServerDataSource(DatabaseElement config)
+        {
+            var conn = new SqlConnection
+                {
+                    ConnectionString = config.ConnectionString
+                };
+
+            var context = new DataContext(conn);
+
+            Initialise(config.Id, config.Name, context, config.Query, config.Delay);
+        }
+
+        public SqlServerDataSource(string id, string name, DataContext context, string query, int delay)
+        {
+            Initialise(id, name, context, query, delay);
+        }
+
+        private void Initialise(string id, string name, DataContext context, string query, int delay)
         {
             _id = id;
 
             _context = context;
 
-            _name = spec.Name;
-
-            _spec = spec;
+            _name = name;
 
             _query = query;
 
-            _delay = delay * 1000;
+            _delay = delay*1000;
+
+            _spec = new MetricSpecification(_name, null, null);
         }
 
         public MetricSpecification Spec

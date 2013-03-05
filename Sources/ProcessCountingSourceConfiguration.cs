@@ -13,6 +13,19 @@ namespace Sources
 
     public class ProcessElement : ConfigurationElement
     {
+        public ProcessElement()
+        {
+        }
+
+        public ProcessElement(string id, string name, string exe, string machineName, int delay)
+        {
+            base["id"] = id;
+            base["name"] = name;
+            base["exe"] = exe;
+            base["machineName"] = machineName;
+            base["delay"] = delay;
+        }
+
         [ConfigurationProperty("delay", IsRequired = true)]
         public int Delay
         {

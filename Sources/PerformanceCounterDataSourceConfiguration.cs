@@ -13,6 +13,23 @@ namespace Sources
 
     public class CounterElement : ConfigurationElement
     {
+        public CounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int delay)
+        {
+            base["id"]           = id;
+            base["name"]         = name;
+            base["categoryName"] = categoryName;
+            base["counterName"]  = counterName;
+            base["instanceName"] = instanceName;
+            base["machineName"]  = machineName;
+            base["min"]          = min;
+            base["max"]          = max;
+            base["delay"]        = delay;
+        }
+
+        public CounterElement()
+        {
+        }
+
         [ConfigurationProperty("delay", IsRequired = true)]
         public int Delay
         {

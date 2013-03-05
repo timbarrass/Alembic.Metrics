@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Data;
-using Sinks;
 using log4net;
 
 namespace Sources
@@ -69,6 +67,11 @@ namespace Sources
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
 
             _spec = new MetricSpecification(_counterName, min, max);
+        }
+
+        public PerformanceCounterDataSource(CounterElement config)
+            : this(config.Id, config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName, config.Min, config.Max, config.Delay)
+        {
         }
 
 

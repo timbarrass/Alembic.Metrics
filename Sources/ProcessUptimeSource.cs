@@ -32,12 +32,17 @@ namespace Sources
 
         public string Name
         {
-            get { return _processToMonitor + "-metrics"; }
+            get { return _processUptimeName; }
         }
 
         public string Id
         {
             get { return _id; }
+        }
+
+        public ProcessUptimeSource(ProcessElement config)
+            : this(config.Id, config.Name, config.Exe, config.MachineName, config.Delay)
+        {
         }
 
         public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine, int delay)

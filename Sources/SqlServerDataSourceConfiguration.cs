@@ -13,6 +13,19 @@ namespace Sources
 
     public class DatabaseElement : ConfigurationElement
     {
+        public DatabaseElement()
+        {
+        }
+
+        public DatabaseElement(string id, string name, string connString, string query, int delay)
+        {
+            base["id"] = id;
+            base["name"] = name;
+            base["connectionString"] = connString;
+            base["query"] = query;
+            base["delay"] = delay;
+        }
+
         [ConfigurationProperty("delay", IsRequired = true)]
         public int Delay
         {

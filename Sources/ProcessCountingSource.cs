@@ -31,12 +31,17 @@ namespace Sources
 
         public string Name
         {
-            get { return _processToMonitor + "-metrics"; }
+            get { return _processCountName; }
         }
 
         public string Id
         {
             get { return _id;  }
+        }
+
+        public ProcessCountingSource(ProcessElement config)
+            : this(config.Id, config.Name, config.Exe, config.MachineName, config.Delay)
+        {
         }
 
         public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, string machine, int delay)
