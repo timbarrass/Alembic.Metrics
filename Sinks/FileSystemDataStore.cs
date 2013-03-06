@@ -19,6 +19,11 @@ namespace Sinks
             _spec = specification;
         }
 
+        public string Name
+        {
+            get { return _spec.Name; }
+        }
+
         public void ResetWith(Snapshot snapshot)
         {
             var zipFileName = ZipFileName(_spec.Name);

@@ -33,6 +33,11 @@ namespace Sinks
             _sourceSpecification = sourceSpecification;
         }
 
+        public string Name
+        {
+            get { return _sourceSpecification.Name; }
+        }
+
         private SlidingBuffer<MetricData> CreateSlidingBuffer()
         {
             return new SlidingBuffer<MetricData>(_pointsToKeep);

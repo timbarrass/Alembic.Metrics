@@ -2,9 +2,7 @@ using System;
 using System.Linq;
 using Data;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Sinks;
-using Sources;
 
 namespace Tests
 {
@@ -12,13 +10,23 @@ namespace Tests
     public class CircularDataSinkTests
     {
         [Test]
+        public void CircularDataSink_ProvidesAName()
+        {
+            var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
+
+            var sink = new CircularDataSink(10, spec);
+            
+            Assert.AreEqual(spec.Name, sink.Name);
+        }
+
+        [Test]
         public void CircularDataSink_CanBeReset()
         {
             var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(10, spec);
 
-            var snapshot = new Snapshot { new MetricData(10, DateTime.Now), new MetricData(20, DateTime.Now) };
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2)), new MetricData(20, DateTime.Now) };
 
             sink.Update(snapshot);
 

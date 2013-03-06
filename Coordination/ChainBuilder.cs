@@ -1,0 +1,33 @@
+using System.Collections.Generic;
+using System.Linq;
+using Data;
+
+namespace Coordination
+{
+    public class ChainBuilder
+    {
+        public static IEnumerable<Chain> Build(IEnumerable<ISnapshotProvider> sources, IEnumerable<ISnapshotConsumer> sinks, IEnumerable<ChainElement> configs)
+        {
+            var chains = new List<Chain>();
+
+            sources = sources.ToArray();
+            sinks = sinks.ToArray();
+
+            foreach(var config in configs)
+            {
+                var chosenSource = sources.First(s => s.Name.Equals(config.Source));
+
+                var chosenSinks = new List<ISnapshotConsumer>();
+
+                foreach(var sinkName in config.Sinks.Split(','))
+                {
+                    chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
+                }
+
+                chains.Add(new Chain(config.Name, chosenSource, chosenSinks.ToArray()));
+            }
+
+            return chains;
+        }
+    }
+}

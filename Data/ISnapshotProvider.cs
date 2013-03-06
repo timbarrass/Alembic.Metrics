@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
 
 namespace Data
 {
     public interface ISnapshotProvider
     {
         MetricSpecification Spec { get; }
+
+        string Name { get; }
 
         Snapshot Snapshot();
 
