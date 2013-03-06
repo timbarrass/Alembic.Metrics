@@ -1,7 +1,6 @@
 ﻿using System;
 using Data;
 using Plotters;
-using Sinks;
 using NUnit.Framework;
 
 namespace Tests
@@ -14,18 +13,16 @@ namespace Tests
         {
             var spec = new MetricSpecification("test1", null, null);
 
-            var sink = new CircularDataSink(10, spec);
-
-            sink.Update(new Snapshot
+            var snapshot = new Snapshot
                             {
                                 new MetricData( 1.0, DateTime.Now),
                                 new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
                                 new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
-                            });
+                            };
 
-            var visitor = new SinglePlotter<MetricData>("", sink, spec);
+            var plotter = new SinglePlotter("", spec);
 
-            visitor.Plot();
+            plotter.Update(snapshot);
 
             //Assert.AreEqual(7.0d, visitor.Total);
         }

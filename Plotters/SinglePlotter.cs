@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
-using Sinks;
 
 namespace Plotters
 {
@@ -14,12 +13,10 @@ namespace Plotters
     /// which is configured with a set of sinks mapped to a set of specs to request
     /// for each sink.
     /// </summary>
-    public class SinglePlotter<T> : IDataPlotter
+    public class SinglePlotter : ISnapshotConsumer
     {
-        public SinglePlotter(string outputDirectory, ISnapshotProvider snapshotProvider, MetricSpecification spec)
+        public SinglePlotter(string outputDirectory, MetricSpecification spec)
         {
-            _snapshotProvider = snapshotProvider;
-
             _spec = spec;
             
             _directory = outputDirectory;
@@ -29,17 +26,8 @@ namespace Plotters
             _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
-        public void Plot()
+        private void Plot(Snapshot snapshot)
         {
-            Plot(_snapshotProvider);
-        }
-
-        private void Plot(ISnapshotProvider snapshotProvider)
-        {
-            var spec = snapshotProvider.Spec;
-
-            var snapshot = snapshotProvider.Snapshot();
-
             DateTime[] xvals;
             double?[] yvals = new double?[0];
 
@@ -50,7 +38,7 @@ namespace Plotters
                 yvals = snapshot.Select(y => y.Data).ToArray();
             }
 
-            GenerateChart(xvals, yvals, spec.ExpectedMin, spec.ExpectedMax, spec.Name);
+            GenerateChart(xvals, yvals, _spec.ExpectedMin, _spec.ExpectedMax, _spec.Name);
         }
 
         private void GenerateChart(DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
@@ -127,5 +115,20 @@ namespace Plotters
         private string _directory;
 
         private PrivateFontCollection _fontCollection;
+        
+        public string Name
+        {
+            get { return _spec.Name; }
+        }
+
+        public void ResetWith(Snapshot snapshot)
+        {
+            Plot(snapshot);
+        }
+
+        public void Update(Snapshot snapshot)
+        {
+            Plot(snapshot);
+        }
     }
 }

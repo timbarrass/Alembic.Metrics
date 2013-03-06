@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="BreakingDataSink.cs" />
     <Compile Include="ChainBuilderTests.cs" />
+    <Compile Include="ChainTests.cs" />
     <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
