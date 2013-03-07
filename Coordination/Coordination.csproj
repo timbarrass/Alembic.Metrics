@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="Chain.cs" />
     <Compile Include="ChainBuilder.cs" />
-    <Compile Include="ChainElement.cs" />
+    <Compile Include="ChainConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

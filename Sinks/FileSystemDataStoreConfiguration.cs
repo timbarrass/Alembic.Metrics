@@ -2,26 +2,26 @@
 
 namespace Sinks
 {
-    public class CircularDataSinkConfiguration : ConfigurationSection
+    public class FileSystemDataStoreConfiguration : ConfigurationSection
     {
-        [ConfigurationProperty("sinks")]
-        public SinkElementCollection Sinks
+        [ConfigurationProperty("stores")]
+        public StoreElementCollection Stores
         {
-            get { return (SinkElementCollection)base["sinks"]; }
+            get { return (StoreElementCollection)base["stores"]; }
         }
     }
 
-    public class SinkElement : ConfigurationElement
+    public class StoreElement : ConfigurationElement
     {
-        public SinkElement()
+        public StoreElement()
         {
         }
 
-        public SinkElement(string name, int points, float? min = null, float? max = null)
+        public StoreElement(string name, string outputPath, float? min, float? max)
         {
             Name = name;
 
-            Points = points;
+            OutputPath = outputPath;
 
             Min = min.HasValue ? min.Value : float.MinValue;
 
@@ -49,21 +49,20 @@ namespace Sinks
             private set { base["name"] = value; }
         }
 
-        [ConfigurationProperty("points", IsRequired = true)]
-        public int Points
+        [ConfigurationProperty("outputPath", IsRequired = true)]
+        public string OutputPath
         {
-            get { return (int)base["points"]; }
-            private set { base["points"] = value; }
+            get { return (string)base["outputPath"]; }
+            private set { base["outputPath"] = value; }
         }
     }
 
-    [ConfigurationCollection(typeof(SinkElement),
-        CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-    public class SinkElementCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(StoreElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+    public class StoreElementCollection : ConfigurationElementCollection
     {
-        public SinkElement this[int index]
+        public StoreElement this[int index]
         {
-            get { return (SinkElement)base.BaseGet(index); }
+            get { return (StoreElement)base.BaseGet(index); }
             set
             {
                 if (base.BaseGet(index) != null)
@@ -74,19 +73,19 @@ namespace Sinks
             }
         }
 
-        public SinkElement this[string name]
+        public StoreElement this[string name]
         {
-            get { return (SinkElement)base.BaseGet(name); }
+            get { return (StoreElement)base.BaseGet(name); }
         }
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new SinkElement();
+            return new StoreElement();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}", (element as SinkElement).Name);
+            return string.Format("{0}", (element as StoreElement).Name);
         }
     }
 

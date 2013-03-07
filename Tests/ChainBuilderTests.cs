@@ -46,6 +46,33 @@ namespace Tests
             Assert.AreEqual(configs.Count, chains.Count());
         }
 
+        [Test]
+        public void ChainBuilderContinuesIfYouAskForAStoreOrSinkThatDoesntExist()
+        {
+            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
+
+            var configs = new List<ChainElement>
+                {
+                    new ChainElement("storageChain", "testSource", "testBuffer"),
+                };
+
+            var source = MockRepository.GenerateMock<ISnapshotProvider>();
+            source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
+            source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+
+            var sources = new HashSet<ISnapshotProvider> { source };
+
+            ChainBuilder.Build(sources, new HashSet<ISnapshotConsumer>(), configs);
+
+            var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
+            buffer.Expect(b => b.Update(snapshot));
+            buffer.Expect(s => s.Name).Return("testBuffer").Repeat.Any();
+
+            var sinks = new HashSet<ISnapshotConsumer> { buffer };
+
+            ChainBuilder.Build(new HashSet<ISnapshotProvider>(), sinks, configs);
+        }
+
         [Test, Category("CollaborationTest")]
         public void ChainBuilderCanBuildAMainAndAPlottingChain()
         {

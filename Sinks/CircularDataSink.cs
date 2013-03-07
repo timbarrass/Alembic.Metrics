@@ -33,6 +33,17 @@ namespace Sinks
             _sourceSpecification = sourceSpecification;
         }
 
+        public CircularDataSink(SinkElement config)
+        {
+            _pointsToKeep = config.Points;
+
+            _data = CreateSlidingBuffer();
+
+            _lastUpdate = DateTime.MinValue;
+
+            _sourceSpecification = new MetricSpecification(config.Name, config.Min, config.Max);
+        }
+
         public string Name
         {
             get { return _sourceSpecification.Name; }

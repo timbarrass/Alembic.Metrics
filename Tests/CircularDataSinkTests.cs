@@ -10,6 +10,19 @@ namespace Tests
     public class CircularDataSinkTests
     {
         [Test]
+        public void CircularDataSink_CanBeConfiguredWithASinkElement()
+        {
+            var name = "testBuffer";
+            var points = 1;
+
+            var config = new SinkElement(name, points);
+
+            var sink = new CircularDataSink(config);
+
+            Assert.AreEqual(name, sink.Name);
+        }
+
+        [Test]
         public void CircularDataSink_ProvidesAName()
         {
             var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);

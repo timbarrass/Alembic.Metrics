@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -10,6 +9,15 @@ namespace Sinks
 {
     public class FileSystemDataStore : ISnapshotConsumer, ISnapshotProvider
     {
+        public FileSystemDataStore(StoreElement config)
+        {
+            _root = config.OutputPath;
+
+            Directory.CreateDirectory(_root);
+
+            _spec = new MetricSpecification(config.Name, config.Min, config.Max);
+        }
+
         public FileSystemDataStore(string root, MetricSpecification specification)
         {
             _root = root;
