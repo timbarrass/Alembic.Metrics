@@ -1,9 +1,21 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sources
 {
     public class ProcessCountingSourceConfiguration : ConfigurationSection
     {
+        public ProcessCountingSourceConfiguration()
+        {}
+
+        public ProcessCountingSourceConfiguration(IEnumerable<ProcessElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                Processes.Add(config);
+            }
+        }
+
         [ConfigurationProperty("processes")]
         public ProcessElementCollection Processes
         {
@@ -63,6 +75,11 @@ namespace Sources
     CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class ProcessElementCollection : ConfigurationElementCollection
     {
+        public void Add(ProcessElement config)
+        {
+            base.BaseAdd(config, false);
+        }
+
         public ProcessElement this[int index]
         {
             get { return (ProcessElement)base.BaseGet(index); }
@@ -76,7 +93,7 @@ namespace Sources
             }
         }
 
-        public ProcessElement this[string name]
+        public new ProcessElement this[string name]
         {
             get { return (ProcessElement)base.BaseGet(name); }
         }

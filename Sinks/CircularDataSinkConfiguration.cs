@@ -1,9 +1,19 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sinks
 {
     public class CircularDataSinkConfiguration : ConfigurationSection
     {
+        public CircularDataSinkConfiguration()
+        {
+        }
+
+        public CircularDataSinkConfiguration(IEnumerable<SinkElement> configs)
+        {
+            Sinks.Add(configs);
+        }
+
         [ConfigurationProperty("sinks")]
         public SinkElementCollection Sinks
         {
@@ -61,6 +71,14 @@ namespace Sinks
         CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class SinkElementCollection : ConfigurationElementCollection
     {
+        public void Add(IEnumerable<SinkElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                base.BaseAdd(config, false);
+            }
+        }
+
         public SinkElement this[int index]
         {
             get { return (SinkElement)base.BaseGet(index); }
@@ -74,7 +92,7 @@ namespace Sinks
             }
         }
 
-        public SinkElement this[string name]
+        public new SinkElement this[string name]
         {
             get { return (SinkElement)base.BaseGet(name); }
         }

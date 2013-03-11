@@ -22,78 +22,60 @@ namespace Tests
 
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
 
-            // processCountingSource builder ...
+            // ProcessCountingSources
             var processCountingSourceConfiguration = configuration.GetSection("processCountingSources") as ProcessCountingSourceConfiguration;
 
             if (processCountingSourceConfiguration != null)
             {
-                foreach (ProcessElement config in processCountingSourceConfiguration.Processes)
-                {
-                    sources.Add(new ProcessCountingSource(config));
-                }
+                sources.AddRange(ProcessCountingSourceBuilder.Build(processCountingSourceConfiguration));
             }
 
-            // processUptimeSource builder
+            // ProcessUptimeSources
             var processUptimeSourceConfiguration = configuration.GetSection("processUptimeSources") as ProcessUptimeSourceConfiguration;
 
             if (processUptimeSourceConfiguration != null)
             {
-                foreach (ProcessElement config in processUptimeSourceConfiguration.Processes)
-                {
-                    sources.Add(new ProcessUptimeSource(config));
-                }
+                sources.AddRange(ProcessUptimeSourceBuilder.Build(processUptimeSourceConfiguration));
             }
 
-            // performanceCounterDataSource builder
+            // PerformanceCounterDataSources
             var performanceCounterSourceConfiguration = configuration.GetSection("performanceCounterSources") as PerformanceCounterDataSourceConfiguration;
 
             if (performanceCounterSourceConfiguration != null)
             {
-                foreach (CounterElement config in performanceCounterSourceConfiguration.Counters)
-                {
-                    sources.Add(new PerformanceCounterDataSource(config));
-                }
+                sources.AddRange(PerformanceCounterDataSourceBuilder.Build(performanceCounterSourceConfiguration));
             }
 
-            // sqlServerDataSource builder
+            // SqlServerDataSources
             var sqlServerDataSourceConfiguration = configuration.GetSection("databaseSources") as SqlServerDataSourceConfiguration;
 
             if (sqlServerDataSourceConfiguration != null)
             {
-                foreach (DatabaseElement config in sqlServerDataSourceConfiguration.Databases)
-                {
-                    sources.Add(new SqlServerDataSource(config));
-                }
+                sources.AddRange(SqlServerDataSourceBuilder.Build(sqlServerDataSourceConfiguration));
             }
 
-            // circularDataSink builder
+            // CircularDataSinks
             var circularDataSinkConfiguration = configuration.GetSection("circularDataSinks") as CircularDataSinkConfiguration;
 
             if (circularDataSinkConfiguration != null)
             {
-                foreach (SinkElement config in circularDataSinkConfiguration.Sinks)
-                {
-                    var sink = new CircularDataSink(config);
+                var circularDataSinks = CircularDataSinkBuilder.Build(circularDataSinkConfiguration);
 
-                    sources.Add(sink);
-                    sinks.Add(sink);
-                }
+                sources.AddRange(circularDataSinks);
+                sinks.AddRange(circularDataSinks);
             }
 
-            // fileSystemDataStore builder
+            // FileSystemDataStores
             var fileSystemDataStoreConfiguration = configuration.GetSection("fileSystemDataStores") as FileSystemDataStoreConfiguration;
-
+            
             if (fileSystemDataStoreConfiguration != null)
             {
-                foreach (StoreElement config in fileSystemDataStoreConfiguration.Stores)
-                {
-                    sinks.Add(new FileSystemDataStore(config));
-                }
+                sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
             }
 
-            // chain ... builder?
+            // Chains
             var chainConfiguration = configuration.GetSection("chains") as ChainConfiguration;
-
+            
             if (chainConfiguration != null)
             {
                 chains.AddRange(ChainBuilder.Build(sources, sinks, chainConfiguration.Links));

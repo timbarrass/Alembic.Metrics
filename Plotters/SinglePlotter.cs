@@ -108,13 +108,11 @@ namespace Plotters
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private ISnapshotProvider _snapshotProvider;
-
         private MetricSpecification _spec;
 
-        private string _directory;
+        private readonly string _directory;
 
-        private PrivateFontCollection _fontCollection;
+        private readonly PrivateFontCollection _fontCollection;
         
         public string Name
         {

@@ -64,7 +64,7 @@ namespace Coordination
             }
         }
 
-        public ChainElement this[string name]
+        public new ChainElement this[string name]
         {
             get { return (ChainElement)base.BaseGet(name); }
         }

@@ -1,9 +1,18 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sources
 {
     public class SqlServerDataSourceConfiguration : ConfigurationSection
     {
+        public SqlServerDataSourceConfiguration()
+        {}
+
+        public SqlServerDataSourceConfiguration(IEnumerable<DatabaseElement> configs)
+        {
+            Databases.Add(configs);
+        }
+
         [ConfigurationProperty("databases")]
         public DatabaseElementCollection Databases
         {
@@ -61,6 +70,14 @@ namespace Sources
         CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class DatabaseElementCollection : ConfigurationElementCollection
     {
+        public void Add(IEnumerable<DatabaseElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                base.BaseAdd(config);
+            }
+        }
+
         public DatabaseElement this[int index]
         {
             get { return (DatabaseElement)base.BaseGet(index); }
@@ -74,7 +91,7 @@ namespace Sources
             }
         }
 
-        public DatabaseElement this[string name]
+        public new DatabaseElement this[string name]
         {
             get { return (DatabaseElement)base.BaseGet(name); }
         }

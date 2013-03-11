@@ -1,9 +1,19 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sources
 {
     public class PerformanceCounterDataSourceConfiguration : ConfigurationSection
     {
+        public PerformanceCounterDataSourceConfiguration()
+        {
+        }
+
+        public PerformanceCounterDataSourceConfiguration(IEnumerable<CounterElement> configs)
+        {
+            Counters.Add(configs);
+        }
+
         [ConfigurationProperty("counters")]
         public CounterElementCollection Counters
         {
@@ -90,6 +100,14 @@ namespace Sources
     CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class CounterElementCollection : ConfigurationElementCollection
     {
+        public void Add(IEnumerable<CounterElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                base.BaseAdd(config);
+            }
+        }
+
         public CounterElement this[int index]
         {
             get { return (CounterElement)base.BaseGet(index); }
@@ -103,7 +121,7 @@ namespace Sources
             }
         }
 
-        public CounterElement this[string name]
+        public new CounterElement this[string name]
         {
             get { return (CounterElement)base.BaseGet(name); }
         }

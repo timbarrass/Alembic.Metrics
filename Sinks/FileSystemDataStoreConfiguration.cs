@@ -1,9 +1,19 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sinks
 {
     public class FileSystemDataStoreConfiguration : ConfigurationSection
     {
+        public FileSystemDataStoreConfiguration()
+        {
+        }
+
+        public FileSystemDataStoreConfiguration(IEnumerable<StoreElement> configs)
+        {
+            Stores.Add(configs);
+        }
+
         [ConfigurationProperty("stores")]
         public StoreElementCollection Stores
         {
@@ -60,6 +70,14 @@ namespace Sinks
     [ConfigurationCollection(typeof(StoreElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class StoreElementCollection : ConfigurationElementCollection
     {
+        public void Add(IEnumerable<StoreElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                BaseAdd(config, true);
+            }
+        }
+
         public StoreElement this[int index]
         {
             get { return (StoreElement)base.BaseGet(index); }
@@ -73,7 +91,7 @@ namespace Sinks
             }
         }
 
-        public StoreElement this[string name]
+        public new StoreElement this[string name]
         {
             get { return (StoreElement)base.BaseGet(name); }
         }

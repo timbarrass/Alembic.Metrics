@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,14 +59,20 @@
     <Compile Include="BreakingDataSink.cs" />
     <Compile Include="ChainBuilderTests.cs" />
     <Compile Include="ChainTests.cs" />
+    <Compile Include="CircularDataSinkBuilderTests.cs" />
     <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="FileSystemDataStoreBuilderTests.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
+    <Compile Include="PerformanceCounterDataSourceBuilderTests.cs" />
     <Compile Include="PerformanceCounterDataSourceTests.cs" />
+    <Compile Include="ProcessCountingSourceBuilderTests.cs" />
     <Compile Include="ProcessCountingSourceTests.cs" />
+    <Compile Include="ProcessUptimeSourceBuilderTests.cs" />
     <Compile Include="ProcessUptimeSourceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
+    <Compile Include="SqlServerDataSourceBuilderTests.cs" />
     <Compile Include="SqlServerDataSourceTests.cs" />
     <Compile Include="TestSerializable.cs" />
   </ItemGroup>

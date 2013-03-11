@@ -87,7 +87,7 @@ namespace Sources
                 {
                     uptime += new TimeSpan(DateTime.Now.Ticks - process.StartTime.Ticks).TotalSeconds;
                 }
-                catch(InvalidOperationException ex)
+                catch(InvalidOperationException)
                 {
                     // _assume_ this is because the process has gone away between getting the process 
                     // list and making the query. Ignore.

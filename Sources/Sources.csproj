@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PerformanceCounterDataSourceBuilder.cs" />
+    <Compile Include="ProcessCountingSourceBuilder.cs" />
+    <Compile Include="ProcessUptimeSourceBuilder.cs" />
     <Compile Include="ProcessUptimeSourceConfiguration.cs" />
     <Compile Include="ProcessUptimeSource.cs" />
     <Compile Include="NullSource.cs" />
@@ -56,16 +59,13 @@
     <Compile Include="ProcessCountingSourceConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerDataSource.cs" />
+    <Compile Include="SqlServerDataSourceBuilder.cs" />
     <Compile Include="SqlServerDataSourceConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
       <Name>Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sinks\Sinks.csproj">
-      <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>
-      <Name>Sinks</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,9 +1,21 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 
 namespace Sources
 {
     public class ProcessUptimeSourceConfiguration : ConfigurationSection
     {
+        public ProcessUptimeSourceConfiguration()
+        {}
+
+        public ProcessUptimeSourceConfiguration(IEnumerable<ProcessElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                Processes.Add(config);
+            }
+        }
+
         [ConfigurationProperty("processes")]
         public ProcessElementCollection Processes
         {
