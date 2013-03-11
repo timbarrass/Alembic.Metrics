@@ -24,17 +24,7 @@ namespace Sources
 
         private MetricSpecification _spec;
 
-        private int _delay;
-
         private string _id;
-
-        public int Delay
-        {
-            get
-            {
-                return _delay;
-            }
-        }
 
         public string Name
         {
@@ -55,15 +45,15 @@ namespace Sources
 
             var context = new DataContext(conn);
 
-            Initialise(config.Id, config.Name, context, config.Query, config.Delay);
+            Initialise(config.Id, config.Name, context, config.Query);
         }
 
-        public SqlServerDataSource(string id, string name, DataContext context, string query, int delay)
+        public SqlServerDataSource(string id, string name, DataContext context, string query)
         {
-            Initialise(id, name, context, query, delay);
+            Initialise(id, name, context, query);
         }
 
-        private void Initialise(string id, string name, DataContext context, string query, int delay)
+        private void Initialise(string id, string name, DataContext context, string query)
         {
             _id = id;
 
@@ -72,8 +62,6 @@ namespace Sources
             _name = name;
 
             _query = query;
-
-            _delay = delay*1000;
 
             _spec = new MetricSpecification(_name, null, null);
         }

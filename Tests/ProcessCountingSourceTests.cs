@@ -9,7 +9,7 @@ namespace Tests
         [Test]
         public void ProcessCountingSource_ProvidesASpec()
         {
-            var source = new ProcessCountingSource("count", "count", "chrome", null, 1);
+            var source = new ProcessCountingSource("count", "count", "chrome", null);
 
             var expectedMetrics = new[] { "count" };
 
@@ -19,7 +19,7 @@ namespace Tests
         [Test]
         public void ProcessingCountingSource_CanBeConfiguredWithAConfigElement()
         {
-            var config = new ProcessElement("id", "testCounter", "exe", "machine", 1);
+            var config = new ProcessElement("id", "testCounter", "exe", "machine");
 
             var source = new ProcessCountingSource(config);
 

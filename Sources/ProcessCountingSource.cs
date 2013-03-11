@@ -15,19 +15,9 @@ namespace Sources
 
         private string _processCountName;
 
-        private int _delay;
-
         private string _id;
 
         private string _machineName = Environment.MachineName;
-
-        public int Delay
-        {
-            get
-            {
-                return _delay;
-            }
-        }
 
         public string Name
         {
@@ -40,17 +30,15 @@ namespace Sources
         }
 
         public ProcessCountingSource(ProcessElement config)
-            : this(config.Id, config.Name, config.Exe, config.MachineName, config.Delay)
+            : this(config.Id, config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, string machine, int delay)
+        public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, string machine)
         {
             _processToMonitor = processToMonitor;
 
             _processCountName = processCountFriendlyName;
-
-            _delay = delay * 1000;
 
             _id = id;
 

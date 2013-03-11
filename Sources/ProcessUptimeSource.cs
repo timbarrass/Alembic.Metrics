@@ -16,19 +16,9 @@ namespace Sources
 
         private string _processUptimeName;
 
-        private int _delay;
-
         private string _id;
 
         private string _machineName;
-
-        public int Delay
-        {
-            get
-            {
-                return _delay;
-            }
-        }
 
         public string Name
         {
@@ -41,17 +31,15 @@ namespace Sources
         }
 
         public ProcessUptimeSource(ProcessElement config)
-            : this(config.Id, config.Name, config.Exe, config.MachineName, config.Delay)
+            : this(config.Id, config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine, int delay)
+        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine)
         {
             _processToMonitor = processToMonitor;
 ;
             _processUptimeName = processUptimeFriendlyName;
-
-            _delay = delay * 1000;
 
             _id = id;
 

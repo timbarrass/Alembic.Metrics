@@ -14,7 +14,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new ProcessElement("id", name, "exe", "machine", 10)
+                    new ProcessElement("id", name, "exe", "machine")
                 };
 
             var configCollection = new ProcessUptimeSourceConfiguration(configs); 

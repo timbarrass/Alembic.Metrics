@@ -15,32 +15,20 @@ namespace Sources
 
         private string _counterName;
 
-        private int _delay;
-
         private string _id;
-
-        public int Delay
-        {
-            get
-            {
-                return _delay;
-            }
-        }
 
         public string Name { get { return _counterName; } }
 
         public string Id { get { return _id; } }
 
-        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max, int delay) 
-            : this(name, categoryName, counterName, instanceName, machine, min, max, delay)
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max) 
+            : this(name, categoryName, counterName, instanceName, machine, min, max)
         {
             _id = id;
         }
 
-        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max, int delay)
+        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max)
         {
-            _delay = delay * 1000;
-
             _counterName = name;
 
             if (string.IsNullOrEmpty(machine))
@@ -70,7 +58,7 @@ namespace Sources
         }
 
         public PerformanceCounterDataSource(CounterElement config)
-            : this(config.Id, config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName, config.Min, config.Max, config.Delay)
+            : this(config.Id, config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName, config.Min, config.Max)
         {
         }
 

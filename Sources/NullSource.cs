@@ -22,11 +22,6 @@ namespace Sources
             return new Snapshot();
         }
 
-        public int Delay
-        {
-            get { return 1000; }
-        }
-
         public string Name
         {
             get { return "NullSource"; }

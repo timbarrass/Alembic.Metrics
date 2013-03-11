@@ -29,19 +29,12 @@ namespace Sources
         {
         }
 
-        public ProcessElement(string id, string name, string exe, string machineName, int delay)
+        public ProcessElement(string id, string name, string exe, string machineName)
         {
             base["id"] = id;
             base["name"] = name;
             base["exe"] = exe;
             base["machineName"] = machineName;
-            base["delay"] = delay;
-        }
-
-        [ConfigurationProperty("delay", IsRequired = true)]
-        public int Delay
-        {
-            get { return (int)base["delay"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

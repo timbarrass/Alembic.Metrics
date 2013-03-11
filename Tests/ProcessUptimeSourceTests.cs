@@ -9,7 +9,7 @@ namespace Tests
         [Test]
         public void ProcessUptimeSource_ProvidesASpec()
         {
-            var source = new ProcessUptimeSource("id", "uptime", "chrome", null, 1);
+            var source = new ProcessUptimeSource("id", "uptime", "chrome", null);
 
             var expectedMetrics = new[] { "uptime" };
 
@@ -19,7 +19,7 @@ namespace Tests
         [Test]
         public void ProcessUptimeSource_CanBeConfiguredWithAconfigElement()
         {
-            var config = new ProcessElement("id", "testCounter", "exe", "machine", 1);
+            var config = new ProcessElement("id", "testCounter", "exe", "machine");
 
             var source = new ProcessUptimeSource(config);
 

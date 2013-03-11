@@ -23,7 +23,7 @@ namespace Tests
 
             var context = new DataContext(connString);
 
-            var source = new SqlServerDataSource("id", "name", context, query, 1);
+            var source = new SqlServerDataSource("id", "name", context, query);
 
             var timeseries = source.Snapshot();
 
@@ -41,7 +41,7 @@ namespace Tests
 
             var query = "select * from ExampleData";
 
-            var config = new DatabaseElement("id", "testDb", connString, query, 1);
+            var config = new DatabaseElement("id", "testDb", connString, query);
 
             var source = new SqlServerDataSource(config);
 

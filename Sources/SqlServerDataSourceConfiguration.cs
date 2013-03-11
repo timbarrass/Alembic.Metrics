@@ -26,19 +26,12 @@ namespace Sources
         {
         }
 
-        public DatabaseElement(string id, string name, string connString, string query, int delay)
+        public DatabaseElement(string id, string name, string connString, string query)
         {
             base["id"] = id;
             base["name"] = name;
             base["connectionString"] = connString;
             base["query"] = query;
-            base["delay"] = delay;
-        }
-
-        [ConfigurationProperty("delay", IsRequired = true)]
-        public int Delay
-        {
-            get { return (int)base["delay"]; }
         }
 
         [ConfigurationProperty("id", IsRequired = true)]
