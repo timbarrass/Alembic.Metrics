@@ -62,6 +62,7 @@
     <Compile Include="CircularDataSinkBuilderTests.cs" />
     <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="ConfigurationParserTests.cs" />
     <Compile Include="FileSystemDataStoreBuilderTests.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
     <Compile Include="PerformanceCounterDataSourceBuilderTests.cs" />
@@ -102,6 +103,12 @@
       <Project>{87791A59-4075-408B-B44F-805C373C9EA8}</Project>
       <Name>Sources</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestConfig.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
