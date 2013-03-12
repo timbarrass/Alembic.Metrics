@@ -6,8 +6,6 @@ namespace Coordination
 {
     public class Chain
     {
-        private readonly string _name;
-
         private readonly ISnapshotProvider _source;
 
         private readonly IEnumerable<ISnapshotConsumer> _sinks;
@@ -16,16 +14,18 @@ namespace Coordination
 
         public Chain(string name, ISnapshotProvider source, params ISnapshotConsumer[] sinks)
         {
-            _name = name;
+            Name = name;
 
             _source = source;
 
             _sinks = sinks;
         }
 
+        public string Name { get; private set; }
+
         public void Update()
         {
-            Log.Debug(string.Format("Updating chain '{0}'", _name));
+            Log.Debug(string.Format("Updating chain '{0}'", Name));
 
             var snapshot = _source.Snapshot();
 

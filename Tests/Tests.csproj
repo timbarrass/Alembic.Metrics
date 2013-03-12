@@ -72,6 +72,7 @@
     <Compile Include="ProcessUptimeSourceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sandbox.cs" />
+    <Compile Include="ScheduleBuilderTests.cs" />
     <Compile Include="SqlServerDataSourceBuilderTests.cs" />
     <Compile Include="SqlServerDataSourceTests.cs" />
     <Compile Include="TestSerializable.cs" />

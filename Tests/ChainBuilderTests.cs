@@ -62,7 +62,9 @@ namespace Tests
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
-            ChainBuilder.Build(sources, new HashSet<ISnapshotConsumer>(), configs);
+            var sourceChains = ChainBuilder.Build(sources, new HashSet<ISnapshotConsumer>(), configs);
+
+            Assert.AreEqual(0, sourceChains.Count());
 
             var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
             buffer.Expect(b => b.Update(snapshot));
@@ -70,7 +72,9 @@ namespace Tests
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer };
 
-            ChainBuilder.Build(new HashSet<ISnapshotProvider>(), sinks, configs);
+            var sinkChains = ChainBuilder.Build(new HashSet<ISnapshotProvider>(), sinks, configs);
+
+            Assert.AreEqual(0, sinkChains.Count());
         }
 
         [Test, Category("CollaborationTest")]
