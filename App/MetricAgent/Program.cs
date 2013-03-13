@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.ServiceProcess;
+using System.Threading;
+using System.Threading.Tasks;
+using Coordination;
 using Data;
 using Plotters;
 using Sinks;
@@ -51,10 +55,37 @@ namespace MetricAgent
         protected override void OnStart(string[] args)
         {
             Log.Info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+            var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
+
+            var schedules = ConfigurationParser.Parse(configuration);
+
+            _tokenSource = new CancellationTokenSource();
+            _cancellationToken = _tokenSource.Token;
+
+            var tasks = new List<Task>();
+
+            foreach (var schedule in schedules)
+            {
+                var currentSchedule = schedule;
+
+                tasks.Add(Task.Factory.StartNew(() => currentSchedule.Start(_cancellationToken), _cancellationToken));
+            }
+
+            try
+            {
+                Task.WaitAny(tasks.ToArray());
+            }
+            catch (AggregateException ae)
+            {
+                ae.Handle(x => { Log.Error(ae.Message); return false; });
+            }
         }
 
         protected override void OnStop()
         {
+            _tokenSource.Cancel();
+
             Log.Info("========================================================================");
         }
 
@@ -64,5 +95,9 @@ namespace MetricAgent
         }
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(Program).Name);
+
+        private CancellationToken _cancellationToken;
+
+        private CancellationTokenSource _tokenSource;
     }
 }

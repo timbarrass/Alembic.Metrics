@@ -34,9 +34,7 @@ namespace Tests
             var tokenSource = new CancellationTokenSource();
             var cancellationToken = tokenSource.Token;
 
-            var WrappedSchedule = new Action<CancellationToken>(t => schedule.Start(t));
-
-            var task = Task.Factory.StartNew(() => WrappedSchedule(cancellationToken), cancellationToken);
+            var task = Task.Factory.StartNew(() => schedule.Start(cancellationToken), cancellationToken);
 
             Thread.Sleep(1000);
 

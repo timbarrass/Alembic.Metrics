@@ -60,6 +60,10 @@
     <Compile Include="QueryExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Coordination\Coordination.csproj">
+      <Project>{1E332CB5-19BB-4507-8DDD-DA2DEF39F104}</Project>
+      <Name>Coordination</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Data\Data.csproj">
       <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
       <Name>Data</Name>
