@@ -71,6 +71,14 @@ namespace Coordination
                 sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
             }
 
+            // SinglePlotters
+            var plotterConfiguration = configuration.GetSection("singlePlotters") as PlotterConfiguration;
+
+            if (plotterConfiguration != null)
+            {
+                sinks.AddRange(SinglePlotterBuilder.Build(plotterConfiguration));
+            }
+
             // Chains
             var chainConfiguration = configuration.GetSection("chains") as ChainConfiguration;
 

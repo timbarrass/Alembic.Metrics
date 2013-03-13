@@ -6,18 +6,41 @@ using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
 
-namespace Plotters
+namespace Sinks
 {
-    /// <summary>
-    /// Intent here is to have the agent configured with a set of plotters, each of
-    /// which is configured with a set of sinks mapped to a set of specs to request
-    /// for each sink.
-    /// </summary>
     public class SinglePlotter : ISnapshotConsumer
     {
+        public SinglePlotter(PlotterElement config)
+            : this(config.OutputDirectory, config.Min, config.Max, config.Name, config.Scale)
+        {
+        }
+
+        public SinglePlotter(string outputDirectory, float expectedMin, float expectedMax, string name, float scale)
+        {
+            _directory = outputDirectory;
+
+            _min = expectedMin;
+
+            _max = expectedMax;
+
+            _name = name;
+
+            _scale = scale;
+
+            _fontCollection = new PrivateFontCollection();
+
+            _fontCollection.AddFontFile("Apple ][.ttf");
+        }
+
         public SinglePlotter(string outputDirectory, MetricSpecification spec)
         {
-            _spec = spec;
+            if(spec.ExpectedMin.HasValue)
+                _min = spec.ExpectedMin.Value;
+
+            if(spec.ExpectedMax.HasValue)
+                _max = spec.ExpectedMax.Value;
+
+            _name = spec.Name;
             
             _directory = outputDirectory;
 
@@ -35,10 +58,10 @@ namespace Plotters
 
             if (xvals.Length != 0)
             {
-                yvals = snapshot.Select(y => y.Data).ToArray();
+                yvals = snapshot.Select(y => y.Data * _scale).ToArray();
             }
 
-            GenerateChart(xvals, yvals, _spec.ExpectedMin, _spec.ExpectedMax, _spec.Name);
+            GenerateChart(xvals, yvals, _min, _max, _name);
         }
 
         private void GenerateChart(DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
@@ -46,14 +69,14 @@ namespace Plotters
             chartName = Environment.MachineName + ": " + chartName;
 
             var titleFont = new Font(
-              _fontCollection.Families[0].Name,
-              8,
+              "Consolas",
+              12,
               FontStyle.Regular,
               GraphicsUnit.Pixel);
 
             var labelFont = new Font(
-              _fontCollection.Families[0].Name,
-              7,
+              "Consolas",
+              10,
               FontStyle.Regular,
               GraphicsUnit.Pixel);
 
@@ -81,8 +104,8 @@ namespace Plotters
                 chartArea.AxisY.Maximum = max.Value;
             }
 
-            chartArea.AxisX.LabelAutoFitMaxFontSize = 7;
-            chartArea.AxisY.LabelAutoFitMaxFontSize = 7;
+            chartArea.AxisX.LabelAutoFitMaxFontSize = 10;
+            chartArea.AxisY.LabelAutoFitMaxFontSize = 10;
             chart.ChartAreas.Add(chartArea);
 
             var series = new Series();
@@ -108,7 +131,13 @@ namespace Plotters
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private MetricSpecification _spec;
+        private readonly float _scale = 1f;
+
+        private readonly float _min;
+
+        private readonly float _max;
+
+        private readonly string _name;
 
         private readonly string _directory;
 
@@ -116,7 +145,7 @@ namespace Plotters
         
         public string Name
         {
-            get { return _spec.Name; }
+            get { return _name; }
         }
 
         public void ResetWith(Snapshot snapshot)

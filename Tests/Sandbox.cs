@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using Coordination;
 using Data;
 using NUnit.Framework;
@@ -75,6 +74,14 @@ namespace Tests
                 sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
             }
 
+            // SinglePlotters
+            var plotterConfiguration = configuration.GetSection("singlePlotters") as PlotterConfiguration;
+
+            if (plotterConfiguration != null)
+            {
+                sinks.AddRange(SinglePlotterBuilder.Build(plotterConfiguration));
+            }
+
             // Chains
             var chainConfiguration = configuration.GetSection("chains") as ChainConfiguration;
             
@@ -92,8 +99,8 @@ namespace Tests
             }
 
             Assert.AreEqual(14, sources.Count);
-            Assert.AreEqual(12, sinks.Count);
-            Assert.AreEqual(1, chains.Count);
+            Assert.AreEqual(13, sinks.Count);
+            Assert.AreEqual(2, chains.Count);
             Assert.AreEqual(1, schedules.Count);
         }
 

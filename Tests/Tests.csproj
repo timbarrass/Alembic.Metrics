@@ -63,6 +63,7 @@
     <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="ConfigurationParserTests.cs" />
+    <Compile Include="SinglePlotterTests.cs" />
     <Compile Include="FileSystemDataStoreBuilderTests.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
     <Compile Include="PerformanceCounterDataSourceBuilderTests.cs" />

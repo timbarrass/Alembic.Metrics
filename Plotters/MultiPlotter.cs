@@ -5,11 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
-using Sinks;
 
 namespace Plotters
 {
-    public class MultiPlotter<T> : IDataPlotter
+    public class MultiPlotter<T>
     {
         public MultiPlotter(ISnapshotProvider snapshotProvider, MetricSpecification[] specs, string name, string outputPath)
         {
