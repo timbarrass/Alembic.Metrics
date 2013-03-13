@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Coordination
 {
@@ -7,7 +8,7 @@ namespace Coordination
     {
         public Schedule(ScheduleElement config, IEnumerable<Chain> chains)
         {
-            Delay = config.Delay;
+            Delay = config.Delay * 1000;
 
             Name = config.Name;
 
@@ -18,11 +19,30 @@ namespace Coordination
 
         public Schedule(string name, int delay, IEnumerable<Chain> chains)
         {
-            Delay = delay;
+            Delay = delay * 1000;
 
             Name = name;
 
             Chains = chains.ToArray();
+        }
+
+        public void Start(CancellationToken cancellationToken)
+        {
+            while (! cancellationToken.IsCancellationRequested)
+            {
+                foreach(var chain in Chains)
+                {
+                    chain.Update();
+                }
+
+                var duration = 0.0;
+                while (duration < Delay && ! cancellationToken.IsCancellationRequested)
+                {
+                    Thread.Sleep(500);
+
+                    duration += 500;
+                }
+            }
         }
 
         public string Name { get; private set; }

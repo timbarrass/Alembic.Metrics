@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Coordination
 {
@@ -7,5 +8,7 @@ namespace Coordination
         string Name { get; }
 
         IEnumerable<Chain> Chains { get; }
+        
+        void Start(CancellationToken token);
     }
 }
