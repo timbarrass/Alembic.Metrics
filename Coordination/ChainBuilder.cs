@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -31,30 +32,37 @@ namespace Coordination
             
             foreach(var config in configs)
             {
-                if (!sources.Any(s => s.Name.Equals(config.Source)))
+                try
                 {
-                    Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied.", config.Name));
+                    if (!sources.Any(s => s.Name.Equals(config.Source)))
+                    {
+                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied.", config.Name));
 
-                    continue;
+                        continue;
+                    }
+
+                    if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))))
+                    {
+                        Log.Warn(string.Format("Couldn't find sink '{0}' in the set of sinks supplied.", config.Name));
+
+                        continue;
+                    }
+
+                    var chosenSource = sources.First(s => s.Name.Equals(config.Source));
+
+                    var chosenSinks = new List<ISnapshotConsumer>();
+
+                    foreach (var sinkName in config.Sinks.Split(','))
+                    {
+                        chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
+                    }
+
+                    chains.Add(new Chain(config.Name, chosenSource, chosenSinks.ToArray()));
                 }
-
-                if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))))
+                catch (InvalidOperationException)
                 {
-                    Log.Warn(string.Format("Couldn't find sink '{0}' in the set of sinks supplied.", config.Name));
-
-                    continue;
+                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}'", config.Name, config.Source, config.Sinks));
                 }
-
-                var chosenSource = sources.First(s => s.Name.Equals(config.Source));
-
-                var chosenSinks = new List<ISnapshotConsumer>();
-
-                foreach(var sinkName in config.Sinks.Split(','))
-                {
-                    chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
-                }
-
-                chains.Add(new Chain(config.Name, chosenSource, chosenSinks.ToArray()));
             }
 
             return chains;
