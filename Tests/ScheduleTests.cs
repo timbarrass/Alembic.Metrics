@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +11,29 @@ namespace Tests
     [TestFixture]
     public class ScheduleTests
     {
+        [Test]
+        public void SchedulesCanBeRunOnce()
+        {
+            var scheduleName = "testSchedule";
+            var delay = 10;
+            var chainName1 = "testChain";
+            var chainName2 = "testChain2";
+
+            var chains = new[]
+                {
+                    new Chain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new Chain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                };
+
+            var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
+
+            var schedule = new Schedule(config, chains);
+
+            schedule.RunOnce();
+
+            // mock out source, sink and assert
+        }
+
         [Test]
         public void ScheduleCAnBeStartedAndStopped()
         {

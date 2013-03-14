@@ -36,14 +36,14 @@ namespace Coordination
                 {
                     if (!sources.Any(s => s.Name.Equals(config.Source)))
                     {
-                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied.", config.Name));
+                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied for chain '{1}'.", config.Source, config.Name));
 
                         continue;
                     }
 
                     if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))))
                     {
-                        Log.Warn(string.Format("Couldn't find sink '{0}' in the set of sinks supplied.", config.Name));
+                        Log.Warn(string.Format("Couldn't find one of sinks '{0}' in the set of sinks supplied for chain '{1}'.", config.Sinks, config.Name));
 
                         continue;
                     }

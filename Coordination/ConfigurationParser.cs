@@ -6,14 +6,22 @@ using Sources;
 
 namespace Coordination
 {
+    public struct ParsedSchedules
+    {
+        public IEnumerable<ISchedule> Schedules;
+
+        public IEnumerable<ISchedule> PreloadSchedules;
+    }
+
     public class ConfigurationParser
     {
-        public static IEnumerable<ISchedule> Parse(Configuration configuration)
+        public static ParsedSchedules Parse(Configuration configuration)
         {
             var sources = new List<ISnapshotProvider>();
             var sinks = new List<ISnapshotConsumer>();
             var chains = new List<Chain>();
             var schedules = new List<ISchedule>();
+            var preloadSchedules = new List<ISchedule>();
 
             // ProcessCountingSources
             var processCountingSourceConfiguration =
@@ -68,7 +76,10 @@ namespace Coordination
 
             if (fileSystemDataStoreConfiguration != null)
             {
-                sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
+                var stores = FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration);
+
+                sinks.AddRange(stores);
+                sources.AddRange(stores);
             }
 
             // SinglePlotters
@@ -87,6 +98,14 @@ namespace Coordination
                 chains.AddRange(ChainBuilder.Build(sources, sinks, chainConfiguration.Links));
             }
 
+            // PreloadSchedules
+            var preloadScheduleConfiguration = configuration.GetSection("preloadSchedules") as ScheduleConfiguration;
+
+            if (preloadScheduleConfiguration != null)
+            {
+                preloadSchedules.AddRange(ScheduleBuilder.Build(preloadScheduleConfiguration, chains));
+            }
+
             // Schedules
             var scheduleConfiguration = configuration.GetSection("schedules") as ScheduleConfiguration;
 
@@ -95,7 +114,7 @@ namespace Coordination
                 schedules.AddRange(ScheduleBuilder.Build(scheduleConfiguration, chains));
             }
 
-            return schedules;
+            return new ParsedSchedules { Schedules = schedules, PreloadSchedules = preloadSchedules };
         }
     }
 }

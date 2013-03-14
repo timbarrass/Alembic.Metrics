@@ -10,5 +10,7 @@ namespace Coordination
         IEnumerable<Chain> Chains { get; }
         
         void Start(CancellationToken token);
+
+        void RunOnce();
     }
 }

@@ -60,12 +60,17 @@ namespace MetricAgent
 
             var schedules = ConfigurationParser.Parse(configuration);
 
+            foreach(var preload in schedules.PreloadSchedules)
+            {
+                preload.RunOnce();
+            }
+
             _tokenSource = new CancellationTokenSource();
             _cancellationToken = _tokenSource.Token;
 
             var tasks = new List<Task>();
 
-            foreach (var schedule in schedules)
+            foreach (var schedule in schedules.Schedules)
             {
                 var currentSchedule = schedule;
 

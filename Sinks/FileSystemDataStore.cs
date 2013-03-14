@@ -4,11 +4,14 @@ using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Data;
+using log4net;
 
 namespace Sinks
 {
     public class FileSystemDataStore : ISnapshotConsumer, ISnapshotProvider
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof(FileSystemDataStore).Name);
+
         public FileSystemDataStore(StoreElement config)
         {
             _root = config.OutputPath;
@@ -109,11 +112,18 @@ namespace Sinks
                     }
                     catch(FileNotFoundException)
                     {
-                        throw;
+                        Log.Warn(string.Format("Attempted to snapshot '{0}', but no underlying file was found.", Name));
+
+                        return new Snapshot();
                     }
                     catch (Exception)
                     {
-                        if (attempt == allowedAttempts) throw;
+                        if (attempt == allowedAttempts)
+                        {
+                            Log.Warn(string.Format("Attempted to snapshot '{0}', but failed {1} times", Name, attempt));
+
+                            return new Snapshot();                            
+                        }
                         
                         // As for Write -- default to simplest backoff
                         Thread.Sleep(100);

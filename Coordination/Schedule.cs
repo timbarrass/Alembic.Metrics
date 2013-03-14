@@ -30,10 +30,7 @@ namespace Coordination
         {
             while (! cancellationToken.IsCancellationRequested)
             {
-                foreach(var chain in Chains)
-                {
-                    chain.Update();
-                }
+                RunOnce();
 
                 var duration = 0.0;
                 while (duration < Delay && ! cancellationToken.IsCancellationRequested)
@@ -50,5 +47,13 @@ namespace Coordination
         public IEnumerable<Chain> Chains { get; private set; }
 
         public int Delay { get; private set; }
+
+        public void RunOnce()
+        {
+            foreach (var chain in Chains)
+            {
+                chain.Update();
+            }
+        }
     }
 }

@@ -76,5 +76,17 @@ namespace Tests
 
             Directory.Delete(root);
         }
+
+        [Test]
+        public void JustWarnsandReturnsEmptySnapshotIfFileDoesNotExistOnSnapshot()
+        {
+            var root = "Store";
+
+            var store = new FileSystemDataStore(root, new MetricSpecification("testData", 0, 0));
+
+            var snapshot = store.Snapshot();
+
+            Assert.AreEqual(0, snapshot.Count());
+        }
     }
 }

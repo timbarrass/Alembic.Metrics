@@ -98,10 +98,10 @@ namespace Tests
                 schedules.AddRange(ScheduleBuilder.Build(scheduleConfiguration, chains));
             }
 
-            Assert.AreEqual(14, sources.Count);
-            Assert.AreEqual(13, sinks.Count);
-            Assert.AreEqual(2, chains.Count);
-            Assert.AreEqual(1, schedules.Count);
+            Assert.AreEqual(15, sources.Count);
+            Assert.AreEqual(18, sinks.Count);
+            Assert.AreEqual(8, chains.Count);
+            Assert.AreEqual(4, schedules.Count);
         }
 
         [Test]

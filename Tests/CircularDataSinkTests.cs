@@ -39,7 +39,7 @@ namespace Tests
 
             var sink = new CircularDataSink(10, spec);
 
-            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2)), new MetricData(20, DateTime.Now) };
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2)), new MetricData(20, DateTime.Now.AddMinutes(-1)) };
 
             sink.Update(snapshot);
 

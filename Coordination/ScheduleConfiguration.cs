@@ -16,6 +16,10 @@ namespace Coordination
         public ScheduleElement()
         {}
 
+        public ScheduleElement(string scheduleName, string chainNames)
+            : this(scheduleName, -1, chainNames)
+        {}
+
         public ScheduleElement(string scheduleName, int delay, string chainNames)
         {
             Name = scheduleName;
@@ -32,7 +36,7 @@ namespace Coordination
             private set { base["name"] = value; }
         }
 
-        [ConfigurationProperty("delay", IsRequired = true)]
+        [ConfigurationProperty("delay", IsRequired = false)]
         public int Delay
         {
             get { return (int)base["delay"]; }
