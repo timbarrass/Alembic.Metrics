@@ -15,7 +15,7 @@ namespace Tests
 
             var schedules = ConfigurationParser.Parse(configuration);
 
-            Assert.AreEqual(1, schedules.Count());
+            Assert.AreEqual(4, schedules.Count());
         }
     }
 }
