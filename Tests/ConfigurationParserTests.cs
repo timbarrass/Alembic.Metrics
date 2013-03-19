@@ -17,7 +17,7 @@ namespace Tests
             var schedules = ConfigurationParser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
-            Assert.AreEqual(4, schedules.Schedules.Count());
+            Assert.AreEqual(5, schedules.Schedules.Count());
         }
 
         [Test]

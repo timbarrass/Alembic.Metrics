@@ -96,7 +96,7 @@ namespace Coordination
 
             if (multiPlotterConfiguration != null)
             {
-                multiSourceSinks.AddRange(MultiPlotterBuilder.Build(plotterConfiguration));
+                multiSourceSinks.AddRange(MultiPlotterBuilder.Build(multiPlotterConfiguration));
             }
 
             // Chains

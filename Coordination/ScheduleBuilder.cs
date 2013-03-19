@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
 
 namespace Coordination
 {
@@ -18,7 +19,9 @@ namespace Coordination
 
             foreach(var config in configs)
             {
-                schedules.Add(new Schedule(config, chains));                
+                schedules.Add(new Schedule(config, chains));
+
+                Log.Info(string.Format("Created schedule '{0}'", config.Name));
             }
 
             return schedules;
@@ -28,5 +31,7 @@ namespace Coordination
         {
             return new Schedule(scheduleName, delay, chains);
         }
+
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ScheduleBuilder).Name);
     }
 }
