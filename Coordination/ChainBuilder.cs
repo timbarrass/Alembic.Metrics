@@ -67,8 +67,10 @@ namespace Coordination
 
                         var chosenSources = new List<ISnapshotProvider>();
 
-                        foreach(var sourceName in config.Sources.Split(','))
+                        foreach(var _ in config.Sources.Split(','))
                         {
+                            var sourceName = _.TrimStart(' ');
+
                             chosenSources.Add(sources.First(s => s.Name.Equals(sourceName)));
                         }
 
