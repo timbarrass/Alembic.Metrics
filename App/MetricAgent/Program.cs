@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Coordination;
 using Data;
-using Plotters;
 using Sinks;
 using Sources;
 using log4net;

@@ -10,7 +10,7 @@ namespace Coordination
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ChainBuilder).Name);
 
-        public static IEnumerable<Chain> Build(IEnumerable<ISnapshotProvider> sources, IEnumerable<ISnapshotConsumer> sinks, ChainElementCollection configs)
+        public static IEnumerable<IChain> Build(IEnumerable<ISnapshotProvider> sources, IEnumerable<ISnapshotConsumer> sinks, IEnumerable<IMultipleSnapshotConsumer> multiSinks, ChainElementCollection configs)
         {
             var enumerableConfigs = new List<ChainElement>();
 
@@ -19,49 +19,65 @@ namespace Coordination
                 enumerableConfigs.Add(config);
             }
 
-            return Build(sources, sinks, enumerableConfigs);
+            return Build(sources, sinks, multiSinks, enumerableConfigs);
         }
 
-        public static IEnumerable<Chain> Build(IEnumerable<ISnapshotProvider> sources, IEnumerable<ISnapshotConsumer> sinks, IEnumerable<ChainElement> configs)
+        public static IEnumerable<IChain> Build(IEnumerable<ISnapshotProvider> sources, IEnumerable<ISnapshotConsumer> sinks, IEnumerable<IMultipleSnapshotConsumer> multiSinks, IEnumerable<ChainElement> configs)
         {
-            var chains = new List<Chain>();
+            var chains = new List<IChain>();
 
             sources = sources.ToArray();
             sinks = sinks.ToArray();
+            multiSinks = multiSinks.ToArray();
 
-            
             foreach(var config in configs)
             {
                 try
                 {
-                    if (!sources.Any(s => s.Name.Equals(config.Source)))
+                    if (!sources.Any(s => config.Sources.Split(',').Any(i => i.Equals(s.Name))))
                     {
-                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied for chain '{1}'.", config.Source, config.Name));
+                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied for chain '{1}'.", config.Sources, config.Name));
 
                         continue;
                     }
 
-                    if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))))
+                    if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))) && !multiSinks.Any(s => config.MultiSinks.Split(',').Any(i => i.Equals(s.Name))))
                     {
-                        Log.Warn(string.Format("Couldn't find one of sinks '{0}' in the set of sinks supplied for chain '{1}'.", config.Sinks, config.Name));
+                        Log.Warn(string.Format("Couldn't find one of sinks '{0}' in the set of sinks and multisinks supplied for chain '{1}'.", config.Sinks, config.Name));
 
                         continue;
                     }
 
-                    var chosenSource = sources.First(s => s.Name.Equals(config.Source));
+                    if (config.Sources.Split(',').Count().Equals(1))
+                    {                      
+                        var chosenSource = sources.First(s => s.Name.Equals(config.Sources));
 
-                    var chosenSinks = new List<ISnapshotConsumer>();
+                        var chosenSinks = new List<ISnapshotConsumer>();
 
-                    foreach (var sinkName in config.Sinks.Split(','))
-                    {
-                        chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
+                        foreach (var sinkName in config.Sinks.Split(','))
+                        {
+                            chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
+                        }
+
+                        chains.Add(new MultipleSinkChain(config.Name, chosenSource, chosenSinks.ToArray()));
                     }
+                    else
+                    {
+                        var chosenSink = multiSinks.First(s => s.Name.Equals(config.MultiSinks));
 
-                    chains.Add(new Chain(config.Name, chosenSource, chosenSinks.ToArray()));
+                        var chosenSources = new List<ISnapshotProvider>();
+
+                        foreach(var sourceName in config.Sources.Split(','))
+                        {
+                            chosenSources.Add(sources.First(s => s.Name.Equals(sourceName)));
+                        }
+
+                        chains.Add(new MultipleSourceChain(config.Name, chosenSink, chosenSources.ToArray()));
+                    }
                 }
                 catch (InvalidOperationException)
                 {
-                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}'", config.Name, config.Source, config.Sinks));
+                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}'", config.Name, config.Sources, config.Sinks));
                 }
             }
 

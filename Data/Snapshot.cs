@@ -6,5 +6,6 @@ namespace Data
     [Serializable]
     public class Snapshot : List<MetricData>
     {
+        public string Name { get; set; }
     }
 }

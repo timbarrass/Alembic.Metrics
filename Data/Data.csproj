@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMultipleSnapshotConsumer.cs" />
     <Compile Include="ISnapshotConsumer.cs" />
     <Compile Include="ISnapshotProvider.cs" />
     <Compile Include="MetricData.cs" />

@@ -7,7 +7,7 @@ namespace Coordination
     {
         string Name { get; }
 
-        IEnumerable<Chain> Chains { get; }
+        IEnumerable<IChain> Chains { get; }
         
         void Start(CancellationToken token);
 

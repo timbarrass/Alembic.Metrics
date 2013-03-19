@@ -5,14 +5,14 @@ namespace Coordination
 {
     public class ScheduleBuilder
     {
-        public static IEnumerable<ISchedule> Build(ScheduleConfiguration configs, IEnumerable<Chain> chains)
+        public static IEnumerable<ISchedule> Build(ScheduleConfiguration configs, IEnumerable<IChain> chains)
         {
             var elements = configs.Links.Cast<ScheduleElement>().ToList();
 
             return Build(elements, chains);
         }
 
-        public static IEnumerable<ISchedule> Build(IEnumerable<ScheduleElement> configs, IEnumerable<Chain> chains)
+        public static IEnumerable<ISchedule> Build(IEnumerable<ScheduleElement> configs, IEnumerable<IChain> chains)
         {
             var schedules = new List<ISchedule>();
 
@@ -24,7 +24,7 @@ namespace Coordination
             return schedules;
         }
 
-        public static ISchedule Build(string scheduleName, int delay, IEnumerable<Chain> chains)
+        public static ISchedule Build(string scheduleName, int delay, IEnumerable<IChain> chains)
         {
             return new Schedule(scheduleName, delay, chains);
         }

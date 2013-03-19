@@ -72,7 +72,10 @@ namespace Sources
         {
             Log.Debug("Querying " + Name);
 
-            return new Snapshot { new MetricData( _counter.NextValue(), DateTime.Now) };
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( _counter.NextValue(), DateTime.Now));
+
+            return snapshot;
         }
 
         public Snapshot Snapshot(DateTime cutoff)

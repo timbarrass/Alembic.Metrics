@@ -92,7 +92,7 @@ namespace Sources
             var queryEnd = DateTime.Now;
             var queryDuration = new TimeSpan(queryEnd.Ticks - start.Ticks).TotalMilliseconds;
 
-            var returnSeries = new Snapshot();
+            var returnSeries = new Snapshot { Name = Name };
 
             foreach(var point in timeseries)
             {

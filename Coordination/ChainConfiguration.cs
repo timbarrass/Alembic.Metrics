@@ -17,13 +17,15 @@ namespace Coordination
         {
         }
 
-        public ChainElement(string name, string source, string sinks)
+        public ChainElement(string name, string sources, string sinks, string multiSinks)
         {
             Name = name;
 
-            Source = source;
+            Sources = sources;
 
             Sinks = sinks;
+
+            MultiSinks = multiSinks;
         }
 
         [ConfigurationProperty("name", IsRequired = true)]
@@ -33,11 +35,11 @@ namespace Coordination
             private set { base["name"] = value; }
         }
 
-        [ConfigurationProperty("source", IsRequired = true)]
-        public string Source
+        [ConfigurationProperty("sources", IsRequired = true)]
+        public string Sources
         {
-            get { return (string)base["source"]; }
-            private set { base["source"] = value; }
+            get { return (string)base["sources"]; }
+            private set { base["sources"] = value; }
         }
 
         [ConfigurationProperty("sinks", IsRequired = true)]
@@ -45,6 +47,13 @@ namespace Coordination
         {
             get { return (string)base["sinks"]; }
             private set { base["sinks"] = value; }
+        }
+
+        [ConfigurationProperty("multiSinks", IsRequired = true)]
+        public string MultiSinks
+        {
+            get { return (string)base["multiSinks"]; }
+            private set { base["multiSinks"] = value; }
         }
     }
 
@@ -76,7 +85,7 @@ namespace Coordination
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}-{1}-{2}", (element as ChainElement).Name, (element as ChainElement).Source, (element as ChainElement).Sinks);
+            return string.Format("{0}-{1}-{2}", (element as ChainElement).Name, (element as ChainElement).Sources, (element as ChainElement).Sinks);
         }
     }
 

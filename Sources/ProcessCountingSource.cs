@@ -67,7 +67,10 @@ namespace Sources
                 processes = Process.GetProcessesByName(_processToMonitor, _machineName);
             }
 
-            return new Snapshot { new MetricData( processes.Length, DateTime.Now) };
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( processes.Length, DateTime.Now));
+
+            return snapshot;
         }
 
         public Snapshot Snapshot(DateTime cutoff)

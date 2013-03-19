@@ -1,4 +1,3 @@
-using System.Linq;
 using NUnit.Framework;
 using Sources;
 
@@ -14,7 +13,7 @@ namespace Tests
 
             var expectedMetrics = new[] { "test" };
 
-                Assert.AreEqual(expectedMetrics[0], source.Spec.Name);
+            Assert.AreEqual(expectedMetrics[0], source.Spec.Name);
         }
 
         [Test]

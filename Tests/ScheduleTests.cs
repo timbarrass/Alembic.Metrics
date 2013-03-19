@@ -21,8 +21,8 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new Chain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new Chain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
             var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
@@ -44,8 +44,8 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new Chain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new Chain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
             var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
@@ -74,8 +74,8 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new Chain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new Chain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
             var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));

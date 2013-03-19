@@ -19,7 +19,8 @@ namespace Coordination
         {
             var sources = new List<ISnapshotProvider>();
             var sinks = new List<ISnapshotConsumer>();
-            var chains = new List<Chain>();
+            var multiSourceSinks = new List<IMultipleSnapshotConsumer>();
+            var chains = new List<IChain>();
             var schedules = new List<ISchedule>();
             var preloadSchedules = new List<ISchedule>();
 
@@ -90,12 +91,20 @@ namespace Coordination
                 sinks.AddRange(SinglePlotterBuilder.Build(plotterConfiguration));
             }
 
+            // MultiPlotters
+            var multiPlotterConfiguration = configuration.GetSection("multiPlotters") as PlotterConfiguration;
+
+            if (multiPlotterConfiguration != null)
+            {
+                multiSourceSinks.AddRange(MultiPlotterBuilder.Build(plotterConfiguration));
+            }
+
             // Chains
             var chainConfiguration = configuration.GetSection("chains") as ChainConfiguration;
 
             if (chainConfiguration != null)
             {
-                chains.AddRange(ChainBuilder.Build(sources, sinks, chainConfiguration.Links));
+                chains.AddRange(ChainBuilder.Build(sources, sinks, multiSourceSinks, chainConfiguration.Links));
             }
 
             // PreloadSchedules

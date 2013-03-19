@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
@@ -6,42 +7,52 @@ using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
 
-namespace Plotters
+namespace Sinks
 {
-    public class MultiPlotter<T>
+    public class MultiPlotter : IMultipleSnapshotConsumer
     {
-        public MultiPlotter(ISnapshotProvider snapshotProvider, MetricSpecification[] specs, string name, string outputPath)
+        public MultiPlotter(string name, string outputPath, float? expectedMin, float? expectedMax, float scale)
         {
-            _snapshotProvider = snapshotProvider;
-
-            _specs = specs;
-
-            _name = name;
+            Name = name;
 
             _directory = outputPath;
+
+            _min = expectedMin;
+
+            _max = expectedMax;
+
+            _scale = scale;
 
             _fontCollection = new PrivateFontCollection();
 
             _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
-        public MultiPlotter(ISnapshotProvider snapshotProvider, MetricSpecification[] specs, string name)
-            : this(snapshotProvider, specs, name, ".")
+        public MultiPlotter(PlotterElement config)
+            : this(config.Name, config.OutputDirectory, config.Min, config.Max, config.Scale)
         {
         }
 
-        public void Plot()
+        public string Name { get; private set; }
+
+        public void ResetWith(IEnumerable<Snapshot> snapshots)
         {
-            var chartName = Environment.MachineName + ": " + _name;
+            Update(snapshots);
+        }
+
+        public void Update(IEnumerable<Snapshot> snapshots)
+        {
+            var chartName = Environment.MachineName + ": " + Name;
             var chart = InitializeChart(chartName);
-            
-            foreach(var spec in _specs)
+
+            foreach (var snapshot in snapshots)
             {
-                Plot(chart, _snapshotProvider);
+                Plot(chart, snapshot);
             }
 
             RenderChart(chart, chartName);
         }
+
 
         private void RenderChart(Chart chart, string chartName)
         {
@@ -52,12 +63,8 @@ namespace Plotters
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private void Plot(Chart chart, ISnapshotProvider snapshotProvider)
+        private void Plot(Chart chart, Snapshot snapshot)
         {
-            var spec = snapshotProvider.Spec;
-
-            var snapshot = snapshotProvider.Snapshot();
-
             DateTime[] xvals;
             double?[] yvals = new double?[0];
 
@@ -65,10 +72,10 @@ namespace Plotters
 
             if (xvals.Length != 0)
             {
-                yvals = snapshot.Select(y => y.Data).ToArray();
+                yvals = snapshot.Select(y => y.Data * _scale).ToArray();
             }
 
-            AddSeriesToChart(chart, xvals, yvals, spec.ExpectedMin, spec.ExpectedMax, spec.Name);
+            AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot.Name);
         }
 
         private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
@@ -127,14 +134,14 @@ namespace Plotters
             return chart;
         }
 
-        private readonly MetricSpecification[] _specs;
-
-        private readonly ISnapshotProvider _snapshotProvider;
-
-        private readonly string _name;
-
         private readonly string _directory;
 
         private PrivateFontCollection _fontCollection;
+
+        private readonly float? _min;
+
+        private readonly float? _max;
+
+        private readonly float _scale;
     }
 }

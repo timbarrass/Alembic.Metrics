@@ -32,23 +32,6 @@ namespace Sinks
             _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
-        public SinglePlotter(string outputDirectory, MetricSpecification spec)
-        {
-            if(spec.ExpectedMin.HasValue)
-                _min = spec.ExpectedMin.Value;
-
-            if(spec.ExpectedMax.HasValue)
-                _max = spec.ExpectedMax.Value;
-
-            _name = spec.Name;
-            
-            _directory = outputDirectory;
-
-            _fontCollection = new PrivateFontCollection();
-
-            _fontCollection.AddFontFile("Apple ][.ttf");
-        }
-
         private void Plot(Snapshot snapshot)
         {
             DateTime[] xvals;

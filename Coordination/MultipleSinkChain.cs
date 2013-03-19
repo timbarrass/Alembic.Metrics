@@ -4,15 +4,15 @@ using log4net;
 
 namespace Coordination
 {
-    public class Chain
+    public class MultipleSinkChain : IChain
     {
         private readonly ISnapshotProvider _source;
 
-        private readonly IEnumerable<ISnapshotConsumer> _sinks;
+        private readonly IEnumerable<ISnapshotConsumer> _sinks; 
 
-        private static readonly ILog Log = LogManager.GetLogger(typeof(Chain).Name);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(MultipleSinkChain).Name);
 
-        public Chain(string name, ISnapshotProvider source, params ISnapshotConsumer[] sinks)
+        public MultipleSinkChain(string name, ISnapshotProvider source, params ISnapshotConsumer[] sinks)
         {
             Name = name;
 

@@ -18,7 +18,7 @@ namespace Tests
         {
             var sources = new List<ISnapshotProvider>();
             var sinks = new List<ISnapshotConsumer>();
-            var chains = new List<Chain>();
+            var chains = new List<IChain>();
             var schedules = new List<ISchedule>();
 
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
@@ -87,7 +87,7 @@ namespace Tests
             
             if (chainConfiguration != null)
             {
-                chains.AddRange(ChainBuilder.Build(sources, sinks, chainConfiguration.Links));
+                chains.AddRange(ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(),  chainConfiguration.Links));
             }
 
             // Schedules

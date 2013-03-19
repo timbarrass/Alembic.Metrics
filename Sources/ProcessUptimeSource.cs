@@ -84,7 +84,10 @@ namespace Sources
                 count++;
             }
 
-            return new Snapshot { new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now) };
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now));
+
+            return snapshot;
         }
 
         public Snapshot Snapshot(DateTime cutoff)

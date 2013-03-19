@@ -61,8 +61,8 @@
     <Compile Include="ChainTests.cs" />
     <Compile Include="CircularDataSinkBuilderTests.cs" />
     <Compile Include="CircularDataSinkTests.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="ConfigurationParserTests.cs" />
+    <Compile Include="MultiPlotterTests.cs" />
     <Compile Include="SinglePlotterTests.cs" />
     <Compile Include="FileSystemDataStoreBuilderTests.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
@@ -92,10 +92,6 @@
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{A777D09D-157B-4230-AEEC-C0E4742CD5C9}</Project>
       <Name>Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Plotters\Plotters.csproj">
-      <Project>{167DF28F-4570-4D63-B444-580D35531B8F}</Project>
-      <Name>Plotters</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sinks\Sinks.csproj">
       <Project>{4ECE58E8-CBBE-46EA-BB0B-3E09445387C1}</Project>

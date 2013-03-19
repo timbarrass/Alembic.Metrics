@@ -89,7 +89,7 @@ namespace Sinks
         {
             lock(_padlock)
             {
-                var snapshot = new Snapshot();
+                var snapshot = new Snapshot { Name = Name };
                 snapshot.AddRange(_data.ToArray()); // want a deep copy, not a reference
 
                 return snapshot;

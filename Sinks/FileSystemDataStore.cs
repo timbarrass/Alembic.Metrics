@@ -93,7 +93,7 @@ namespace Sinks
 
             var zipFileName = ZipFileName(_spec.Name);
 
-            var snapshot = new Snapshot();
+            var snapshot = new Snapshot { Name = Name };
 
             using (var gzo = new MemoryStream())
             {

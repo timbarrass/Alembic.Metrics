@@ -24,8 +24,8 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer"),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer")
+                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
+                    new ChainElement("secondTestChain", "testSource", "testBuffer", "")
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -40,7 +40,7 @@ namespace Tests
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer };
 
-            var chains = ChainBuilder.Build(sources, sinks, configs);
+            var chains = ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
 
             var schedule = ScheduleBuilder.Build(scheduleName, delay, chains);
 
@@ -59,8 +59,8 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer"),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer")
+                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
+                    new ChainElement("secondTestChain", "testSource", "testBuffer", "")
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -75,7 +75,7 @@ namespace Tests
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer };
 
-            var chains = ChainBuilder.Build(sources, sinks, configs);
+            var chains = ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
 
             var scheduleConfig = new ScheduleElement(scheduleName, delay, string.Join(",", "firstTestChain", "secondTestChain"));
 

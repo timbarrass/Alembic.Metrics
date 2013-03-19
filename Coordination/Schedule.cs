@@ -6,7 +6,7 @@ namespace Coordination
 {
     public class Schedule : ISchedule
     {
-        public Schedule(ScheduleElement config, IEnumerable<Chain> chains)
+        public Schedule(ScheduleElement config, IEnumerable<IChain> chains)
         {
             Delay = config.Delay * 1000;
 
@@ -17,7 +17,7 @@ namespace Coordination
             Chains = chains.Where(c => chainNames.Contains(c.Name)).ToArray();
         }
 
-        public Schedule(string name, int delay, IEnumerable<Chain> chains)
+        public Schedule(string name, int delay, IEnumerable<IChain> chains)
         {
             Delay = delay * 1000;
 
@@ -44,7 +44,7 @@ namespace Coordination
 
         public string Name { get; private set; }
 
-        public IEnumerable<Chain> Chains { get; private set; }
+        public IEnumerable<IChain> Chains { get; private set; }
 
         public int Delay { get; private set; }
 

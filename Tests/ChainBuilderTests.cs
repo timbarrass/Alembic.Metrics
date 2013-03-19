@@ -5,7 +5,6 @@ using System.Linq;
 using Coordination;
 using Data;
 using NUnit.Framework;
-using Plotters;
 using Rhino.Mocks;
 using Sinks;
 
@@ -21,8 +20,9 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer"),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer,testStore")
+                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
+                    new ChainElement("secondTestChain", "testSource", "testBuffer,testStore", ""),
+                    new ChainElement("thirdTestChain", "testSource,testSource", "", "testMultiStore")
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -37,11 +37,17 @@ namespace Tests
             store.Expect(s => s.Update(snapshot));
             store.Expect(s => s.Name).Return("testStore").Repeat.Any();
 
+            var multiStore = MockRepository.GenerateMock<IMultipleSnapshotConsumer>();
+            multiStore.Expect(s => s.Update(null)).IgnoreArguments();
+            multiStore.Expect(s => s.Name).Return("testMultiStore").Repeat.Any();
+
             var sources = new HashSet<ISnapshotProvider> { source };
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer, store };
 
-            var chains = ChainBuilder.Build(sources, sinks, configs);
+            var multiSinks = new HashSet<IMultipleSnapshotConsumer> { multiStore };
+
+            var chains = ChainBuilder.Build(sources, sinks, multiSinks, configs);
 
             Assert.AreEqual(configs.Count, chains.Count());
         }
@@ -53,7 +59,7 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("storageChain", "testSource", "testBuffer"),
+                    new ChainElement("storageChain", "testSource", "testBuffer", ""),
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -62,7 +68,7 @@ namespace Tests
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
-            var sourceChains = ChainBuilder.Build(sources, new HashSet<ISnapshotConsumer>(), configs);
+            var sourceChains = ChainBuilder.Build(sources, new HashSet<ISnapshotConsumer>(), new HashSet<IMultipleSnapshotConsumer>(), configs);
 
             Assert.AreEqual(0, sourceChains.Count());
 
@@ -72,7 +78,7 @@ namespace Tests
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer };
 
-            var sinkChains = ChainBuilder.Build(new HashSet<ISnapshotProvider>(), sinks, configs);
+            var sinkChains = ChainBuilder.Build(new HashSet<ISnapshotProvider>(), sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
 
             Assert.AreEqual(0, sinkChains.Count());
         }
@@ -93,8 +99,8 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("storageChain", "testSource", "testBuffer,testStore"),
-                    new ChainElement("plottingChain", "testBuffer", "testPlotter"),
+                    new ChainElement("storageChain", "testSource", "testBuffer,testStore", ""),
+                    new ChainElement("plottingChain", "testBuffer", "testPlotter", ""),
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -105,13 +111,15 @@ namespace Tests
 
             var store = new FileSystemDataStore(".", storeSpec);
 
-            var plotter = new SinglePlotter(".", plotterSpec);
+            var config = new PlotterElement("testPlotter", ".", 0, 1, 1);
+
+            var plotter = new SinglePlotter(config);
 
             var sources = new HashSet<ISnapshotProvider> { source, buffer };
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer, store, plotter };
 
-            var chains = ChainBuilder.Build(sources, sinks, configs);
+            var chains = ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
 
             Assert.AreEqual(configs.Count, chains.Count());
 
