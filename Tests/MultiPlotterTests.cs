@@ -43,7 +43,7 @@ namespace Tests
 
             sink.ResetWith(new [] { firstSnapshot, secondSnapshot });
 
-            var plotFile = Path.Combine(".", Path.ChangeExtension(string.Join("- ", Environment.MachineName, name), "png"));
+            var plotFile = Path.Combine(".", Path.ChangeExtension(name, "png"));
 
             Assert.IsTrue(File.Exists(plotFile));
 

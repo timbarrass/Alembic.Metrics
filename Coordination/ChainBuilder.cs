@@ -48,7 +48,7 @@ namespace Coordination
                         continue;
                     }
 
-                    if (config.Sources.Split(',').Count().Equals(1))
+                    if (!string.IsNullOrEmpty(config.Sinks) && config.Sources.Split(',').Count().Equals(1))
                     {                      
                         var chosenSource = sources.First(s => s.Name.Equals(config.Sources));
 
@@ -61,7 +61,8 @@ namespace Coordination
 
                         chains.Add(new MultipleSinkChain(config.Name, chosenSource, chosenSinks.ToArray()));
                     }
-                    else
+                    
+                    if (!string.IsNullOrEmpty(config.MultiSinks))
                     {
                         var chosenSink = multiSinks.First(s => s.Name.Equals(config.MultiSinks));
 

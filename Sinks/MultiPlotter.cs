@@ -42,15 +42,17 @@ namespace Sinks
 
         public void Update(IEnumerable<Snapshot> snapshots)
         {
-            var chartName = Environment.MachineName + ": " + Name;
-            var chart = InitializeChart(chartName);
+            var smallChart = InitializeSmallChart(Name);
+            var largeChart = InitializeLargeChart(Name);
 
             foreach (var snapshot in snapshots)
             {
-                Plot(chart, snapshot);
+                Plot(smallChart, snapshot);
+                Plot(largeChart, snapshot);
             }
 
-            RenderChart(chart, chartName);
+            RenderChart(smallChart, string.Join("-", Name, "small"));
+            RenderChart(largeChart, Name);
         }
 
 
@@ -78,16 +80,16 @@ namespace Sinks
             AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot.Name);
         }
 
-        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, double? min, double? max, string chartName)
+        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, float? min, float? max, string chartName)
         {
             if (min.HasValue)
             {
-                if (min.Value < (double?)Decimal.MinValue) min = (double?)Decimal.MinValue + 1;
+                if (min.Value < (float?)Decimal.MinValue) min = (float?)Decimal.MinValue + 1;
                 chart.ChartAreas[0].AxisY.Minimum = min.Value;
             }
             if (max.HasValue)
             {
-                if (max.Value > (double?)Decimal.MaxValue) max = (double?)Decimal.MaxValue - 1;
+                if (max.Value > (float?)Decimal.MaxValue) max = (float?)Decimal.MaxValue - 1;
                 chart.ChartAreas[0].AxisY.Maximum = max.Value;
             }
 
@@ -100,22 +102,22 @@ namespace Sinks
             chart.Series[chartName].Points.DataBindXY(xvals, yvals);
         }
 
-        private Chart InitializeChart(string chartName)
+        private Chart InitializeLargeChart(string chartName)
         {
             var titleFont = new Font(
-                _fontCollection.Families[0].Name,
-                8,
-                FontStyle.Regular,
+                "Tahoma",
+                16,
+                FontStyle.Bold,
                 GraphicsUnit.Pixel);
 
             var labelFont = new Font(
-                _fontCollection.Families[0].Name,
-                7,
+                "Tahoma",
+                14,
                 FontStyle.Regular,
                 GraphicsUnit.Pixel);
 
             var chart = new Chart();
-            chart.Size = new Size(400, 200);
+            chart.Size = new Size(1200, 400);
             chart.AntiAliasing = AntiAliasingStyles.None;
             chart.Titles.Add(new Title(chartName, Docking.Top, titleFont, Color.Black));
 
@@ -126,6 +128,48 @@ namespace Sinks
             chartArea.AxisX.LabelStyle.Font = labelFont;
             chartArea.AxisY.LabelStyle.Font = labelFont;
             chartArea.IsSameFontSizeForAllAxes = true;
+
+            chartArea.BorderColor = Color.Black;
+            chartArea.BorderWidth = 1;
+            chartArea.BorderDashStyle = ChartDashStyle.Solid;
+
+            chart.ChartAreas.Add(chartArea);
+
+            chart.Legends.Add(new Legend(chartName));
+
+            return chart;
+        }
+
+        private Chart InitializeSmallChart(string chartName)
+        {
+            var titleFont = new Font(
+                "Tahoma",
+                12,
+                FontStyle.Bold,
+                GraphicsUnit.Pixel);
+
+            var labelFont = new Font(
+                "Tahoma",
+                7,
+                FontStyle.Regular,
+                GraphicsUnit.Pixel);
+
+            var chart = new Chart();
+            chart.Size = new Size(300, 150);
+            chart.AntiAliasing = AntiAliasingStyles.None;
+            chart.Titles.Add(new Title(chartName, Docking.Top, titleFont, Color.Black));
+
+            var chartArea = new ChartArea();
+            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
+            chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
+            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
+            chartArea.AxisX.LabelStyle.Font = labelFont;
+            chartArea.AxisY.LabelStyle.Font = labelFont;
+            chartArea.IsSameFontSizeForAllAxes = true;
+
+            chartArea.BorderColor = Color.Black;
+            chartArea.BorderWidth = 1;
+            chartArea.BorderDashStyle = ChartDashStyle.Solid;
 
             chartArea.AxisX.LabelAutoFitMaxFontSize = 7;
             chartArea.AxisY.LabelAutoFitMaxFontSize = 7;

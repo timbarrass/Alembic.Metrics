@@ -99,7 +99,7 @@ namespace Tests
             }
 
             Assert.AreEqual(15, sources.Count);
-            Assert.AreEqual(18, sinks.Count);
+            Assert.AreEqual(14, sinks.Count);
             Assert.AreEqual(8, chains.Count);
             Assert.AreEqual(5, schedules.Count);
         }
