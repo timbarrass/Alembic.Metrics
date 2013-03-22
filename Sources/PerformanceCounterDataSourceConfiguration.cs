@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
+using Configuration;
 
 namespace Sources
 {
@@ -23,32 +24,28 @@ namespace Sources
 
     public class CounterElement : ConfigurationElement
     {
-        public CounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max)
+        public CounterElement(string name, string categoryName, string counterName, string instanceName, string machineName)
         {
-            base["id"]           = id;
             base["name"]         = name;
             base["categoryName"] = categoryName;
             base["counterName"]  = counterName;
             base["instanceName"] = instanceName;
             base["machineName"]  = machineName;
-            base["min"]          = min;
-            base["max"]          = max;
         }
 
         public CounterElement()
         {
         }
-        
+
+        public CounterElement(ICounterConfiguration config)
+            : this(config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
+        {
+        }
+
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
             get { return (string)base["name"]; }
-        }
-
-        [ConfigurationProperty("id", IsRequired = true)]
-        public string Id
-        {
-            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("categoryName", IsRequired = true)]
@@ -73,18 +70,6 @@ namespace Sources
         public string MachineName
         {
             get { return (string)base["machineName"]; }
-        }
-
-        [ConfigurationProperty("min"), DefaultSettingValue(null)]
-        public float? Min
-        {
-            get { return (float?)base["min"]; }
-        }
-
-        [ConfigurationProperty("max"), DefaultSettingValue(null)]
-        public float? Max
-        {
-            get { return (float?)base["max"]; }
         }
     }
 
@@ -126,7 +111,7 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}-{1}-{2}-{3}", (element as CounterElement).Id, (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
+            return string.Format("{0}-{1}-{2}", (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
         }
     }
 

@@ -85,8 +85,12 @@
       <Project>{f60213e7-ae95-4712-abbe-eebce258abe1}</Project>
       <Name>MetricAgent</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Configuration\Configuration.csproj">
+      <Project>{DDF63A35-35B4-4C7B-B577-0A738AB97594}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Coordination\Coordination.csproj">
-      <Project>{1E332CB5-19BB-4507-8DDD-DA2DEF39F104}</Project>
+      <Project>{1e332cb5-19bb-4507-8ddd-da2def39f104}</Project>
       <Name>Coordination</Name>
     </ProjectReference>
     <ProjectReference Include="..\Data\Data.csproj">

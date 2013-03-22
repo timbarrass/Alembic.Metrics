@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using Configuration;
 using Coordination;
 using Data;
 using NUnit.Framework;
@@ -13,6 +14,38 @@ namespace Tests
     [TestFixture]
     public class Sandbox
     {
+        [Test]
+        public void CanMapASimpleCounterConfigurationToACounterConfiguration()
+        {
+            const string name = "testCounter";
+            const string catgeory = "theCategory";
+            const string counter = "theCounter";
+            const string instance = "theInstance";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+
+            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points, outputPath, scale);
+
+            var config = new CounterElement(simpleConfig);
+
+            Assert.IsInstanceOf<ICounterConfiguration>(simpleConfig);
+            Assert.IsInstanceOf<IConfiguration>(simpleConfig);
+            Assert.AreEqual(name, config.Name);
+            Assert.AreEqual(counter, config.CounterName);
+        }
+
+        [Test, Category("CollaborationTest")]
+        public void SimpleConfigurationParserParsesConfigAndGeneratesEndToEndComponents()
+        {
+ 
+
+            Assert.Fail();
+        }
+
         [Test, Category("CollaborationTest")]
         public void ConfigurationParserParsesConfigAndRequestsChainsFromBuilder()
         {

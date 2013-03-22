@@ -18,7 +18,7 @@ namespace MetricAgent
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("Failed to query {0}: {1}", source.Spec.Name, ex.Message));
+                Log.Error(String.Format("Failed to query {0}: {1}", source.Name, ex.Message));
 
                 metricData = null;
 

@@ -1,34 +1,41 @@
-/ in example app create MAP of source : sinks that need to be updated from source
-/ Separate plotting responsibility from data sink
-/ Typed MetricData and generic sink
-/ Enable enumeration of sink
-/ Check service installation, uninstallation [need to be admin?]
-. Sketch out remote interface
-. Enable new source plugins
-/ Uptime needs to handle case where process goes while querying for times
-/ have source.Query return an IEnumerable<IMetricData> (require sorted on timestamp?)
-/ have sink.Update accept an IEnumerable<IMetricData>
-/ have sinks maintain a buffer per source (set of specs) [breaks direct IEnumerator implementation, but should be able to get an enumerator for a buffer]
-/ make sinks configurable -- link with source, start with number of points remembered
-/ generic SqlServer database source -- get timeseries data
-. move to async source query, register handlers with sink
-/ multithread source query
-. CircularDataSink should validate name of metric supplied against known specs
-/ For extracting plotter, etc, think in terms of sink-visitor? overkill, just need a vistiable/snapshottable interface
-/ have sink recall latest recent timestamp, and not reimport data before then (wasteful)
-. file locking around persisted sinks 
-. reconstitute sink from file 
-. configure sink based on source name 
-. configure sink based on file (new file-based source?) 
-. multiple source per sink
-/ PROPER LOGGING
-. More sophisticiated "unknown" recording and plotting
-. rationalise, ensure test coverage, look over each class in detail
-. configure plotters independently based on sinks, as sinks are with sources?
-/ review crosscutting aspects -- logging and exeption handling
-/ update WaitUntilCancelled -- should be signal-driven
-. more selective isolation of exceptions thrown in query
-. isolation from selected exceptions thrown in write
-. add try - catch to Agent.Graph to isolate app from write errors
-. consider whether SingleWriter should be a snapshot consumer
-. consider making snapshot a class in its own right
+Typical pattern is going to be:
+
+... source
+<add id="Committed Bytes" name="Committed Bytes Source" categoryName="Memory" counterName="Committed Bytes"/>
+
+... buffer
+<add name="Committed Bytes Buffer" points="600"/>
+
+... store
+<add name="Committed Bytes Store" outputPath="."/>
+
+... plot
+<add name="Committed GB" outputDirectory="." min="0" max="5" scale="0.000000001" />
+
+... chains
+<add name="Committed Bytes Preload" sources="Committed Bytes Store" sinks="Committed Bytes Buffer" multiSinks="" />
+<add name="Committed Bytes Buffer" sources="Committed Bytes Source" sinks="Committed Bytes Buffer" multiSinks="" />
+<add name="Committed Bytes Sinks" sources="Committed Bytes Buffer" sinks="Committed Bytes Store" multiSinks="Committed GB" />
+
+... preload schedule
+<add name ="Committed Bytes Preload Schedule" chains="Committed Bytes Preload" />
+
+... schedule
+<add name="Committed Bytes Schedule" delay="10" chains="Committed Bytes Buffer,Committed Bytes Sinks" />
+
+Is there an aggregate configuration that can be used to auto-instantiate this pattern?
+If we want to hang further plotters from it, do we need an another aggregate config (rather than implicit knowledge about source names)
+
+... aggregate source; used to generate source, buffer, store, plot, chains and schedules, with names by guid/convention
+<add name="Committed Bytes"
+     categoryName="Memory"
+     counterName="Committed Bytes"
+     points="600"
+     outputPath="."
+     min="0"
+     max="5"
+     scale="0.000000001" />
+
+... example aggregated plotter config
+<add name="Committed Bytes"
+     sources="Committed Bytes" />

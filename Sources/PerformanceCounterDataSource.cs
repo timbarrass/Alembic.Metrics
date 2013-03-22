@@ -9,25 +9,18 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PerformanceCounterDataSource).Name);
 
-        private MetricSpecification _spec;
-
         private PerformanceCounter _counter;
 
         private string _counterName;
 
-        private string _id;
-
         public string Name { get { return _counterName; } }
 
-        public string Id { get { return _id; } }
-
-        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max) 
-            : this(name, categoryName, counterName, instanceName, machine, min, max)
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine) 
+            : this(name, categoryName, counterName, instanceName, machine)
         {
-            _id = id;
         }
 
-        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine, float? min, float? max)
+        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine)
         {
             _counterName = name;
 
@@ -42,30 +35,18 @@ namespace Sources
             {
                 _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName, InstanceName = instanceName, MachineName = machine };
             }
-
-            _spec = new MetricSpecification(_counterName, min, max);
         }
 
-        public PerformanceCounterDataSource(string id, string name,string categoryName, string counterName, float? min, float? max)
+        public PerformanceCounterDataSource(string name,string categoryName, string counterName)
         {
-            _id = id;
-
             _counterName = name;
 
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
-
-            _spec = new MetricSpecification(_counterName, min, max);
         }
 
         public PerformanceCounterDataSource(CounterElement config)
-            : this(config.Id, config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName, config.Min, config.Max)
+            : this(config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
         {
-        }
-
-
-        public MetricSpecification Spec
-        {
-            get { return _spec; }
         }
 
         public Snapshot Snapshot()
