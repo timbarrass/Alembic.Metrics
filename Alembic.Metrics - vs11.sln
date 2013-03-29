@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coordination", "Coordinatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration", "Configuration\Configuration.csproj", "{DDF63A35-35B4-4C7B-B577-0A738AB97594}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{F61D8039-DF44-40EC-9F55-E2AD74C09335}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,18 @@ Global
 		{DDF63A35-35B4-4C7B-B577-0A738AB97594}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{DDF63A35-35B4-4C7B-B577-0A738AB97594}.Release|Win32.ActiveCfg = Release|Any CPU
 		{DDF63A35-35B4-4C7B-B577-0A738AB97594}.Release|x86.ActiveCfg = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,5 +181,6 @@ Global
 		{F60213E7-AE95-4712-ABBE-EEBCE258ABE1} = {3BBD4910-C50E-43AB-934F-F2B0DAE00F6D}
 		{445C6FC0-6972-4FC2-B21C-ABAD80F3299D} = {3BBD4910-C50E-43AB-934F-F2B0DAE00F6D}
 		{ED6C878B-A654-4389-AFDE-0E2F09DF9A6B} = {3BBD4910-C50E-43AB-934F-F2B0DAE00F6D}
+		{F61D8039-DF44-40EC-9F55-E2AD74C09335} = {3BBD4910-C50E-43AB-934F-F2B0DAE00F6D}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
 using System.Linq;
+using Configuration;
 using NUnit.Framework;
 using Sources;
 
@@ -14,7 +15,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new DatabaseElement("id", name, @"Data Source=.\SQLEXPRESS;Initial catalog=Alembic.Metrics.Dev;Integrated Security=True", "select 1")
+                    new DatabaseElement(name, @"Data Source=.\SQLEXPRESS;Initial catalog=Alembic.Metrics.Dev;Integrated Security=True", "select 1")
                 };
 
             var configCollection = new SqlServerDataSourceConfiguration(configs);

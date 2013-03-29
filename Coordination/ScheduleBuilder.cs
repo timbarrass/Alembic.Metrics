@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Configuration;
 using log4net;
 
 namespace Coordination

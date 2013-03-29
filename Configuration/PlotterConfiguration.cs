@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sinks
+namespace Configuration
 {
     public class PlotterConfiguration : ConfigurationSection
     {
@@ -27,7 +27,12 @@ namespace Sinks
         {
         }
 
-        public PlotterElement(string name, string outputDirectory, float min, float max, float scale)
+        public PlotterElement(IPlotterConfiguration config)
+            : this(config.Name + " Plotter", config.OutputPath, config.Min, config.Max, config.Scale)
+        {
+        }
+
+        public PlotterElement(string name, string outputDirectory, float? min, float? max, double scale)
         {
             Name = name;
 
@@ -55,23 +60,23 @@ namespace Sinks
         }
 
         [ConfigurationProperty("min", IsRequired = true)]
-        public float Min
+        public float? Min
         {
-            get { return (float)base["min"]; }
+            get { return (float?)base["min"]; }
             private set { base["min"] = value; }
         }
 
         [ConfigurationProperty("max", IsRequired = true)]
-        public float Max
+        public float? Max
         {
-            get { return (float)base["max"]; }
+            get { return (float?)base["max"]; }
             private set { base["max"] = value; }
         }
 
         [ConfigurationProperty("scale", IsRequired = true)]
-        public float Scale
+        public double Scale
         {
-            get { return (float)base["scale"]; }
+            get { return (double)base["scale"]; }
             private set { base["scale"] = value; }
         }
     }

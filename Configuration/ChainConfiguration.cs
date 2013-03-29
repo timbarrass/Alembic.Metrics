@@ -1,6 +1,6 @@
 using System.Configuration;
 
-namespace Coordination
+namespace Configuration
 {
     public class ChainConfiguration : ConfigurationSection
     {

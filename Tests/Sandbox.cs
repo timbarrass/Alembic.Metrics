@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Configuration;
 using Coordination;
 using Data;
@@ -15,7 +16,87 @@ namespace Tests
     public class Sandbox
     {
         [Test]
-        public void CanMapASimpleCounterConfigurationToACounterConfiguration()
+        public void CanMapASimpleCounterConfigurationToCounterBufferStoreAndPlotterConfiguration()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string catgeory = "theCategory";
+            const string counter = "theCounter";
+            const string instance = "theInstance";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 1;
+
+            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points,
+                                                        outputPath, scale, delay);
+
+            Assert.IsInstanceOf<ICounterConfiguration>(simpleConfig);
+            Assert.IsInstanceOf<IConfiguration>(simpleConfig);
+
+            var counterConfig = new CounterElement(simpleConfig);
+
+            Assert.AreEqual(sourceName, counterConfig.Name);
+            Assert.AreEqual(counter, counterConfig.CounterName);
+
+            var bufferConfig = new SinkElement(simpleConfig);
+
+            Assert.AreEqual(bufferName, bufferConfig.Name);
+
+            var storeConfig = new StoreElement(simpleConfig);
+
+            Assert.AreEqual(storeName, storeConfig.Name);
+
+            var plotterConfig = new PlotterElement(simpleConfig);
+
+            Assert.AreEqual(plotterName, plotterConfig.Name);
+        }
+
+        [Test]
+        public void CanMapASimpleProcessConfigurationToProcessBufferStoreAndPlotterConfiguration()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string exe = "testExecutable";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 11;
+
+            var simpleConfig = new SimpleProcessElement(name, exe, machine, min, max, points, outputPath, scale, delay);
+
+            var uptimeConfig = new ProcessElement(simpleConfig);
+
+            Assert.AreEqual(sourceName, uptimeConfig.Name);
+            Assert.AreEqual(exe, uptimeConfig.Exe);
+
+            var bufferConfig = new SinkElement(simpleConfig);
+
+            Assert.AreEqual(bufferName, bufferConfig.Name);
+
+            var storeConfig = new StoreElement(simpleConfig);
+
+            Assert.AreEqual(storeName, storeConfig.Name);
+
+            var plotterConfig = new PlotterElement(simpleConfig);
+
+            Assert.AreEqual(plotterName, plotterConfig.Name);
+        }
+
+        [Test]
+        public void SimpleConfigurationParserCreatesCounterSchedule()
         {
             const string name = "testCounter";
             const string catgeory = "theCategory";
@@ -27,23 +108,50 @@ namespace Tests
             const int points = 10;
             const string outputPath = "thePath";
             const double scale = 0.1d;
+            const int delay = 11;
 
-            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points, outputPath, scale);
+            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points, outputPath, scale, delay);
 
-            var config = new CounterElement(simpleConfig);
+            var schedules = SimpleCounterBuilder.Build(simpleConfig);
 
-            Assert.IsInstanceOf<ICounterConfiguration>(simpleConfig);
-            Assert.IsInstanceOf<IConfiguration>(simpleConfig);
-            Assert.AreEqual(name, config.Name);
-            Assert.AreEqual(counter, config.CounterName);
+            Assert.AreEqual(1, schedules.Count()); // interesting. chains, delay are encapsulated. how do I test that it's been created properly?
         }
 
-        [Test, Category("CollaborationTest")]
-        public void SimpleConfigurationParserParsesConfigAndGeneratesEndToEndComponents()
+        [Test]
+        public void CanMapASimpleDatabaseConfigurationToDatabaseBufferStoreAndPlotterConfiguration()
         {
- 
+            const string name = "testDatabase";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string query = "testQuery";
+            const string connectionString = "theConnectionString";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 11;
 
-            Assert.Fail();
+            var simpleConfig = new SimpleDatabaseElement(name, query, connectionString, min, max, points, outputPath, scale, delay);
+
+            var databaseConfig = new DatabaseElement(simpleConfig);
+
+            Assert.AreEqual(sourceName, databaseConfig.Name);
+            Assert.AreEqual(query, databaseConfig.Query);
+
+            var bufferConfig = new SinkElement(simpleConfig);
+
+            Assert.AreEqual(bufferName, bufferConfig.Name);
+
+            var storeConfig = new StoreElement(simpleConfig);
+
+            Assert.AreEqual(storeName, storeConfig.Name);
+
+            var plotterConfig = new PlotterElement(simpleConfig);
+
+            Assert.AreEqual(plotterName, plotterConfig.Name);
         }
 
         [Test, Category("CollaborationTest")]
@@ -105,14 +213,6 @@ namespace Tests
             if (fileSystemDataStoreConfiguration != null)
             {
                 sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
-            }
-
-            // SinglePlotters
-            var plotterConfiguration = configuration.GetSection("singlePlotters") as PlotterConfiguration;
-
-            if (plotterConfiguration != null)
-            {
-                sinks.AddRange(SinglePlotterBuilder.Build(plotterConfiguration));
             }
 
             // Chains

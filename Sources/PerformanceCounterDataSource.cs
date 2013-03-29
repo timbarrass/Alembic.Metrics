@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Configuration;
 using Data;
 using log4net;
 
@@ -14,11 +15,6 @@ namespace Sources
         private string _counterName;
 
         public string Name { get { return _counterName; } }
-
-        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine) 
-            : this(name, categoryName, counterName, instanceName, machine)
-        {
-        }
 
         public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine)
         {
@@ -44,7 +40,7 @@ namespace Sources
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
         }
 
-        public PerformanceCounterDataSource(CounterElement config)
+        public PerformanceCounterDataSource(ICounterConfiguration config)
             : this(config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
         {
         }

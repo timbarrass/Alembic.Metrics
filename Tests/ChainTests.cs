@@ -25,7 +25,7 @@ namespace Tests
             var store = MockRepository.GenerateMock<ISnapshotConsumer>();
             store.Expect(s => s.Update(snapshot));
 
-            var chain = new MultipleSinkChain(name, source, buffer, store);   // ignores fact that all must have same spec
+            var chain = new MultipleSinkChain(name, source, buffer, store);
 
             chain.Update();
 
@@ -53,7 +53,7 @@ namespace Tests
             var sink = MockRepository.GenerateMock<IMultipleSnapshotConsumer>();
             sink.Expect(b => b.Update(null)).IgnoreArguments();
 
-            var chain = new MultipleSourceChain(name, sink, firstSource, secondSource);   // ignores fact that all must have same spec
+            var chain = new MultipleSourceChain(name, sink, firstSource, secondSource); 
 
             chain.Update();
 

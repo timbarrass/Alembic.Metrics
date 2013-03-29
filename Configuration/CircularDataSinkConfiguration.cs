@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sinks
+namespace Configuration
 {
     public class CircularDataSinkConfiguration : ConfigurationSection
     {
@@ -21,9 +21,14 @@ namespace Sinks
         }
     }
 
-    public class SinkElement : ConfigurationElement
+    public class SinkElement : ConfigurationElement, ISinkConfiguration
     {
         public SinkElement()
+        {
+        }
+
+        public SinkElement(ISinkConfiguration config)
+            : this(config.Name + " Buffer", config.Points)
         {
         }
 

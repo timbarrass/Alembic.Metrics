@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Configuration;
 using Data;
 
 namespace Sinks
@@ -14,26 +15,11 @@ namespace Sinks
 
         private SlidingBuffer<MetricData> _data;
 
-        private MetricSpecification _sourceSpecification;
-
         private DateTime _lastUpdate = new DateTime();
 
-        /// <summary>
-        /// Each sink is configured to accept data from multiple sources (represented by spec) but will
-        /// remember the same number of points for each.
-        /// </summary>
-        public CircularDataSink(int pointsToKeep, MetricSpecification sourceSpecification)
-        {
-            _pointsToKeep = pointsToKeep;
+        private string _name;
 
-            _data = CreateSlidingBuffer();
-
-            _lastUpdate = DateTime.MinValue;
-
-            _sourceSpecification = sourceSpecification;
-        }
-
-        public CircularDataSink(SinkElement config)
+        public CircularDataSink(ISinkConfiguration config)
         {
             _pointsToKeep = config.Points;
 
@@ -41,22 +27,17 @@ namespace Sinks
 
             _lastUpdate = DateTime.MinValue;
 
-            _sourceSpecification = new MetricSpecification(config.Name, config.Min, config.Max);
+            _name = config.Name;
         }
 
         public string Name
         {
-            get { return _sourceSpecification.Name; }
+            get { return _name; }
         }
 
         private SlidingBuffer<MetricData> CreateSlidingBuffer()
         {
             return new SlidingBuffer<MetricData>(_pointsToKeep);
-        }
-
-        public MetricSpecification Spec
-        {
-            get { return _sourceSpecification; }
         }
 
         public void ResetWith(Snapshot snapshot)

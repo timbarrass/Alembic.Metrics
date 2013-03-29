@@ -40,12 +40,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChainConfiguration.cs" />
+    <Compile Include="CircularDataSinkConfiguration.cs" />
+    <Compile Include="FileSystemDataStoreConfiguration.cs" />
+    <Compile Include="IDatabaseConfiguration.cs" />
+    <Compile Include="IScheduleConfiguration.cs" />
+    <Compile Include="PerformanceCounterDataSourceConfiguration.cs" />
+    <Compile Include="PlotterConfiguration.cs" />
+    <Compile Include="ProcessCountingSourceConfiguration.cs" />
+    <Compile Include="ProcessUptimeSourceConfiguration.cs" />
+    <Compile Include="ScheduleConfiguration.cs" />
+    <Compile Include="SimpleDatabaseConfiguration.cs" />
     <Compile Include="IConfiguration.cs" />
     <Compile Include="ICounterConfiguration.cs" />
+    <Compile Include="IPlotterConfiguration.cs" />
+    <Compile Include="IProcessConfiguration.cs" />
+    <Compile Include="ISinkConfiguration.cs" />
+    <Compile Include="IStoreConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleCounterElement.cs" />
-    <Compile Include="SimpleCounterElementCollection.cs" />
-    <Compile Include="SimplePerformanceCounterSourceConfiguration.cs" />
+    <Compile Include="SimpleCounterConfiguration.cs" />
+    <Compile Include="SimpleProcessConfiguration.cs" />
+    <Compile Include="SqlServerDataSourceConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{a777d09d-157b-4230-aeec-c0e4742cd5c9}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

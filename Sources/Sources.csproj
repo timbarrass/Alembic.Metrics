@@ -50,17 +50,13 @@
     <Compile Include="PerformanceCounterDataSourceBuilder.cs" />
     <Compile Include="ProcessCountingSourceBuilder.cs" />
     <Compile Include="ProcessUptimeSourceBuilder.cs" />
-    <Compile Include="ProcessUptimeSourceConfiguration.cs" />
     <Compile Include="ProcessUptimeSource.cs" />
     <Compile Include="NullSource.cs" />
     <Compile Include="PerformanceCounterDataSource.cs" />
-    <Compile Include="PerformanceCounterDataSourceConfiguration.cs" />
     <Compile Include="ProcessCountingSource.cs" />
-    <Compile Include="ProcessCountingSourceConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerDataSource.cs" />
     <Compile Include="SqlServerDataSourceBuilder.cs" />
-    <Compile Include="SqlServerDataSourceConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Configuration\Configuration.csproj">

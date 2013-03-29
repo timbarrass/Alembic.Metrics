@@ -1,4 +1,5 @@
 using System.Linq;
+using Configuration;
 using NUnit.Framework;
 using Sinks;
 

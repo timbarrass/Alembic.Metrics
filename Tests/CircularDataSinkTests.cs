@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Configuration;
 using Data;
 using NUnit.Framework;
 using Sinks;
@@ -25,19 +26,19 @@ namespace Tests
         [Test]
         public void CircularDataSink_ProvidesAName()
         {
-            var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
             
-            Assert.AreEqual(spec.Name, sink.Name);
+            Assert.AreEqual(config.Name, sink.Name);
         }
 
         [Test]
         public void CircularDataSink_CanBeReset()
         {
-            var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
 
             var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2)), new MetricData(20, DateTime.Now.AddMinutes(-1)) };
 
@@ -61,9 +62,9 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanProvideASnapshotOfDataAfterSomeCutoff()
         {
-            var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
 
             var snapshot = new Snapshot { new MetricData(10, DateTime.Parse("7 Feb 2013")), new MetricData(20, DateTime.Parse("9 Feb 2013")) };
 
@@ -78,9 +79,9 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanBeUpdatedWithMetricData()
         {
-            var spec = new MetricSpecification("testData", float.MinValue, float.MaxValue);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
 
             var snapshot = new Snapshot { new MetricData(10, DateTime.Now) };
 
@@ -95,9 +96,9 @@ namespace Tests
         [Test]
         public void CircularDataSink_SupportsDataSnapshot()
         {
-            var spec = new MetricSpecification("test1", null, null);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
 
             sink.Update(new Snapshot
                             {
@@ -121,9 +122,9 @@ namespace Tests
         [Test]
         public void CircularDataSink_IgnoreDataOlderThanMostRecentLastUpdate()
         {
-            var spec = new MetricSpecification("test1", null, null);
+            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
 
-            var sink = new CircularDataSink(10, spec);
+            var sink = new CircularDataSink(config);
 
             sink.Update(new Snapshot
                             {

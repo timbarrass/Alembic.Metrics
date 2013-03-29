@@ -1,5 +1,6 @@
 using System.Data.Linq;
 using System.Linq;
+using Configuration;
 using Data;
 using NUnit.Framework;
 using Sources;
@@ -41,7 +42,7 @@ namespace Tests
 
             var query = "select * from ExampleData";
 
-            var config = new DatabaseElement("id", "testDb", connString, query);
+            var config = new DatabaseElement("testDb", connString, query);
 
             var source = new SqlServerDataSource(config);
 

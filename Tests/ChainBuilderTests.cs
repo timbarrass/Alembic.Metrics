@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Configuration;
 using Coordination;
 using Data;
 using NUnit.Framework;
@@ -86,10 +87,6 @@ namespace Tests
         [Test, Category("CollaborationTest")]
         public void ChainBuilderCanBuildAMainAndAPlottingChain()
         {
-            var bufferSpec = new MetricSpecification("testBuffer", 0, 1);
-            var storeSpec = new MetricSpecification("testStore", 0, 1);
-            var plotterSpec = new MetricSpecification("testPlotter", 0, 1);
-
             var snapshot = new Snapshot
                 {
                     new MetricData(0.5, DateTime.Parse("12 Aug 2008")),
@@ -100,26 +97,30 @@ namespace Tests
             var configs = new List<ChainElement>
                 {
                     new ChainElement("storageChain", "testSource", "testBuffer,testStore", ""),
-                    new ChainElement("plottingChain", "testBuffer", "testPlotter", ""),
+                    new ChainElement("plottingChain", "testBuffer", "", "testPlotter"),
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
 
-            var buffer = new CircularDataSink(10, bufferSpec);
+            var bufferConfig = new SinkElement("testBuffer", 10, 0, 1);
 
-            var store = new FileSystemDataStore(".", storeSpec);
+            var buffer = new CircularDataSink(bufferConfig);
+
+            var store = new FileSystemDataStore(".", "testStore");
 
             var config = new PlotterElement("testPlotter", ".", 0, 1, 1);
 
-            var plotter = new SinglePlotter(config);
+            var plotter = new MultiPlotter(config);
 
             var sources = new HashSet<ISnapshotProvider> { source, buffer };
 
-            var sinks = new HashSet<ISnapshotConsumer> { buffer, store, plotter };
+            var sinks = new HashSet<ISnapshotConsumer> { buffer, store };
 
-            var chains = ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
+            var multiSinks = new HashSet<IMultipleSnapshotConsumer> { plotter };
+
+            var chains = ChainBuilder.Build(sources, sinks, multiSinks, configs);
 
             Assert.AreEqual(configs.Count, chains.Count());
 
@@ -128,7 +129,7 @@ namespace Tests
                 chain.Update();
             }
 
-            var chartName = @".\" + Environment.MachineName + "- " + plotterSpec.Name + ".png";
+            var chartName = Path.Combine(@".", plotter.Name + ".png");
             var storeName = store.Name + ".am.gz";
 
             Assert.IsTrue(File.Exists(chartName));

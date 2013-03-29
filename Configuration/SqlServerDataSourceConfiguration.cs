@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sources
+namespace Configuration
 {
     public class SqlServerDataSourceConfiguration : ConfigurationSection
     {
@@ -26,18 +26,16 @@ namespace Sources
         {
         }
 
-        public DatabaseElement(string id, string name, string connString, string query)
+        public DatabaseElement(IDatabaseConfiguration config)
+            : this(config.Name + " Source", config.ConnectionString, config.Query)
         {
-            base["id"] = id;
+        }
+
+        public DatabaseElement(string name, string connString, string query)
+        {
             base["name"] = name;
             base["connectionString"] = connString;
             base["query"] = query;
-        }
-
-        [ConfigurationProperty("id", IsRequired = true)]
-        public string Id
-        {
-            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]
@@ -97,7 +95,7 @@ namespace Sources
         protected override object GetElementKey(ConfigurationElement element)
         {
             //return base.GetElementKey(element);
-            return string.Format("{0}", (element as DatabaseElement).Id);
+            return string.Format("{0}", (element as DatabaseElement).Name);
         }
     }
 

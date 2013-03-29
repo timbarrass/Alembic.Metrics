@@ -5,13 +5,14 @@ using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
+using Configuration;
 using Data;
 
 namespace Sinks
 {
     public class MultiPlotter : IMultipleSnapshotConsumer
     {
-        public MultiPlotter(string name, string outputPath, float? expectedMin, float? expectedMax, float scale)
+        public MultiPlotter(string name, string outputPath, float? expectedMin, float? expectedMax, double scale)
         {
             Name = name;
 
@@ -186,6 +187,6 @@ namespace Sinks
 
         private readonly float? _max;
 
-        private readonly float _scale;
+        private readonly double _scale;
     }
 }

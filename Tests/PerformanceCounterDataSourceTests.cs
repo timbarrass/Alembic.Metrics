@@ -1,3 +1,4 @@
+using Configuration;
 using NUnit.Framework;
 using Sources;
 

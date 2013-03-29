@@ -1,9 +1,18 @@
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Coordination
+namespace Configuration
 {
     public class ScheduleConfiguration : ConfigurationSection
     {
+        public ScheduleConfiguration()
+        {}
+
+        public ScheduleConfiguration(IEnumerable<ScheduleElement> configs)
+        {
+            Links.Add(configs);
+        }
+
         [ConfigurationProperty("schedules")]
         public ScheduleElementCollection Links
         {
@@ -54,6 +63,14 @@ namespace Coordination
     [ConfigurationCollection(typeof(ChainElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class ScheduleElementCollection : ConfigurationElementCollection
     {
+        public void Add(IEnumerable<ScheduleElement> configs)
+        {
+            foreach (var config in configs)
+            {
+                BaseAdd(config);
+            }
+        }
+
         public ScheduleElement this[int index]
         {
             get { return (ScheduleElement)base.BaseGet(index); }

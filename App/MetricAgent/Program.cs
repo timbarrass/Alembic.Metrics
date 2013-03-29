@@ -4,10 +4,9 @@ using System.Configuration;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
+using Common;
+using Configuration;
 using Coordination;
-using Data;
-using Sinks;
-using Sources;
 using log4net;
 
 namespace MetricAgent

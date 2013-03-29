@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
-using Configuration;
 
-namespace Sources
+namespace Configuration
 {
     public class PerformanceCounterDataSourceConfiguration : ConfigurationSection
     {
@@ -22,7 +21,7 @@ namespace Sources
         }
     }
 
-    public class CounterElement : ConfigurationElement
+    public class CounterElement : ConfigurationElement, ICounterConfiguration
     {
         public CounterElement(string name, string categoryName, string counterName, string instanceName, string machineName)
         {
@@ -38,7 +37,7 @@ namespace Sources
         }
 
         public CounterElement(ICounterConfiguration config)
-            : this(config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
+            : this(config.Name + " Source", config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
         {
         }
 

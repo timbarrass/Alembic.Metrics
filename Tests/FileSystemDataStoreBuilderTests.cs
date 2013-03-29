@@ -1,4 +1,5 @@
 using System.Linq;
+using Configuration;
 using NUnit.Framework;
 using Sinks;
 
@@ -14,7 +15,7 @@ namespace Tests
 
             var configs = new []
                 {
-                    new StoreElement(name, ".", null, null)
+                    new StoreElement(name, ".")
                 };
 
             var configCollection = new FileSystemDataStoreConfiguration(configs);

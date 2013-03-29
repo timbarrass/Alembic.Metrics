@@ -1,4 +1,5 @@
 using System.Linq;
+using Configuration;
 using NUnit.Framework;
 using Sources;
 
@@ -14,7 +15,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new ProcessElement("id", name, "exe", "machine")
+                    new ProcessElement(name, "exe", "machine")
                 };
 
             var configCollection = new ProcessUptimeSourceConfiguration(configs); 

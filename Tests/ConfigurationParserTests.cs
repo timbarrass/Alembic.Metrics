@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using Coordination;
+using Common;
 using NUnit.Framework;
 
 namespace Tests
@@ -17,7 +16,7 @@ namespace Tests
             var schedules = ConfigurationParser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
-            Assert.AreEqual(5, schedules.Schedules.Count());
+            Assert.AreEqual(6, schedules.Schedules.Count());
         }
 
         [Test]

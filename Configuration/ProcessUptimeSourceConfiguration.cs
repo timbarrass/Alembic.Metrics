@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sources
+namespace Configuration
 {
     public class ProcessUptimeSourceConfiguration : ConfigurationSection
     {
@@ -20,12 +20,6 @@ namespace Sources
         public ProcessElementCollection Processes
         {
             get { return (ProcessElementCollection)base["processes"]; }
-        }
-
-        [ConfigurationProperty("id")]
-        public ProcessElementCollection Id
-        {
-            get { return (ProcessElementCollection)base["id"]; }
         }
 
         [ConfigurationProperty("machineName", DefaultValue = null)]

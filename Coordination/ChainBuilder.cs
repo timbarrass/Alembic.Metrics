@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Configuration;
 using Data;
 using log4net;
 
@@ -78,9 +79,9 @@ namespace Coordination
                         chains.Add(new MultipleSourceChain(config.Name, chosenSink, chosenSources.ToArray()));
                     }
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException ioe)
                 {
-                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}'", config.Name, config.Sources, config.Sinks));
+                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}': {3}", config.Name, config.Sources, config.Sinks, ioe.Message));
                 }
             }
 

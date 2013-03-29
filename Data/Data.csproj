@@ -46,7 +46,6 @@
     <Compile Include="ISnapshotConsumer.cs" />
     <Compile Include="ISnapshotProvider.cs" />
     <Compile Include="MetricData.cs" />
-    <Compile Include="MetricSpecification.cs" />
     <Compile Include="NullMetricData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Snapshot.cs" />

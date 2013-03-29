@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using Configuration;
 using Data;
 using log4net;
 
@@ -16,28 +17,28 @@ namespace Sinks
         {
             _root = config.OutputPath;
 
-            Directory.CreateDirectory(_root);
+            _name = config.Name;
 
-            _spec = new MetricSpecification(config.Name, config.Min, config.Max);
+            Directory.CreateDirectory(_root);
         }
 
-        public FileSystemDataStore(string root, MetricSpecification specification)
+        public FileSystemDataStore(string root, string name)
         {
             _root = root;
 
-            Directory.CreateDirectory(root);
+            _name = name;
 
-            _spec = specification;
+            Directory.CreateDirectory(root);
         }
 
         public string Name
         {
-            get { return _spec.Name; }
+            get { return _name; }
         }
 
         public void ResetWith(Snapshot snapshot)
         {
-            var zipFileName = ZipFileName(_spec.Name);
+            var zipFileName = ZipFileName(Name);
 
             if (File.Exists(zipFileName))
             {
@@ -52,7 +53,7 @@ namespace Sinks
             var allowedAttempts = 3;
             var attempt = 1;
 
-            var zipFileName = ZipFileName(_spec.Name);
+            var zipFileName = ZipFileName(Name);
 
             using (var os = new MemoryStream())
             {
@@ -84,14 +85,12 @@ namespace Sinks
             }
         }
 
-        public MetricSpecification Spec { get { return _spec; }}
-
         public Snapshot Snapshot()
         {
             var allowedAttempts = 3;
             var attempt = 1;
 
-            var zipFileName = ZipFileName(_spec.Name);
+            var zipFileName = ZipFileName(Name);
 
             var snapshot = new Snapshot { Name = Name };
 
@@ -169,6 +168,6 @@ namespace Sinks
 
         private string _root = ".";
 
-        private readonly MetricSpecification _spec;
+        private string _name;
     }
 }

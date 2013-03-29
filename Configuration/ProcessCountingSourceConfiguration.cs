@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sources
+namespace Configuration
 {
     public class ProcessCountingSourceConfiguration : ConfigurationSection
     {
@@ -29,9 +29,13 @@ namespace Sources
         {
         }
 
-        public ProcessElement(string id, string name, string exe, string machineName)
+        public ProcessElement(IProcessConfiguration config)
+            : this(config.Name + " Source", config.Exe, config.MachineName)
         {
-            base["id"] = id;
+        }
+
+        public ProcessElement(string name, string exe, string machineName)
+        {
             base["name"] = name;
             base["exe"] = exe;
             base["machineName"] = machineName;
@@ -48,12 +52,6 @@ namespace Sources
         public string Exe
         {
             get { return (string)base["exe"]; }
-        }
-
-        [ConfigurationProperty("id", IsRequired = true)]
-        public string Id
-        {
-            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("machineName", DefaultValue = null)]
@@ -98,7 +96,7 @@ namespace Sources
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return (element as ProcessElement).Id;
+            return (element as ProcessElement).Name;
         }
     }
 

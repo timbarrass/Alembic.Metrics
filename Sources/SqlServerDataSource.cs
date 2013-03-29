@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlClient;
+using Configuration;
 using Data;
 using log4net;
 
@@ -22,18 +23,9 @@ namespace Sources
 
         private string _query;
 
-        private MetricSpecification _spec;
-
-        private string _id;
-
         public string Name
         {
             get { return _name; }
-        }
-
-        public string Id
-        {
-            get { return _id; }
         }
 
         public SqlServerDataSource(DatabaseElement config)
@@ -45,30 +37,21 @@ namespace Sources
 
             var context = new DataContext(conn);
 
-            Initialise(config.Id, config.Name, context, config.Query);
+            Initialise(config.Name, context, config.Query);
         }
 
         public SqlServerDataSource(string id, string name, DataContext context, string query)
         {
-            Initialise(id, name, context, query);
+            Initialise(name, context, query);
         }
 
-        private void Initialise(string id, string name, DataContext context, string query)
+        private void Initialise(string name, DataContext context, string query)
         {
-            _id = id;
-
             _context = context;
 
             _name = name;
 
             _query = query;
-
-            _spec = new MetricSpecification(_name, null, null);
-        }
-
-        public MetricSpecification Spec
-        {
-            get { return _spec; }
         }
 
         public Snapshot Snapshot()

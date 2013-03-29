@@ -63,7 +63,6 @@
     <Compile Include="CircularDataSinkTests.cs" />
     <Compile Include="ConfigurationParserTests.cs" />
     <Compile Include="MultiPlotterTests.cs" />
-    <Compile Include="SinglePlotterTests.cs" />
     <Compile Include="FileSystemDataStoreBuilderTests.cs" />
     <Compile Include="FileSystemDataStoreTests.cs" />
     <Compile Include="PerformanceCounterDataSourceBuilderTests.cs" />
@@ -84,6 +83,10 @@
     <ProjectReference Include="..\App\MetricAgent\MetricAgent.csproj">
       <Project>{f60213e7-ae95-4712-abbe-eebce258abe1}</Project>
       <Name>MetricAgent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{F61D8039-DF44-40EC-9F55-E2AD74C09335}</Project>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Configuration\Configuration.csproj">
       <Project>{DDF63A35-35B4-4C7B-B577-0A738AB97594}</Project>

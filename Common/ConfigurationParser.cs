@@ -1,21 +1,16 @@
 using System.Collections.Generic;
 using System.Configuration;
+using Configuration;
+using Coordination;
 using Data;
 using Sinks;
 using Sources;
 
-namespace Coordination
+namespace Common
 {
-    public struct ParsedSchedules
-    {
-        public IEnumerable<ISchedule> Schedules;
-
-        public IEnumerable<ISchedule> PreloadSchedules;
-    }
-
     public class ConfigurationParser
     {
-        public static ParsedSchedules Parse(Configuration configuration)
+        public static ParsedSchedules Parse(System.Configuration.Configuration configuration)
         {
             var sources = new List<ISnapshotProvider>();
             var sinks = new List<ISnapshotConsumer>();
@@ -83,14 +78,6 @@ namespace Coordination
                 sources.AddRange(stores);
             }
 
-            // SinglePlotters
-            var plotterConfiguration = configuration.GetSection("singlePlotters") as PlotterConfiguration;
-
-            if (plotterConfiguration != null)
-            {
-                sinks.AddRange(SinglePlotterBuilder.Build(plotterConfiguration));
-            }
-
             // MultiPlotters
             var multiPlotterConfiguration = configuration.GetSection("multiPlotters") as PlotterConfiguration;
 
@@ -122,6 +109,38 @@ namespace Coordination
             {
                 schedules.AddRange(ScheduleBuilder.Build(scheduleConfiguration, chains));
             }
+
+            // Simple configurations
+            var simpleCounterConfiguration = configuration.GetSection("simplePerformanceCounterSources") as SimplePerformanceCounterSourceConfiguration;
+
+            if (simpleCounterConfiguration != null)
+            {
+                schedules.AddRange(SimpleCounterBuilder.Build(simpleCounterConfiguration));
+            }
+
+            var simpleProcessUptimeConfiguration = configuration.GetSection("simpleProcessUptimeSources") as SimpleProcessUptimeConfiguration;
+
+            if (simpleProcessUptimeConfiguration != null)
+            {
+                schedules.AddRange(SimpleProcessUptimeBuilder.Build(simpleProcessUptimeConfiguration));
+            }
+
+            var simpleProcessCounterConfiguration = configuration.GetSection("simpleProcessCountingSources") as SimpleProcessCountingConfiguration;
+
+            if (simpleProcessCounterConfiguration != null)
+            {
+                schedules.AddRange(SimpleProcessCountingBuilder.Build(simpleProcessCounterConfiguration));
+            }
+
+            var simpleDatabaseConfiguration = configuration.GetSection("simpleDatabaseSources") as SimpleDatabaseConfiguration;
+
+            if (simpleDatabaseConfiguration != null)
+            {
+                schedules.AddRange(SimpleDatabaseBuilder.Build(simpleDatabaseConfiguration));
+            }
+
+
+
 
             return new ParsedSchedules { Schedules = schedules, PreloadSchedules = preloadSchedules };
         }

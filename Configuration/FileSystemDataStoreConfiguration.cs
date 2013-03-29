@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Configuration;
 
-namespace Sinks
+namespace Configuration
 {
     public class FileSystemDataStoreConfiguration : ConfigurationSection
     {
@@ -27,29 +27,16 @@ namespace Sinks
         {
         }
 
-        public StoreElement(string name, string outputPath, float? min, float? max)
+        public StoreElement(IStoreConfiguration config)
+            : this(config.Name + " Store", config.OutputPath)
+        {
+        }
+
+        public StoreElement(string name, string outputPath)
         {
             Name = name;
 
             OutputPath = outputPath;
-
-            Min = min.HasValue ? min.Value : float.MinValue;
-
-            Max = max.HasValue ? max.Value : float.MaxValue;
-        }
-
-        [ConfigurationProperty("min", IsRequired = false)]
-        public float Min
-        {
-            get { return (float)base["min"]; }
-            private set { base["min"] = value; }
-        }
-
-        [ConfigurationProperty("max", IsRequired = false)]
-        public float Max
-        {
-            get { return (float)base["max"]; }
-            private set { base["max"] = value; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

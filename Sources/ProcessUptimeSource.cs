@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Configuration;
 using Data;
 using log4net;
 
@@ -10,13 +11,9 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessUptimeSource).Name);
 
-        private MetricSpecification _spec;
-
         private string _processToMonitor;
 
         private string _processUptimeName;
-
-        private string _id;
 
         private string _machineName;
 
@@ -25,32 +22,18 @@ namespace Sources
             get { return _processUptimeName; }
         }
 
-        public string Id
-        {
-            get { return _id; }
-        }
-
         public ProcessUptimeSource(ProcessElement config)
-            : this(config.Id, config.Name, config.Exe, config.MachineName)
+            : this(config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine)
+        public ProcessUptimeSource(string processUptimeFriendlyName, string processToMonitor, string machine)
         {
             _processToMonitor = processToMonitor;
 ;
             _processUptimeName = processUptimeFriendlyName;
 
-            _id = id;
-
             _machineName = machine;
-
-            _spec = new MetricSpecification(_processUptimeName, 0, null);
-        }
-
-        public MetricSpecification Spec
-        {
-            get { return _spec; }
         }
 
         public Snapshot Snapshot()

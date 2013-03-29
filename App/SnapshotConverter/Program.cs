@@ -31,7 +31,7 @@ namespace SnapshotConverter
         {
             var item = Path.GetFileName(snapshotFile).Replace(".am.gz", "");
 
-            var store = new FileSystemDataStore(".", new MetricSpecification(item, float.MinValue, float.MaxValue));
+            var store = new FileSystemDataStore(".", item);
 
             var snapshot = store.Snapshot();
 
