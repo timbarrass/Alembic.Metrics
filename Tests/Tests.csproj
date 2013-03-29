@@ -37,10 +37,10 @@
       <HintPath>..\bin\Debug\log4net.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\Externals\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\Code\csharp\GraphSandbox\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Rhino.Mocks">
-      <HintPath>..\..\Externals\Rhino.Mocks-3.6\Rhino.Mocks.dll</HintPath>
+      <HintPath>..\..\..\Code\csharp\Externals\Rhino.Mocks-3.6\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />

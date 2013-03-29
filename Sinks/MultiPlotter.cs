@@ -23,10 +23,6 @@ namespace Sinks
             _max = expectedMax;
 
             _scale = scale;
-
-            _fontCollection = new PrivateFontCollection();
-
-            _fontCollection.AddFontFile("Apple ][.ttf");
         }
 
         public MultiPlotter(PlotterElement config)
@@ -180,8 +176,6 @@ namespace Sinks
         }
 
         private readonly string _directory;
-
-        private PrivateFontCollection _fontCollection;
 
         private readonly float? _min;
 
