@@ -16,7 +16,7 @@ namespace Tests
             var schedules = ConfigurationParser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
-            Assert.AreEqual(6, schedules.Schedules.Count());
+            Assert.AreEqual(8, schedules.Schedules.Count());
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace Tests
             var schedules = ConfigurationParser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
-            Assert.AreEqual(1, schedules.PreloadSchedules.Count());            
+            Assert.AreEqual(7, schedules.PreloadSchedules.Count());            
         }
     }
 }

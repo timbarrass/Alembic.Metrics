@@ -9,6 +9,14 @@ namespace Configuration
         {
         }
 
+        public PlotterConfiguration(IEnumerable<IPlotterConfiguration> configs)
+        {
+            foreach(var config in configs)
+            {
+                Plotters.Add(new PlotterElement(config));
+            }
+        }
+
         public PlotterConfiguration(IEnumerable<PlotterElement> configs)
         {
             Plotters.Add(configs);
@@ -84,11 +92,16 @@ namespace Configuration
     [ConfigurationCollection(typeof(StoreElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class PlotterElementCollection : ConfigurationElementCollection
     {
+        public void Add(PlotterElement config)
+        {
+            BaseAdd(config, true);
+        }
+
         public void Add(IEnumerable<PlotterElement> configs)
         {
             foreach (var config in configs)
             {
-                BaseAdd(config, true);
+                Add(config);
             }
         }
 

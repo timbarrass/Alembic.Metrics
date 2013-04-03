@@ -1,9 +1,15 @@
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace Configuration
 {
     public class ChainConfiguration : ConfigurationSection
     {
+        public ChainConfiguration(IEnumerable<ChainElement> configs)
+        {
+            Links.Add(configs);
+        }
+
         [ConfigurationProperty("links")]
         public ChainElementCollection Links
         {
@@ -60,6 +66,20 @@ namespace Configuration
     [ConfigurationCollection(typeof(ChainElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class ChainElementCollection : ConfigurationElementCollection
     {
+        public bool Contains(string name)
+        {
+            return _names.Contains(name);
+        }
+
+        public void Add(IEnumerable<ChainElement> configs)
+        {
+            foreach(var config in configs)
+            {
+                BaseAdd(config);
+                _names.Add(config.Name);
+            }
+        }
+
         public ChainElement this[int index]
         {
             get { return (ChainElement)base.BaseGet(index); }
@@ -87,6 +107,8 @@ namespace Configuration
         {
             return string.Format("{0}-{1}-{2}", (element as ChainElement).Name, (element as ChainElement).Sources, (element as ChainElement).Sinks);
         }
+
+        private HashSet<string> _names = new HashSet<string>(); 
     }
 
 

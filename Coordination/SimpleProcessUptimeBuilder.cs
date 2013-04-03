@@ -10,19 +10,19 @@ namespace Coordination
 {
     public class SimpleProcessUptimeBuilder
     {
-        public static IEnumerable<ISchedule> Build(SimpleProcessUptimeConfiguration configs)
+        public static IEnumerable<BuiltComponents> Build(SimpleProcessUptimeConfiguration configs)
         {
-            var schedules = new List<ISchedule>();
+            var components = new List<BuiltComponents>();
 
             foreach(SimpleProcessElement config in configs.Processes)
             {
-                schedules.AddRange(Build(config));
+                components.Add(Build(config));
             }
 
-            return schedules;
+            return components;
         }
 
-        public static IEnumerable<ISchedule> Build(SimpleProcessElement simpleConfig)
+        public static BuiltComponents Build(SimpleProcessElement simpleConfig)
         {
             var counterElement = new ProcessElement(simpleConfig);
             var bufferElement = new SinkElement(simpleConfig);
@@ -41,7 +41,9 @@ namespace Coordination
             var buffers = CircularDataSinkBuilder.Build(bufferConfig);
             sinks.AddRange(buffers);
             sources.AddRange(buffers);
-            sinks.AddRange(FileSystemDataStoreBuilder.Build(storeConfig));
+            var stores = FileSystemDataStoreBuilder.Build(storeConfig);
+            sinks.AddRange(stores);
+            sources.AddRange(stores);
 
             var multiSinks = new List<IMultipleSnapshotConsumer>();
             multiSinks.AddRange(MultiPlotterBuilder.Build(plotterConfig));
@@ -51,26 +53,29 @@ namespace Coordination
                 simpleConfig.Name + " Source",
                 simpleConfig.Name + " Buffer",
                 "");
-            var bufferChain = ChainBuilder.Build(sources, sinks, multiSinks, new[] {bufferChainElement});
 
             var sinkChainElement = new ChainElement(
                 simpleConfig.Name + " Sink Chain",
                 simpleConfig.Name + " Buffer",
                 simpleConfig.Name + " Store",
                 simpleConfig.Name + " Plotter");
-            var sinkChain = ChainBuilder.Build(sources, sinks, multiSinks, new[] {sinkChainElement});
 
-            var chains = new List<IChain>();
-            chains.AddRange(bufferChain);
-            chains.AddRange(sinkChain);
+            var preloadChainElement = new ChainElement(
+                simpleConfig.Name + " Preload Chain",
+                simpleConfig.Name + " Store",
+                simpleConfig.Name + " Buffer",
+                "");
 
-            var chainNames = String.Join((string) ",", (IEnumerable<string>) chains.Select(c => c.Name));
-            var scheduleElement = new ScheduleElement(simpleConfig.Name, simpleConfig.Delay, chainNames);
+            var chainConfig = new ChainConfiguration(new[] { bufferChainElement, sinkChainElement, preloadChainElement });
+
+            var preLoadScheduleElement = new ScheduleElement(simpleConfig.Name + " Preload Schedule", simpleConfig.Delay, preloadChainElement.Name);
+            var preloadScheduleConfig = new ScheduleConfiguration(new[] { preLoadScheduleElement });
+
+            var chainNames = String.Join(",", new [] { bufferChainElement.Name, sinkChainElement.Name });
+            var scheduleElement = new ScheduleElement(simpleConfig.Name + " Schedule", simpleConfig.Delay, chainNames);
             var scheduleConfig = new ScheduleConfiguration(new[] {scheduleElement});
 
-            var schedules = ScheduleBuilder.Build(scheduleConfig, chains);
-
-            return schedules;
+            return new BuiltComponents(sources, sinks, multiSinks, chainConfig, preloadScheduleConfig, scheduleConfig);
         }
     }
 }

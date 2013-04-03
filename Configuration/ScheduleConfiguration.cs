@@ -63,11 +63,17 @@ namespace Configuration
     [ConfigurationCollection(typeof(ChainElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class ScheduleElementCollection : ConfigurationElementCollection
     {
+        public bool Contains(string name)
+        {
+            return _names.Contains(name);
+        }
+
         public void Add(IEnumerable<ScheduleElement> configs)
         {
             foreach (var config in configs)
             {
                 BaseAdd(config);
+                _names.Add(config.Name);
             }
         }
 
@@ -98,6 +104,8 @@ namespace Configuration
         {
             return string.Format("{0}", (element as ScheduleElement).Name);
         }
+
+        private HashSet<string> _names = new HashSet<string>(); 
     }
 
 }

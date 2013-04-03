@@ -19,6 +19,83 @@ namespace Common
             var schedules = new List<ISchedule>();
             var preloadSchedules = new List<ISchedule>();
 
+            var chainConfigs = new List<ChainConfiguration>();
+            var preloadScheduleConfigs = new List<ScheduleConfiguration>();
+            var scheduleConfigs = new List<ScheduleConfiguration>();
+
+            // Simple configurations
+            var simpleCounterConfiguration = configuration.GetSection("simplePerformanceCounterSources") as SimplePerformanceCounterSourceConfiguration;
+
+            if (simpleCounterConfiguration != null)
+            {
+                var componentsSet = SimpleCounterBuilder.Build(simpleCounterConfiguration);
+                foreach (var components in componentsSet)
+                {
+                    sources.AddRange(components.Sources);
+                    sinks.AddRange(components.Sinks);
+                    multiSourceSinks.AddRange(components.Multisinks);
+                    chainConfigs.Add(components.Chains);
+                    preloadScheduleConfigs.Add(components.PreloadSchedules);
+                    scheduleConfigs.Add(components.Schedules);
+                }
+            }
+
+            var simpleProcessUptimeConfiguration = configuration.GetSection("simpleProcessUptimeSources") as SimpleProcessUptimeConfiguration;
+
+            if (simpleProcessUptimeConfiguration != null)
+            {
+                var componentsSet = SimpleProcessUptimeBuilder.Build(simpleProcessUptimeConfiguration);
+                foreach (var components in componentsSet)
+                {
+                    sources.AddRange(components.Sources);
+                    sinks.AddRange(components.Sinks);
+                    multiSourceSinks.AddRange(components.Multisinks);
+                    chainConfigs.Add(components.Chains);
+                    preloadScheduleConfigs.Add(components.PreloadSchedules);
+                    scheduleConfigs.Add(components.Schedules);
+                }
+            }
+
+            var simpleProcessCounterConfiguration = configuration.GetSection("simpleProcessCountingSources") as SimpleProcessCountingConfiguration;
+
+            if (simpleProcessCounterConfiguration != null)
+            {
+                var componentsSet = SimpleProcessCountingBuilder.Build(simpleProcessCounterConfiguration);
+                foreach (var components in componentsSet)
+                {
+                    sources.AddRange(components.Sources);
+                    sinks.AddRange(components.Sinks);
+                    multiSourceSinks.AddRange(components.Multisinks);
+                    chainConfigs.Add(components.Chains);
+                    preloadScheduleConfigs.Add(components.PreloadSchedules);
+                    scheduleConfigs.Add(components.Schedules);
+                }
+            }
+
+            var simpleDatabaseConfiguration = configuration.GetSection("simpleDatabaseSources") as SimpleDatabaseConfiguration;
+
+            if (simpleDatabaseConfiguration != null)
+            {
+                var componentsSet = SimpleDatabaseBuilder.Build(simpleDatabaseConfiguration);
+                foreach (var components in componentsSet)
+                {
+                    sources.AddRange(components.Sources);
+                    sinks.AddRange(components.Sinks);
+                    multiSourceSinks.AddRange(components.Multisinks);
+                    chainConfigs.Add(components.Chains);
+                    preloadScheduleConfigs.Add(components.PreloadSchedules);
+                    scheduleConfigs.Add(components.Schedules);
+                }
+            }
+
+            var simplePlotterConfiguration = configuration.GetSection("simplePlotters") as SimplePlotterConfiguration;
+
+            if (simplePlotterConfiguration != null)
+            {
+                schedules.AddRange(SimplePlotterBuilder.Build(simplePlotterConfiguration, sources)); // this won't work, as everything else is hidden behind schedules
+            }
+
+
             // ProcessCountingSources
             var processCountingSourceConfiguration =
                 configuration.GetSection("processCountingSources") as ProcessCountingSourceConfiguration;
@@ -91,7 +168,12 @@ namespace Common
 
             if (chainConfiguration != null)
             {
-                chains.AddRange(ChainBuilder.Build(sources, sinks, multiSourceSinks, chainConfiguration.Links));
+                chainConfigs.Add(chainConfiguration);
+            }
+            
+            foreach(var config in chainConfigs)
+            {
+                chains.AddRange(ChainBuilder.Build(sources, sinks, multiSourceSinks, config.Links));
             }
 
             // PreloadSchedules
@@ -99,7 +181,12 @@ namespace Common
 
             if (preloadScheduleConfiguration != null)
             {
-                preloadSchedules.AddRange(ScheduleBuilder.Build(preloadScheduleConfiguration, chains));
+                preloadScheduleConfigs.Add(preloadScheduleConfiguration);
+            }
+
+            foreach(var config in preloadScheduleConfigs)
+            {
+                preloadSchedules.AddRange(ScheduleBuilder.Build(config, chains));
             }
 
             // Schedules
@@ -107,39 +194,14 @@ namespace Common
 
             if (scheduleConfiguration != null)
             {
-                schedules.AddRange(ScheduleBuilder.Build(scheduleConfiguration, chains));
+                scheduleConfigs.Add(scheduleConfiguration);
             }
 
-            // Simple configurations
-            var simpleCounterConfiguration = configuration.GetSection("simplePerformanceCounterSources") as SimplePerformanceCounterSourceConfiguration;
-
-            if (simpleCounterConfiguration != null)
+            foreach(var config in scheduleConfigs)
             {
-                schedules.AddRange(SimpleCounterBuilder.Build(simpleCounterConfiguration));
+                schedules.AddRange(ScheduleBuilder.Build(config, chains));
             }
-
-            var simpleProcessUptimeConfiguration = configuration.GetSection("simpleProcessUptimeSources") as SimpleProcessUptimeConfiguration;
-
-            if (simpleProcessUptimeConfiguration != null)
-            {
-                schedules.AddRange(SimpleProcessUptimeBuilder.Build(simpleProcessUptimeConfiguration));
-            }
-
-            var simpleProcessCounterConfiguration = configuration.GetSection("simpleProcessCountingSources") as SimpleProcessCountingConfiguration;
-
-            if (simpleProcessCounterConfiguration != null)
-            {
-                schedules.AddRange(SimpleProcessCountingBuilder.Build(simpleProcessCounterConfiguration));
-            }
-
-            var simpleDatabaseConfiguration = configuration.GetSection("simpleDatabaseSources") as SimpleDatabaseConfiguration;
-
-            if (simpleDatabaseConfiguration != null)
-            {
-                schedules.AddRange(SimpleDatabaseBuilder.Build(simpleDatabaseConfiguration));
-            }
-
-
+            
 
 
             return new ParsedSchedules { Schedules = schedules, PreloadSchedules = preloadSchedules };

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ChainConfiguration.cs" />
     <Compile Include="CircularDataSinkConfiguration.cs" />
+    <Compile Include="SimplePlotterConfiguration.cs" />
     <Compile Include="FileSystemDataStoreConfiguration.cs" />
     <Compile Include="IDatabaseConfiguration.cs" />
     <Compile Include="IScheduleConfiguration.cs" />

@@ -12,9 +12,224 @@ using Sources;
 
 namespace Tests
 {
+    public class SimpleDatabaseBuilderTests
+    {
+        [Test]
+        public void SimpleDatabaseBuilderParsesConfigDownToComponents()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string bufferChainName = name + " Buffer Chain";
+            const string sinkChainName = name + " Sink Chain";
+            const string preloadChainName = name + " Preload Chain";
+            const string preloadScheduleName = name + " Preload Schedule";
+            const string scheduleName = name + " Schedule";
+            const string query = "theQuery";
+            const string connectionString = @"Data Source=.\SQLEXPRESS;Initial catalog=Alembic.Metrics.Dev;Integrated Security=True";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 1;
+
+            var simpleConfig = new SimpleDatabaseElement(name, query, connectionString, min, max, points,
+                                                        outputPath, scale, delay);
+
+            var components = SimpleDatabaseBuilder.Build(simpleConfig);
+
+            Assert.IsInstanceOf<BuiltComponents>(components);
+
+            Assert.AreEqual(3, components.Sources.Count());
+            Assert.IsTrue(components.Sources.Any(s => s.Name == sourceName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(2, components.Sinks.Count());
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(1, components.Multisinks.Count());
+            Assert.IsTrue(components.Multisinks.Any(s => s.Name == plotterName));
+
+            Assert.IsTrue(components.Chains.Links.Contains(bufferChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(sinkChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(preloadChainName));
+
+            Assert.IsTrue(components.PreloadSchedules.Links.Contains(preloadScheduleName));
+            Assert.IsTrue(components.Schedules.Links.Contains(scheduleName));
+        }
+    }
+
+
+    public class SimpleProcessUptimeBuilderTests
+    {
+        [Test]
+        public void SimpleProcessUptimeBuilderParsesConfigDownToComponents()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string bufferChainName = name + " Buffer Chain";
+            const string sinkChainName = name + " Sink Chain";
+            const string preloadChainName = name + " Preload Chain";
+            const string preloadScheduleName = name + " Preload Schedule";
+            const string scheduleName = name + " Schedule";
+            const string exe = "theCategory";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 1;
+
+            var simpleConfig = new SimpleProcessElement(name, exe, machine, min, max, points,
+                                                        outputPath, scale, delay);
+
+            var components = SimpleProcessUptimeBuilder.Build(simpleConfig);
+
+            Assert.IsInstanceOf<BuiltComponents>(components);
+
+            Assert.AreEqual(3, components.Sources.Count());
+            Assert.IsTrue(components.Sources.Any(s => s.Name == sourceName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(2, components.Sinks.Count());
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(1, components.Multisinks.Count());
+            Assert.IsTrue(components.Multisinks.Any(s => s.Name == plotterName));
+
+            Assert.IsTrue(components.Chains.Links.Contains(bufferChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(sinkChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(preloadChainName));
+
+            Assert.IsTrue(components.PreloadSchedules.Links.Contains(preloadScheduleName));
+            Assert.IsTrue(components.Schedules.Links.Contains(scheduleName));
+        }
+    }
+
+    [TestFixture]
+    public class SimpleProcessCountingBuilderTests
+    {
+        [Test]
+        public void SimpleProcessCountingBuilderParsesConfigDownToComponents()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string bufferChainName = name + " Buffer Chain";
+            const string sinkChainName = name + " Sink Chain";
+            const string preloadChainName = name + " Preload Chain";
+            const string preloadScheduleName = name + " Preload Schedule";
+            const string scheduleName = name + " Schedule";
+            const string exe = "theCategory";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 1;
+
+            var simpleConfig = new SimpleProcessElement(name, exe, machine, min, max, points,
+                                                        outputPath, scale, delay);
+
+            var components = SimpleProcessCountingBuilder.Build(simpleConfig);
+
+            Assert.IsInstanceOf<BuiltComponents>(components);
+
+            Assert.AreEqual(3, components.Sources.Count());
+            Assert.IsTrue(components.Sources.Any(s => s.Name == sourceName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(2, components.Sinks.Count());
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(1, components.Multisinks.Count());
+            Assert.IsTrue(components.Multisinks.Any(s => s.Name == plotterName));
+
+            Assert.IsTrue(components.Chains.Links.Contains(bufferChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(sinkChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(preloadChainName));
+
+            Assert.IsTrue(components.PreloadSchedules.Links.Contains(preloadScheduleName));
+            Assert.IsTrue(components.Schedules.Links.Contains(scheduleName));
+        }
+    }
+
+    [TestFixture]
+    public class SimpleCounterBuilderTests
+    {
+        [Test]
+        public void SimpleCounterBuilderParsesConfigDownToComponents()
+        {
+            const string name = "testCounter";
+            const string sourceName = name + " Source";
+            const string bufferName = name + " Buffer";
+            const string storeName = name + " Store";
+            const string plotterName = name + " Plotter";
+            const string bufferChainName = name + " Buffer Chain";
+            const string sinkChainName = name + " Sink Chain";
+            const string preloadChainName = name + " Preload Chain";
+            const string preloadScheduleName = name + " Preload Schedule";
+            const string scheduleName = name + " Schedule";
+            const string catgeory = "theCategory";
+            const string counter = "theCounter";
+            const string instance = "theInstance";
+            const string machine = "theMachine";
+            float? min = 0.0f;
+            float? max = 0.0f;
+            const int points = 10;
+            const string outputPath = "thePath";
+            const double scale = 0.1d;
+            const int delay = 1;
+
+            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points,
+                                            outputPath, scale, delay);
+
+            var components = SimpleCounterBuilder.Build(simpleConfig);
+
+            Assert.IsInstanceOf<BuiltComponents>(components);
+
+            Assert.AreEqual(3, components.Sources.Count());
+            Assert.IsTrue(components.Sources.Any(s => s.Name == sourceName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sources.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(2, components.Sinks.Count());
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == bufferName));
+            Assert.IsTrue(components.Sinks.Any(s => s.Name == storeName));
+
+            Assert.AreEqual(1, components.Multisinks.Count());
+            Assert.IsTrue(components.Multisinks.Any(s => s.Name == plotterName));
+
+            Assert.IsTrue(components.Chains.Links.Contains(bufferChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(sinkChainName));
+            Assert.IsTrue(components.Chains.Links.Contains(preloadChainName));
+
+            Assert.IsTrue(components.PreloadSchedules.Links.Contains(preloadScheduleName));
+            Assert.IsTrue(components.Schedules.Links.Contains(scheduleName));
+        }
+        
+    }
+
     [TestFixture]
     public class Sandbox
     {
+
         [Test]
         public void CanMapASimpleCounterConfigurationToCounterBufferStoreAndPlotterConfiguration()
         {
@@ -96,26 +311,31 @@ namespace Tests
         }
 
         [Test]
-        public void SimpleConfigurationParserCreatesCounterSchedule()
+        public void SimpleMultiPlotterCanConnectToMultipleSources()
         {
-            const string name = "testCounter";
-            const string catgeory = "theCategory";
-            const string counter = "theCounter";
-            const string instance = "theInstance";
-            const string machine = "theMachine";
+            const string sourceName1 = "testSource";
+            const string sourceName2 = "testSource2";
+            const string multiplotterName = "testPlotter";
+            var sources = string.Join(",", sourceName1, sourceName2);
             float? min = 0.0f;
             float? max = 0.0f;
-            const int points = 10;
             const string outputPath = "thePath";
             const double scale = 0.1d;
             const int delay = 11;
 
-            var simpleConfig = new SimpleCounterElement(name, catgeory, counter, instance, machine, min, max, points, outputPath, scale, delay);
+            var plotter = new SimplePlotterElement(multiplotterName, sources, min, max, outputPath, scale, delay);
 
-            var schedules = SimpleCounterBuilder.Build(simpleConfig);
+            var source1 = MockRepository.GenerateMock<ISnapshotProvider>();
+            source1.Expect(s => s.Name).Return(sourceName1).Repeat.Any();
+            var source2 = MockRepository.GenerateMock<ISnapshotProvider>();
+            source2.Expect(s => s.Name).Return(sourceName2).Repeat.Any();
 
-            Assert.AreEqual(1, schedules.Count()); // interesting. chains, delay are encapsulated. how do I test that it's been created properly?
+            var schedules = SimplePlotterBuilder.Build(plotter, new [] { source1, source2 });
+
+           Assert.AreEqual("testPlotter", schedules.Name);
         }
+
+
 
         [Test]
         public void CanMapASimpleDatabaseConfigurationToDatabaseBufferStoreAndPlotterConfiguration()
@@ -152,89 +372,6 @@ namespace Tests
             var plotterConfig = new PlotterElement(simpleConfig);
 
             Assert.AreEqual(plotterName, plotterConfig.Name);
-        }
-
-        [Test, Category("CollaborationTest")]
-        public void ConfigurationParserParsesConfigAndRequestsChainsFromBuilder()
-        {
-            var sources = new List<ISnapshotProvider>();
-            var sinks = new List<ISnapshotConsumer>();
-            var chains = new List<IChain>();
-            var schedules = new List<ISchedule>();
-
-            var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
-
-            // ProcessCountingSources
-            var processCountingSourceConfiguration = configuration.GetSection("processCountingSources") as ProcessCountingSourceConfiguration;
-
-            if (processCountingSourceConfiguration != null)
-            {
-                sources.AddRange(ProcessCountingSourceBuilder.Build(processCountingSourceConfiguration));
-            }
-
-            // ProcessUptimeSources
-            var processUptimeSourceConfiguration = configuration.GetSection("processUptimeSources") as ProcessUptimeSourceConfiguration;
-
-            if (processUptimeSourceConfiguration != null)
-            {
-                sources.AddRange(ProcessUptimeSourceBuilder.Build(processUptimeSourceConfiguration));
-            }
-
-            // PerformanceCounterDataSources
-            var performanceCounterSourceConfiguration = configuration.GetSection("performanceCounterSources") as PerformanceCounterDataSourceConfiguration;
-
-            if (performanceCounterSourceConfiguration != null)
-            {
-                sources.AddRange(PerformanceCounterDataSourceBuilder.Build(performanceCounterSourceConfiguration));
-            }
-
-            // SqlServerDataSources
-            var sqlServerDataSourceConfiguration = configuration.GetSection("databaseSources") as SqlServerDataSourceConfiguration;
-
-            if (sqlServerDataSourceConfiguration != null)
-            {
-                sources.AddRange(SqlServerDataSourceBuilder.Build(sqlServerDataSourceConfiguration));
-            }
-
-            // CircularDataSinks
-            var circularDataSinkConfiguration = configuration.GetSection("circularDataSinks") as CircularDataSinkConfiguration;
-
-            if (circularDataSinkConfiguration != null)
-            {
-                var circularDataSinks = CircularDataSinkBuilder.Build(circularDataSinkConfiguration);
-
-                sources.AddRange(circularDataSinks);
-                sinks.AddRange(circularDataSinks);
-            }
-
-            // FileSystemDataStores
-            var fileSystemDataStoreConfiguration = configuration.GetSection("fileSystemDataStores") as FileSystemDataStoreConfiguration;
-            
-            if (fileSystemDataStoreConfiguration != null)
-            {
-                sinks.AddRange(FileSystemDataStoreBuilder.Build(fileSystemDataStoreConfiguration));
-            }
-
-            // Chains
-            var chainConfiguration = configuration.GetSection("chains") as ChainConfiguration;
-            
-            if (chainConfiguration != null)
-            {
-                chains.AddRange(ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(),  chainConfiguration.Links));
-            }
-
-            // Schedules
-            var scheduleConfiguration = configuration.GetSection("schedules") as ScheduleConfiguration;
-
-            if (scheduleConfiguration != null)
-            {
-                schedules.AddRange(ScheduleBuilder.Build(scheduleConfiguration, chains));
-            }
-
-            Assert.AreEqual(15, sources.Count);
-            Assert.AreEqual(14, sinks.Count);
-            Assert.AreEqual(8, chains.Count);
-            Assert.AreEqual(5, schedules.Count);
         }
 
         [Test]

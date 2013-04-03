@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SimpleDatabaseBuilder.cs" />
+    <Compile Include="SimplePlotterBuilder.cs" />
     <Compile Include="SimpleProcessCountingBuilder.cs" />
     <Compile Include="SimpleProcessUptimeBuilder.cs" />
     <Compile Include="IChain.cs" />
