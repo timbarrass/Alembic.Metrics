@@ -10,7 +10,7 @@ namespace Tests
         [Test]
         public void PerformanceCounterDataSource_CanBeConfiguredFromAConfigItem()
         {
-            var config = new CounterElement("test", "Memory", "Committed Bytes", "", "localhost");
+            var config = new CounterElement("id", "test", "Memory", "Committed Bytes", "", "localhost");
 
             var source = new PerformanceCounterDataSource(config);
 

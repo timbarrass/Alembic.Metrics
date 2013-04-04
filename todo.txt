@@ -1,41 +1,4 @@
-Typical pattern is going to be:
+Add Id, use Id to relate components
+Use Name for filenames and plot titles
 
-... source
-<add id="Committed Bytes" name="Committed Bytes Source" categoryName="Memory" counterName="Committed Bytes"/>
-
-... buffer
-<add name="Committed Bytes Buffer" points="600"/>
-
-... store
-<add name="Committed Bytes Store" outputPath="."/>
-
-... plot
-<add name="Committed GB" outputDirectory="." min="0" max="5" scale="0.000000001" />
-
-... chains
-<add name="Committed Bytes Preload" sources="Committed Bytes Store" sinks="Committed Bytes Buffer" multiSinks="" />
-<add name="Committed Bytes Buffer" sources="Committed Bytes Source" sinks="Committed Bytes Buffer" multiSinks="" />
-<add name="Committed Bytes Sinks" sources="Committed Bytes Buffer" sinks="Committed Bytes Store" multiSinks="Committed GB" />
-
-... preload schedule
-<add name ="Committed Bytes Preload Schedule" chains="Committed Bytes Preload" />
-
-... schedule
-<add name="Committed Bytes Schedule" delay="10" chains="Committed Bytes Buffer,Committed Bytes Sinks" />
-
-Is there an aggregate configuration that can be used to auto-instantiate this pattern?
-If we want to hang further plotters from it, do we need an another aggregate config (rather than implicit knowledge about source names)
-
-... aggregate source; used to generate source, buffer, store, plot, chains and schedules, with names by guid/convention
-<add name="Committed Bytes"
-     categoryName="Memory"
-     counterName="Committed Bytes"
-     points="600"
-     outputPath="."
-     min="0"
-     max="5"
-     scale="0.000000001" />
-
-... example aggregated plotter config
-<add name="Committed Bytes"
-     sources="Committed Bytes" />
+SimplePlotterElement etc to provide PlotterId, BufferId, StoreId properties etc for subscribing classes to use

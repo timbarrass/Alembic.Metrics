@@ -49,30 +49,33 @@ namespace Coordination
             multiSinks.AddRange(MultiPlotterBuilder.Build(plotterConfig));
 
             var bufferChainElement = new ChainElement(
-                simpleConfig.Name + " Buffer Chain",
-                simpleConfig.Name + " Source",
-                simpleConfig.Name + " Buffer",
+                simpleConfig.Id + " Buffer Chain",
+                simpleConfig.Name,
+                simpleConfig.Id + " Source",
+                simpleConfig.Id + " Buffer",
                 "");
 
             var sinkChainElement = new ChainElement(
-                simpleConfig.Name + " Sink Chain",
-                simpleConfig.Name + " Buffer",
-                simpleConfig.Name + " Store",
-                simpleConfig.Name + " Plotter");
+                simpleConfig.Id + " Sink Chain",
+                simpleConfig.Name,
+                simpleConfig.Id + " Buffer",
+                simpleConfig.Id + " Store",
+                simpleConfig.Id + " Plotter");
 
             var preloadChainElement = new ChainElement(
-                simpleConfig.Name + " Preload Chain",
-                simpleConfig.Name + " Store",
-                simpleConfig.Name + " Buffer",
+                simpleConfig.Id + " Preload Chain",
+                simpleConfig.Name,
+                simpleConfig.Id + " Store",
+                simpleConfig.Id + " Buffer",
                 "");
 
             var chainConfig = new ChainConfiguration(new[] { bufferChainElement, sinkChainElement, preloadChainElement });
 
-            var preLoadScheduleElement = new ScheduleElement(simpleConfig.Name + " Preload Schedule", simpleConfig.Delay, preloadChainElement.Name);
+            var preLoadScheduleElement = new ScheduleElement(simpleConfig.Id + " Preload Schedule", simpleConfig.Delay, preloadChainElement.Id);
             var preloadScheduleConfig = new ScheduleConfiguration(new[] { preLoadScheduleElement });
 
-            var chainNames = String.Join(",", new [] { bufferChainElement.Name, sinkChainElement.Name });
-            var scheduleElement = new ScheduleElement(simpleConfig.Name + " Schedule", simpleConfig.Delay, chainNames);
+            var chainNames = String.Join(",", new [] { bufferChainElement.Id, sinkChainElement.Id });
+            var scheduleElement = new ScheduleElement(simpleConfig.Id + " Schedule", simpleConfig.Delay, chainNames);
             var scheduleConfig = new ScheduleConfiguration(new[] {scheduleElement});
 
             return new BuiltComponents(sources, sinks, multiSinks, chainConfig, preloadScheduleConfig, scheduleConfig);

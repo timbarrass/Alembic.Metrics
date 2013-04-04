@@ -10,15 +10,19 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PerformanceCounterDataSource).Name);
 
-        private PerformanceCounter _counter;
+        private readonly PerformanceCounter _counter;
 
-        private string _counterName;
+        private readonly string _counterName;
 
-        public string Name { get { return _counterName; } }
+        public string Name { get; private set; }
 
-        public PerformanceCounterDataSource(string name, string categoryName, string counterName, string instanceName, string machine)
+        public string Id { get; private set; }
+
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName, string instanceName, string machine)
         {
-            _counterName = name;
+            Id = id;
+
+            Name = name;
 
             if (string.IsNullOrEmpty(machine))
                 machine = Environment.MachineName;
@@ -33,15 +37,17 @@ namespace Sources
             }
         }
 
-        public PerformanceCounterDataSource(string name,string categoryName, string counterName)
+        public PerformanceCounterDataSource(string id, string name, string categoryName, string counterName)
         {
+            Id = id;
+
             _counterName = name;
 
             _counter = new PerformanceCounter { CategoryName = categoryName, CounterName = counterName };
         }
 
         public PerformanceCounterDataSource(ICounterConfiguration config)
-            : this(config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
+            : this(config.Id, config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
         {
         }
 

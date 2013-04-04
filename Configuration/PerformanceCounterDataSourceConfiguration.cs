@@ -23,8 +23,9 @@ namespace Configuration
 
     public class CounterElement : ConfigurationElement, ICounterConfiguration
     {
-        public CounterElement(string name, string categoryName, string counterName, string instanceName, string machineName)
+        public CounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName)
         {
+            base["id"]           = id;
             base["name"]         = name;
             base["categoryName"] = categoryName;
             base["counterName"]  = counterName;
@@ -37,8 +38,14 @@ namespace Configuration
         }
 
         public CounterElement(ICounterConfiguration config)
-            : this(config.Name + " Source", config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
+            : this(config.Id + " Source", config.Name, config.CategoryName, config.CounterName, config.InstanceName, config.MachineName)
         {
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

@@ -28,15 +28,24 @@ namespace Configuration
         }
 
         public StoreElement(IStoreConfiguration config)
-            : this(config.Name + " Store", config.OutputPath)
+            : this(config.Id + " Store", config.Name, config.OutputPath)
         {
         }
 
-        public StoreElement(string name, string outputPath)
+        public StoreElement(string id, string name, string outputPath)
         {
+            Id = id;
+
             Name = name;
 
             OutputPath = outputPath;
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+            private set { base["id"] = value; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

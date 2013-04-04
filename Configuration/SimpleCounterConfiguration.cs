@@ -29,8 +29,9 @@ namespace Configuration
         IPlotterConfiguration,
         IScheduleConfiguration
     {
-        public SimpleCounterElement(string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay)
+        public SimpleCounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay)
         {
+            base["id"] = id;
             base["name"] = name;
             base["categoryName"] = categoryName;
             base["counterName"] = counterName;
@@ -46,6 +47,12 @@ namespace Configuration
 
         public SimpleCounterElement()
         {
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

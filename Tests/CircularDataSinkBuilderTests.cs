@@ -15,7 +15,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new SinkElement(name, 10, null, null)
+                    new SinkElement("id", name, 10, null, null)
                 };
 
             var configCollection = new CircularDataSinkConfiguration(configs);

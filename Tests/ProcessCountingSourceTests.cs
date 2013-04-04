@@ -10,7 +10,7 @@ namespace Tests
         [Test]
         public void ProcessingCountingSource_CanBeConfiguredWithAConfigElement()
         {
-            var config = new ProcessElement("testCounter", "exe", "machine");
+            var config = new ProcessElement("testCounterId", "testCounter", "exe", "machine");
 
             var source = new ProcessCountingSource(config);
 

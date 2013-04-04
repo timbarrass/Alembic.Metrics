@@ -10,11 +10,18 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessCountingSource).Name);
 
-        private string _processToMonitor;
+        private readonly string _processToMonitor;
 
-        private string _processCountName;
+        private readonly string _processCountName;
 
-        private string _machineName = Environment.MachineName;
+        private readonly string _machineName = Environment.MachineName;
+
+        private readonly string _id;
+
+        public string Id
+        {
+            get { return _id; }
+        }
 
         public string Name
         {
@@ -22,12 +29,14 @@ namespace Sources
         }
 
         public ProcessCountingSource(ProcessElement config)
-            : this(config.Name, config.Exe, config.MachineName)
+            : this(config.Id, config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessCountingSource(string processCountFriendlyName, string processToMonitor, string machine)
+        public ProcessCountingSource(string id, string processCountFriendlyName, string processToMonitor, string machine)
         {
+            _id = id;
+
             _processToMonitor = processToMonitor;
 
             _processCountName = processCountFriendlyName;

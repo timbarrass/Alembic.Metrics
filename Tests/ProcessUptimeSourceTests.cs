@@ -10,7 +10,7 @@ namespace Tests
         [Test]
         public void ProcessUptimeSource_CanBeConfiguredWithAconfigElement()
         {
-            var config = new ProcessElement("testCounter", "exe", "machine");
+            var config = new ProcessElement("testConterId", "testCounter", "exe", "machine");
 
             var source = new ProcessUptimeSource(config);
 

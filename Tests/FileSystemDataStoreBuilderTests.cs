@@ -15,7 +15,7 @@ namespace Tests
 
             var configs = new []
                 {
-                    new StoreElement(name, ".")
+                    new StoreElement("id", name, ".")
                 };
 
             var configCollection = new FileSystemDataStoreConfiguration(configs);

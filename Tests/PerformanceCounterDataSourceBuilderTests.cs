@@ -15,7 +15,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new CounterElement(name, "category", "counter", "instance", "machine")
+                    new CounterElement("id", name, "category", "counter", "instance", "machine")
                 };
 
             var configCollection = new PerformanceCounterDataSourceConfiguration(configs);

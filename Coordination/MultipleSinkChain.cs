@@ -12,9 +12,11 @@ namespace Coordination
 
         private static readonly ILog Log = LogManager.GetLogger(typeof(MultipleSinkChain).Name);
 
-        public MultipleSinkChain(string name, ISnapshotProvider source, params ISnapshotConsumer[] sinks)
+        public MultipleSinkChain(string id, string name, ISnapshotProvider source, params ISnapshotConsumer[] sinks)
         {
             Name = name;
+
+            Id = id;
 
             _source = source;
 
@@ -22,6 +24,8 @@ namespace Coordination
         }
 
         public string Name { get; private set; }
+
+        public string Id { get; private set; }
 
         public void Update()
         {

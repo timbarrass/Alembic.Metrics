@@ -4,6 +4,8 @@ namespace Coordination
     {
         string Name { get; }
 
+        string Id { get; }
+
         void Update();
     }
 }

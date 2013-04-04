@@ -14,7 +14,7 @@ namespace Tests
         [Test]
         public void FileSystemDataStoreIsASnapshotConsumerAndProvider()
         {
-            var store = new FileSystemDataStore(".", "testStore");
+            var store = new FileSystemDataStore(".", "testStore", "id");
 
             Assert.IsInstanceOf<ISnapshotConsumer>(store);
             Assert.IsInstanceOf<ISnapshotProvider>(store);
@@ -25,7 +25,7 @@ namespace Tests
         {
             var testData = new Snapshot { new MetricData(2.5d, DateTime.Now) };
 
-            var store = new FileSystemDataStore(".", "testStore");
+            var store = new FileSystemDataStore(".", "testStore", "id");
 
             store.Update(testData);
 
@@ -41,7 +41,7 @@ namespace Tests
         {
             var testData = new Snapshot { new MetricData(2.5d, DateTime.Now) };
 
-            var store = new FileSystemDataStore(".", "testData");
+            var store = new FileSystemDataStore(".", "testData", "id");
 
             store.ResetWith(testData);
             
@@ -56,7 +56,7 @@ namespace Tests
         {
             var root = "Store";
 
-            var store = new FileSystemDataStore(root, "testData");
+            var store = new FileSystemDataStore(root, "testData", "id");
 
             Assert.IsTrue(Directory.Exists(root));
 
@@ -78,7 +78,7 @@ namespace Tests
         {
             var root = "Store";
 
-            var store = new FileSystemDataStore(root, "testData");
+            var store = new FileSystemDataStore(root, "testData", "id");
 
             var snapshot = store.Snapshot();
 

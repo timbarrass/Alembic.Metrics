@@ -29,9 +29,10 @@ namespace Configuration
         IPlotterConfiguration,
         IScheduleConfiguration
     {
-        public SimpleDatabaseElement(string name, string query, string connectionString, float? min, float? max,
+        public SimpleDatabaseElement(string id, string name, string query, string connectionString, float? min, float? max,
                                     int pointsToKeep, string outputPath, double scale, int delay)
         {
+            base["id"] = id;
             base["name"] = name;
             base["query"] = query;
             base["connectionString"] = connectionString;
@@ -45,6 +46,12 @@ namespace Configuration
 
         public SimpleDatabaseElement()
         {
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

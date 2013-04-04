@@ -30,22 +30,28 @@ namespace Configuration
         }
 
         public ProcessElement(IProcessConfiguration config)
-            : this(config.Name + " Source", config.Exe, config.MachineName)
+            : this(config.Id + " Source", config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessElement(string name, string exe, string machineName)
+        public ProcessElement(string id, string name, string exe, string machineName)
         {
+            base["id"] = id;
             base["name"] = name;
             base["exe"] = exe;
             base["machineName"] = machineName;
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
         {
             get { return (string)base["name"]; }
-
         }
 
         [ConfigurationProperty("exe", IsRequired = true)]

@@ -12,8 +12,10 @@ namespace Sinks
 {
     public class MultiPlotter : IMultipleSnapshotConsumer
     {
-        public MultiPlotter(string name, string outputPath, float? expectedMin, float? expectedMax, double scale)
+        public MultiPlotter(string id, string name, string outputPath, float? expectedMin, float? expectedMax, double scale)
         {
+            Id = id;
+
             Name = name;
 
             _directory = outputPath;
@@ -26,9 +28,11 @@ namespace Sinks
         }
 
         public MultiPlotter(PlotterElement config)
-            : this(config.Name, config.OutputDirectory, config.Min, config.Max, config.Scale)
+            : this(config.Id, config.Name, config.OutputDirectory, config.Min, config.Max, config.Scale)
         {
         }
+
+        public string Id { get; private set; }
 
         public string Name { get; private set; }
 

@@ -9,18 +9,22 @@ namespace Sinks
 {
     public class CircularDataSink : ISnapshotProvider, ISnapshotConsumer
     {
-        private object _padlock = new object();
+        private readonly object _padlock = new object();
 
-        private int _pointsToKeep = 10;
+        private readonly int _pointsToKeep = 10;
 
         private SlidingBuffer<MetricData> _data;
 
         private DateTime _lastUpdate = new DateTime();
 
-        private string _name;
+        private readonly string _name;
+
+        private readonly string _id;
 
         public CircularDataSink(ISinkConfiguration config)
         {
+            _id = config.Id;
+
             _pointsToKeep = config.Points;
 
             _data = CreateSlidingBuffer();
@@ -28,6 +32,11 @@ namespace Sinks
             _lastUpdate = DateTime.MinValue;
 
             _name = config.Name;
+        }
+
+        public string Id
+        {
+            get { return _id; }
         }
 
         public string Name

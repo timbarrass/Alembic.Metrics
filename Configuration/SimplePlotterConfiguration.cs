@@ -26,9 +26,10 @@ namespace Configuration
         IPlotterConfiguration,
         IScheduleConfiguration
     {
-        public SimplePlotterElement(string name, string sources, float? min, float? max,
+        public SimplePlotterElement(string id, string name, string sources, float? min, float? max,
                                     string outputPath, double scale, int delay)
         {
+            base["id"] = id;
             base["name"] = name;
             base["sources"] = sources;
             base["min"] = min;
@@ -40,6 +41,12 @@ namespace Configuration
 
         public SimplePlotterElement()
         {
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

@@ -25,17 +25,19 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer", "")
-                };
+                    new ChainElement("id1", "firstTestChain", "testSourceId", "testBufferId", ""),
+                    new ChainElement("id2", "secondTestChain", "testSourceId", "testBufferId", "")
+                };                   
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+            source.Expect(s => s.Id).Return("testSourceId").Repeat.Any();
 
             var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
             buffer.Expect(b => b.Update(snapshot));
             buffer.Expect(s => s.Name).Return("testBuffer").Repeat.Any();
+            buffer.Expect(s => s.Id).Return("testBufferId").Repeat.Any();
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
@@ -60,17 +62,19 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer", "")
-                };
+                    new ChainElement("chainId1", "firstTestChain", "testSourceId", "testBufferId", ""),
+                    new ChainElement("chainId2", "secondTestChain", "testSourceId", "testBufferId", "")
+                };                   
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+            source.Expect(s => s.Id).Return("testSourceId").Repeat.Any();
 
             var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
             buffer.Expect(b => b.Update(snapshot));
             buffer.Expect(s => s.Name).Return("testBuffer").Repeat.Any();
+            buffer.Expect(s => s.Id).Return("testBufferId").Repeat.Any();
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
@@ -78,7 +82,7 @@ namespace Tests
 
             var chains = ChainBuilder.Build(sources, sinks, new HashSet<IMultipleSnapshotConsumer>(), configs);
 
-            var scheduleConfig = new ScheduleElement(scheduleName, delay, string.Join(",", "firstTestChain", "secondTestChain"));
+            var scheduleConfig = new ScheduleElement(scheduleName, delay, string.Join(",", "chainId1", "chainId2"));
 
             var schedules = ScheduleBuilder.Build(new [] { scheduleConfig }, chains);
 

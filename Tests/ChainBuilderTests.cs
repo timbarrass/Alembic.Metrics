@@ -21,26 +21,30 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("firstTestChain", "testSource", "testBuffer", ""),
-                    new ChainElement("secondTestChain", "testSource", "testBuffer,testStore", ""),
-                    new ChainElement("thirdTestChain", "testSource,testSource", "", "testMultiStore")
+                    new ChainElement("id1", "firstTestChain", "testSourceId", "testBufferId", ""),
+                    new ChainElement("id2", "secondTestChain", "testSourceId", "testBufferId,testStoreId", ""),
+                    new ChainElement("id3", "thirdTestChain", "testSourceId,testSourceId", "", "testMultiStoreId")
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+            source.Expect(s => s.Id).Return("testSourceId").Repeat.Any();
 
             var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
             buffer.Expect(b => b.Update(snapshot));
             buffer.Expect(s => s.Name).Return("testBuffer").Repeat.Any();
+            buffer.Expect(s => s.Id).Return("testBufferId").Repeat.Any();
 
             var store = MockRepository.GenerateMock<ISnapshotConsumer>();
             store.Expect(s => s.Update(snapshot));
             store.Expect(s => s.Name).Return("testStore").Repeat.Any();
+            store.Expect(s => s.Id).Return("testStoreId").Repeat.Any();
 
             var multiStore = MockRepository.GenerateMock<IMultipleSnapshotConsumer>();
             multiStore.Expect(s => s.Update(null)).IgnoreArguments();
             multiStore.Expect(s => s.Name).Return("testMultiStore").Repeat.Any();
+            multiStore.Expect(s => s.Id).Return("testMultiStoreId").Repeat.Any();
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
@@ -60,12 +64,13 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("storageChain", "testSource", "testBuffer", ""),
+                    new ChainElement("id", "storageChain", "testSourceId", "testBufferId", ""),
                 };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+            source.Expect(s => s.Id).Return("testSourceId").Repeat.Any();
 
             var sources = new HashSet<ISnapshotProvider> { source };
 
@@ -76,6 +81,7 @@ namespace Tests
             var buffer = MockRepository.GenerateMock<ISnapshotConsumer>();
             buffer.Expect(b => b.Update(snapshot));
             buffer.Expect(s => s.Name).Return("testBuffer").Repeat.Any();
+            buffer.Expect(s => s.Id).Return("testBufferId").Repeat.Any();
 
             var sinks = new HashSet<ISnapshotConsumer> { buffer };
 
@@ -96,21 +102,22 @@ namespace Tests
 
             var configs = new List<ChainElement>
                 {
-                    new ChainElement("storageChain", "testSource", "testBuffer,testStore", ""),
-                    new ChainElement("plottingChain", "testBuffer", "", "testPlotter"),
-                };
+                    new ChainElement("chain1", "storageChain", "testSourceId", "testBufferId,testStoreId", ""),
+                    new ChainElement("chain2", "plottingChain", "testBufferId", "", "testPlotterId"),
+                };                   
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
             source.Expect(s => s.Snapshot()).Return(snapshot).Repeat.Any();
             source.Expect(s => s.Name).Return("testSource").Repeat.Any();
+            source.Expect(s => s.Id).Return("testSourceId").Repeat.Any();
 
-            var bufferConfig = new SinkElement("testBuffer", 10, 0, 1);
+            var bufferConfig = new SinkElement("testBufferId", "testBuffer", 10, 0, 1);
 
             var buffer = new CircularDataSink(bufferConfig);
 
-            var store = new FileSystemDataStore(".", "testStore");
+            var store = new FileSystemDataStore(".", "testStore", "testStoreId");
 
-            var config = new PlotterElement("testPlotter", ".", 0, 1, 1);
+            var config = new PlotterElement("testPlotterId", "testPlotter", ".", 0, 1, 1);
 
             var plotter = new MultiPlotter(config);
 

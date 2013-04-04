@@ -2,10 +2,8 @@ using System;
 
 namespace Data
 {
-    public interface ISnapshotProvider
+    public interface ISnapshotProvider : ISnapshotHandler
     {
-        string Name { get; }
-
         Snapshot Snapshot();
 
         Snapshot Snapshot(DateTime cutoff);

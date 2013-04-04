@@ -75,6 +75,10 @@
     <Compile Include="Sandbox.cs" />
     <Compile Include="ScheduleBuilderTests.cs" />
     <Compile Include="ScheduleTests.cs" />
+    <Compile Include="SimpleCounterBuilderTests.cs" />
+    <Compile Include="SimpleDatabaseBuilderTests.cs" />
+    <Compile Include="SimpleProcessCountingBuilderTests.cs" />
+    <Compile Include="SimpleProcessUptimeBuilderTests.cs" />
     <Compile Include="SqlServerDataSourceBuilderTests.cs" />
     <Compile Include="SqlServerDataSourceTests.cs" />
     <Compile Include="TestSerializable.cs" />

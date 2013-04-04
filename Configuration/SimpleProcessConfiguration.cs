@@ -47,9 +47,10 @@ namespace Configuration
         IPlotterConfiguration,
         IScheduleConfiguration
     {
-        public SimpleProcessElement(string name, string executableName, string machineName, float? min, float? max,
+        public SimpleProcessElement(string id, string name, string executableName, string machineName, float? min, float? max,
                                     int pointsToKeep, string outputPath, double scale, int delay)
         {
+            base["id"] = id;
             base["name"] = name;
             base["exe"] = executableName;
             base["machineName"] = machineName;
@@ -63,6 +64,12 @@ namespace Configuration
 
         public SimpleProcessElement()
         {
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

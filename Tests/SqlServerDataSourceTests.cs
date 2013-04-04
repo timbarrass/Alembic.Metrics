@@ -42,7 +42,7 @@ namespace Tests
 
             var query = "select * from ExampleData";
 
-            var config = new DatabaseElement("testDb", connString, query);
+            var config = new DatabaseElement("id", "testDb", connString, query);
 
             var source = new SqlServerDataSource(config);
 

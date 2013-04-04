@@ -15,7 +15,7 @@ namespace Coordination
 
             var chainNames = config.Chains.Split(',');
 
-            Chains = chains.Where(c => chainNames.Contains(c.Name)).ToArray();
+            Chains = chains.Where(c => chainNames.Contains(c.Id)).ToArray();
         }
 
         public Schedule(string name, int delay, IEnumerable<IChain> chains)

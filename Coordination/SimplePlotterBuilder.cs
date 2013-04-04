@@ -31,11 +31,11 @@ namespace Coordination
             var sourceStringBuilder = new StringBuilder();
             foreach(var source in config.Sources.Split(','))
             {
-                sourceStringBuilder.Append(source).Append(" Buffer,");
+                sourceStringBuilder.Append(source).Append(" Source,");
             }
             var configSources = sourceStringBuilder.ToString().TrimEnd(',');
 
-            var chainConfig = new ChainElement(config.Name, configSources, "", config.Name + " Plotter");
+            var chainConfig = new ChainElement(config.Id + " Chain", config.Name, configSources, "", config.Id + " Plotter");
 
             var chains = ChainBuilder.Build(sources, new List<ISnapshotConsumer>(), sinks, new [] { chainConfig });
 

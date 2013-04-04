@@ -28,12 +28,14 @@ namespace Configuration
         }
 
         public SinkElement(ISinkConfiguration config)
-            : this(config.Name + " Buffer", config.Points)
+            : this(config.Id + " Buffer", config.Name, config.Points)
         {
         }
 
-        public SinkElement(string name, int points, float? min = null, float? max = null)
+        public SinkElement(string id, string name, int points, float? min = null, float? max = null)
         {
+            Id = id;
+
             Name = name;
 
             Points = points;
@@ -41,6 +43,13 @@ namespace Configuration
             Min = min.HasValue ? min.Value : float.MinValue;
 
             Max = max.HasValue ? max.Value : float.MaxValue;
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+            private set { base["id"] = value; }
         }
 
         [ConfigurationProperty("min", IsRequired = false)]

@@ -14,21 +14,24 @@ namespace Sinks
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileSystemDataStore).Name);
 
         public FileSystemDataStore(StoreElement config)
+            : this(config.OutputPath, config.Name, config.Id)
         {
-            _root = config.OutputPath;
-
-            _name = config.Name;
-
-            Directory.CreateDirectory(_root);
         }
 
-        public FileSystemDataStore(string root, string name)
+        public FileSystemDataStore(string root, string name, string id)
         {
+            _id = id;
+
             _root = root;
 
             _name = name;
 
             Directory.CreateDirectory(root);
+        }
+
+        public string Id
+        {
+            get { return _id; }
         }
 
         public string Name
@@ -166,8 +169,10 @@ namespace Sinks
             return zipFileName;
         }
 
-        private string _root = ".";
+        private readonly string _root = ".";
 
-        private string _name;
+        private readonly string _name;
+
+        private readonly string _id;
     }
 }

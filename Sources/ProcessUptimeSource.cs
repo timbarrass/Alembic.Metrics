@@ -11,27 +11,26 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(ProcessUptimeSource).Name);
 
-        private string _processToMonitor;
+        private readonly string _processToMonitor;
 
-        private string _processUptimeName;
+        private readonly string _machineName;
 
-        private string _machineName;
+        public string Name { get; private set; }
 
-        public string Name
-        {
-            get { return _processUptimeName; }
-        }
+        public string Id { get; private set; }
 
         public ProcessUptimeSource(ProcessElement config)
-            : this(config.Name, config.Exe, config.MachineName)
+            : this(config.Id, config.Name, config.Exe, config.MachineName)
         {
         }
 
-        public ProcessUptimeSource(string processUptimeFriendlyName, string processToMonitor, string machine)
+        public ProcessUptimeSource(string id, string processUptimeFriendlyName, string processToMonitor, string machine)
         {
+            Id = id;
+
             _processToMonitor = processToMonitor;
 ;
-            _processUptimeName = processUptimeFriendlyName;
+            Name = processUptimeFriendlyName;
 
             _machineName = machine;
         }

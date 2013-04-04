@@ -16,7 +16,7 @@ namespace Tests
             var name = "testBuffer";
             var points = 1;
 
-            var config = new SinkElement(name, points);
+            var config = new SinkElement("id", name, points);
 
             var sink = new CircularDataSink(config);
 
@@ -26,7 +26,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_ProvidesAName()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
             
@@ -36,7 +36,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanBeReset()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
 
@@ -62,7 +62,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanProvideASnapshotOfDataAfterSomeCutoff()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
 
@@ -79,7 +79,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_CanBeUpdatedWithMetricData()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
 
@@ -96,7 +96,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_SupportsDataSnapshot()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
 
@@ -122,7 +122,7 @@ namespace Tests
         [Test]
         public void CircularDataSink_IgnoreDataOlderThanMostRecentLastUpdate()
         {
-            var config = new SinkElement("testData", 10, float.MinValue, float.MaxValue);
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
 
             var sink = new CircularDataSink(config);
 

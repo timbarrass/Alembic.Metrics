@@ -22,8 +22,8 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain("id1", chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain("id2", chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
             var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
@@ -45,8 +45,8 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain("id1", chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain("id2", chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
             var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
@@ -75,11 +75,11 @@ namespace Tests
 
             var chains = new[]
                 {
-                    new MultipleSinkChain(chainName1, new NullSource(), new ISnapshotConsumer[] {}),
-                    new MultipleSinkChain(chainName2, new NullSource(), new ISnapshotConsumer[] {})
+                    new MultipleSinkChain("id1", chainName1, new NullSource(), new ISnapshotConsumer[] {}),
+                    new MultipleSinkChain("id2", chainName2, new NullSource(), new ISnapshotConsumer[] {})
                 };
 
-            var config = new ScheduleElement(scheduleName, delay, string.Join(",", chainName1, chainName2));
+            var config = new ScheduleElement(scheduleName, delay, string.Join(",", "id1", "id2"));
 
             var schedule = new Schedule(config, chains);
 

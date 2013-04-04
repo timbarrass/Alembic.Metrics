@@ -8,9 +8,11 @@ namespace Coordination
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(MultipleSourceChain).Name);
 
-        public MultipleSourceChain(string name, IMultipleSnapshotConsumer sink, params ISnapshotProvider[] sources)
+        public MultipleSourceChain(string id, string name, IMultipleSnapshotConsumer sink, params ISnapshotProvider[] sources)
         {
             Name = name;
+
+            Id = id;
 
             _sources = sources;
 
@@ -18,6 +20,8 @@ namespace Coordination
         }
 
         public string Name { get; private set; }
+
+        public string Id { get; private set; }
 
         public void Update()
         {

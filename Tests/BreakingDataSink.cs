@@ -7,6 +7,8 @@ namespace Tests
     {
         public string Name { get { return "BreakingDataSink"; } }
 
+        public string Id { get { return "BreakingDataSinkId"; } }
+
         public void ResetWith(Snapshot snapshot)
         {
             throw new NotImplementedException();

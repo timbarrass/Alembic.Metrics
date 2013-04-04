@@ -2,10 +2,8 @@ using System.Collections.Generic;
 
 namespace Data
 {
-    public interface IMultipleSnapshotConsumer
+    public interface IMultipleSnapshotConsumer : ISnapshotHandler
     {
-        string Name { get; }
-
         void ResetWith(IEnumerable<Snapshot> snapshot);
 
         void Update(IEnumerable<Snapshot> snapshot);

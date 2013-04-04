@@ -15,7 +15,7 @@ namespace Tests
         {
             var name = "testPlotter";
 
-            var config = new PlotterElement(name, ".", 0, 1, 1);
+            var config = new PlotterElement("id", name, ".", 0, 1, 1);
 
             var plotter = new MultiPlotter(config);
 
@@ -38,7 +38,7 @@ namespace Tests
 
             var name = "testPlotter";
 
-            var config = new PlotterElement(name, ".", 0, 15, 1);
+            var config = new PlotterElement("id", name, ".", 0, 15, 1);
 
             var sink = new MultiPlotter(config);
 

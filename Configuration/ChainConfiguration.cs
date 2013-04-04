@@ -23,8 +23,10 @@ namespace Configuration
         {
         }
 
-        public ChainElement(string name, string sources, string sinks, string multiSinks)
+        public ChainElement(string id, string name, string sources, string sinks, string multiSinks)
         {
+            Id = id;
+
             Name = name;
 
             Sources = sources;
@@ -33,6 +35,14 @@ namespace Configuration
 
             MultiSinks = multiSinks;
         }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+            private set { base["id"] = value; }
+        }
+
 
         [ConfigurationProperty("name", IsRequired = true)]
         public string Name
@@ -66,9 +76,9 @@ namespace Configuration
     [ConfigurationCollection(typeof(ChainElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
     public class ChainElementCollection : ConfigurationElementCollection
     {
-        public bool Contains(string name)
+        public bool Contains(string id)
         {
-            return _names.Contains(name);
+            return _ids.Contains(id);
         }
 
         public void Add(IEnumerable<ChainElement> configs)
@@ -76,7 +86,7 @@ namespace Configuration
             foreach(var config in configs)
             {
                 BaseAdd(config);
-                _names.Add(config.Name);
+                _ids.Add(config.Id);
             }
         }
 
@@ -108,7 +118,7 @@ namespace Configuration
             return string.Format("{0}-{1}-{2}", (element as ChainElement).Name, (element as ChainElement).Sources, (element as ChainElement).Sinks);
         }
 
-        private HashSet<string> _names = new HashSet<string>(); 
+        private HashSet<string> _ids = new HashSet<string>(); 
     }
 
 

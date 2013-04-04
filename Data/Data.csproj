@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="IMultipleSnapshotConsumer.cs" />
     <Compile Include="ISnapshotConsumer.cs" />
+    <Compile Include="ISnapshotHandler.cs" />
     <Compile Include="ISnapshotProvider.cs" />
     <Compile Include="MetricData.cs" />
     <Compile Include="NullMetricData.cs" />

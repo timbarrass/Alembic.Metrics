@@ -36,12 +36,14 @@ namespace Configuration
         }
 
         public PlotterElement(IPlotterConfiguration config)
-            : this(config.Name + " Plotter", config.OutputPath, config.Min, config.Max, config.Scale)
+            : this(config.Id + " Plotter", config.Name, config.OutputPath, config.Min, config.Max, config.Scale)
         {
         }
 
-        public PlotterElement(string name, string outputDirectory, float? min, float? max, double scale)
+        public PlotterElement(string id, string name, string outputDirectory, float? min, float? max, double scale)
         {
+            Id = id;
+
             Name = name;
 
             OutputDirectory = outputDirectory;
@@ -51,6 +53,13 @@ namespace Configuration
             Max = max;
 
             Scale = scale;
+        }
+
+        [ConfigurationProperty("id", IsRequired = true)]
+        public string Id
+        {
+            get { return (string)base["id"]; }
+            private set { base["id"] = value; }
         }
 
         [ConfigurationProperty("name", IsRequired = true)]

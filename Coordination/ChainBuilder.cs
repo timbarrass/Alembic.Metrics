@@ -35,37 +35,37 @@ namespace Coordination
             {
                 try
                 {
-                    if (!sources.Any(s => config.Sources.Split(',').Any(i => i.Equals(s.Name))))
+                    if (!sources.Any(s => config.Sources.Split(',').Any(i => i.Equals(s.Id))))
                     {
-                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied for chain '{1}'.", config.Sources, config.Name));
+                        Log.Warn(string.Format("Couldn't find source '{0}' in the set of sources supplied for chain '{1}'.", config.Sources, config.Id));
 
                         continue;
                     }
 
-                    if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Name))) && !multiSinks.Any(s => config.MultiSinks.Split(',').Any(i => i.Equals(s.Name))))
+                    if (!sinks.Any(s => config.Sinks.Split(',').Any(i => i.Equals(s.Id))) && !multiSinks.Any(s => config.MultiSinks.Split(',').Any(i => i.Equals(s.Id))))
                     {
-                        Log.Warn(string.Format("Couldn't find one of sinks '{0}' in the set of sinks and multisinks supplied for chain '{1}'.", config.Sinks, config.Name));
+                        Log.Warn(string.Format("Couldn't find one of sinks '{0}' in the set of sinks and multisinks supplied for chain '{1}'.", config.Sinks, config.Id));
 
                         continue;
                     }
 
                     if (!string.IsNullOrEmpty(config.Sinks) && config.Sources.Split(',').Count().Equals(1))
                     {                      
-                        var chosenSource = sources.First(s => s.Name.Equals(config.Sources));
+                        var chosenSource = sources.First(s => s.Id.Equals(config.Sources));
 
                         var chosenSinks = new List<ISnapshotConsumer>();
 
                         foreach (var sinkName in config.Sinks.Split(','))
                         {
-                            chosenSinks.Add(sinks.First(s => s.Name.Equals(sinkName)));
+                            chosenSinks.Add(sinks.First(s => s.Id.Equals(sinkName)));
                         }
 
-                        chains.Add(new MultipleSinkChain(config.Name, chosenSource, chosenSinks.ToArray()));
+                        chains.Add(new MultipleSinkChain(config.Id, config.Name, chosenSource, chosenSinks.ToArray()));
                     }
                     
                     if (!string.IsNullOrEmpty(config.MultiSinks))
                     {
-                        var chosenSink = multiSinks.First(s => s.Name.Equals(config.MultiSinks));
+                        var chosenSink = multiSinks.First(s => s.Id.Equals(config.MultiSinks));
 
                         var chosenSources = new List<ISnapshotProvider>();
 
@@ -73,15 +73,15 @@ namespace Coordination
                         {
                             var sourceName = _.TrimStart(' ');
 
-                            chosenSources.Add(sources.First(s => s.Name.Equals(sourceName)));
+                            chosenSources.Add(sources.First(s => s.Id.Equals(sourceName)));
                         }
 
-                        chains.Add(new MultipleSourceChain(config.Name, chosenSink, chosenSources.ToArray()));
+                        chains.Add(new MultipleSourceChain(config.Id, config.Name, chosenSink, chosenSources.ToArray()));
                     }
                 }
                 catch (InvalidOperationException ioe)
                 {
-                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}': {3}", config.Name, config.Sources, config.Sinks, ioe.Message));
+                    Log.Warn(string.Format("Couldn't construct chain: '{0}' '{1}' '{2}': {3}", config.Id, config.Sources, config.Sinks, ioe.Message));
                 }
             }
 

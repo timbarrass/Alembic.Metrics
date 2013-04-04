@@ -23,10 +23,9 @@ namespace Sources
 
         private string _query;
 
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; private set; }
+
+        public string Id { get; private set; }
 
         public SqlServerDataSource(DatabaseElement config)
         {
@@ -37,19 +36,21 @@ namespace Sources
 
             var context = new DataContext(conn);
 
-            Initialise(config.Name, context, config.Query);
+            Initialise(config.Id, config.Name, context, config.Query);
         }
 
         public SqlServerDataSource(string id, string name, DataContext context, string query)
         {
-            Initialise(name, context, query);
+            Initialise(id, name, context, query);
         }
 
-        private void Initialise(string name, DataContext context, string query)
+        private void Initialise(string id, string name, DataContext context, string query)
         {
             _context = context;
 
-            _name = name;
+            Name = name;
+
+            Id = id;
 
             _query = query;
         }
@@ -98,8 +99,6 @@ namespace Sources
         {
             throw new NotImplementedException();
         }
-
-        private string _name;
     }
 
     /// <summary>

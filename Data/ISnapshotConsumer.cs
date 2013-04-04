@@ -1,9 +1,7 @@
 namespace Data
 {
-    public interface ISnapshotConsumer
+    public interface ISnapshotConsumer : ISnapshotHandler
     {
-        string Name { get; }
-
         void ResetWith(Snapshot snapshot);
         
         void Update(Snapshot snapshot);
