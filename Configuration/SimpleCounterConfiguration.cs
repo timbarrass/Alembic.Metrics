@@ -159,7 +159,7 @@ namespace Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}-{1}-{2}", (element as SimpleCounterElement).CategoryName, (element as SimpleCounterElement).CounterName, (element as SimpleCounterElement).InstanceName);
+            return string.Format("{0}-{1}-{2}-{3}", (element as SimpleCounterElement).MachineName, (element as SimpleCounterElement).CategoryName, (element as SimpleCounterElement).CounterName, (element as SimpleCounterElement).InstanceName);
         }
     }
 }

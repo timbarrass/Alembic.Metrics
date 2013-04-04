@@ -117,7 +117,7 @@ namespace Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return string.Format("{0}-{1}-{2}", (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
+            return string.Format("{0}-{1}-{2}-{3}", (element as CounterElement).MachineName, (element as CounterElement).CategoryName, (element as CounterElement).CounterName, (element as CounterElement).InstanceName);
         }
     }
 
