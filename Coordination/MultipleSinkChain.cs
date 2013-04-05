@@ -29,7 +29,7 @@ namespace Coordination
 
         public void Update()
         {
-            Log.Debug(string.Format("Updating chain '{0}'", Name));
+            Log.Debug(string.Format("Updating chain '{0}'", Id));
 
             var snapshot = _source.Snapshot();
 

@@ -68,20 +68,22 @@ namespace Sinks
 
         private void Plot(Chart chart, Snapshot snapshot)
         {
-            DateTime[] xvals;
-            double?[] yvals = new double?[0];
+            var xvals = snapshot.Select(x => x.Timestamp).ToArray();
 
-            xvals = snapshot.Select(x => x.Timestamp).ToArray();
+            var yvals = new double?[0];
 
             if (xvals.Length != 0)
             {
-                yvals = snapshot.Select(y => y.Data[0] * _scale).ToArray();
-            }
+                for (int i = 0; i < snapshot[0].Data.Count(d => d.HasValue); i++)
+                {
+                    yvals = snapshot.Select(y => y.Data[i]*_scale).ToArray();
 
-            AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot.Name);
+                    AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot[0].Labels[i]);
+                }
+            }
         }
 
-        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, float? min, float? max, string chartName)
+        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, float? min, float? max, string seriesName)
         {
             if (min.HasValue)
             {
@@ -95,12 +97,12 @@ namespace Sinks
             }
 
             var series = new Series();
-            series.Name = chartName;
+            series.Name = seriesName;
             series.ChartType = SeriesChartType.FastLine;
             series.XValueType = ChartValueType.DateTime;
             chart.Series.Add(series);
 
-            chart.Series[chartName].Points.DataBindXY(xvals, yvals);
+            chart.Series[seriesName].Points.DataBindXY(xvals, yvals);
         }
 
         private Chart InitializeLargeChart(string chartName)

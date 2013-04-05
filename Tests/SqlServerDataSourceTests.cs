@@ -39,8 +39,8 @@ namespace Tests
             var result = source.Snapshot();
 
             Assert.AreEqual(1, result.Count);
-            Assert.AreEqual("firstValue", result.Labels[0]);
-            Assert.AreEqual("secondValue", result.Labels[1]);
+            Assert.AreEqual("firstValue", result[0].Labels[0]);
+            Assert.AreEqual("secondValue", result[0].Labels[1]);
             Assert.AreEqual(5, result[0].Data.Count);
             Assert.AreEqual(1, result[0].Data[0]);            
         }

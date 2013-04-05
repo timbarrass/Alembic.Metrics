@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Coordination;
 using Data;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ namespace Tests
         [Test]
         public void ChainCanBeConfiguredWithASingleSourceAndMultipleSinks()
         {
-            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
+            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string>()) };
 
             var name = "testChain";
 
@@ -39,8 +40,8 @@ namespace Tests
         [Test]
         public void ChainCanBeConfiguredWithMultipleSourcesAndASingleSink()
         {
-            var firstSnapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
-            var secondSnapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
+            var firstSnapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string> { "value" }) };
+            var secondSnapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string> { "value" }) };
 
             var name = "testChain";
 

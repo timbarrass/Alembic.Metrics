@@ -66,8 +66,8 @@ namespace Sources
                 count++;
             }
 
-            var snapshot = new Snapshot { Name = Name, Labels = new List<string> { Name } };
-            snapshot.Add(new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now));
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( count == 0 ? 0 : uptime / count, DateTime.Now, new List<string> { Name }));
 
             return snapshot;
         }

@@ -61,7 +61,7 @@ namespace Sources
 
             var context = new DataContextWrapper(new DataContext(conn));
 
-            Initialise(config.Id, config.Name, context, config.Query, new List<string>());
+            Initialise(config.Id, config.Name, context, config.Query, config.Labels.Split(',').ToList());
         }
 
         public SqlServerDataSource(string id, string name, DataContextWrapper context, string query)
@@ -108,13 +108,13 @@ namespace Sources
             var queryEnd = DateTime.Now;
             var queryDuration = new TimeSpan(queryEnd.Ticks - start.Ticks).TotalMilliseconds;
 
-            var returnSeries = new Snapshot { Name = Name, Labels = Labels };
+            var returnSeries = new Snapshot { Name = Name };
 
             foreach(var point in timeseries)
             {
                 var values = new[] {point.Value1, point.Value2, point.Value3, point.Value4, point.Value5}.ToList();
 
-                var metricData = new MetricData(values, point.Timestamp);
+                var metricData = new MetricData(values, point.Timestamp, Labels);
                 
                 returnSeries.Add(metricData);
             }

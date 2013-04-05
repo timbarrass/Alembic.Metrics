@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Configuration;
 using Data;
@@ -40,7 +41,7 @@ namespace Tests
 
             var sink = new CircularDataSink(config);
 
-            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2)), new MetricData(20, DateTime.Now.AddMinutes(-1)) };
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-2), new List<string> { "value" }), new MetricData(20, DateTime.Now.AddMinutes(-1), new List<string> { "value" }) };
 
             sink.Update(snapshot);
 
@@ -49,7 +50,7 @@ namespace Tests
             Assert.AreEqual(2, actual.Count());
             Assert.AreEqual(10, actual.First().Data[0]);
 
-            snapshot = new Snapshot { new MetricData(20, DateTime.Now) };
+            snapshot = new Snapshot { new MetricData(20, DateTime.Now, new List<string> { "value" }) };
 
             sink.ResetWith(snapshot);
 
@@ -66,7 +67,7 @@ namespace Tests
 
             var sink = new CircularDataSink(config);
 
-            var snapshot = new Snapshot { new MetricData(10, DateTime.Parse("7 Feb 2013")), new MetricData(20, DateTime.Parse("9 Feb 2013")) };
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Parse("7 Feb 2013"), new List<string> { "value" }), new MetricData(20, DateTime.Parse("9 Feb 2013"), new List<string> { "value" }) };
 
             sink.Update(snapshot);
 
@@ -83,7 +84,7 @@ namespace Tests
 
             var sink = new CircularDataSink(config);
 
-            var snapshot = new Snapshot { new MetricData(10, DateTime.Now) };
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Now, new List<string> { "value" }) };
 
             sink.Update(snapshot);
 
@@ -102,9 +103,9 @@ namespace Tests
 
             sink.Update(new Snapshot
                             {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
-                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
+                                new MetricData( 1.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5), new List<string> { "value" }),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10), new List<string> { "value" }),
                             });
 
             var snapshot = sink.Snapshot();
@@ -128,10 +129,10 @@ namespace Tests
 
             sink.Update(new Snapshot
                             {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now.AddMinutes(5)),
-                                new MetricData( 4.0, DateTime.Now.AddMinutes(10)),
-                                new MetricData( 1.0, DateTime.Now.AddMinutes(5))
+                                new MetricData( 1.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 2.0, DateTime.Now.AddMinutes(5), new List<string> { "value" }),
+                                new MetricData( 4.0, DateTime.Now.AddMinutes(10), new List<string> { "value" }),
+                                new MetricData( 1.0, DateTime.Now.AddMinutes(5), new List<string> { "value" })
                             });
 
             var snapshot = sink.Snapshot();

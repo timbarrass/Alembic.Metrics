@@ -23,7 +23,7 @@ namespace Tests
         [Test, Category("IntegrationTest")]
         public void FileSystemDataStore_CanPersistSimpleData()
         {
-            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now) };
+            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now, new List<string>()) };
 
             var store = new FileSystemDataStore(".", "testStore", "id");
 
@@ -39,7 +39,7 @@ namespace Tests
         [Test, Category("IntegrationTest")]
         public void FileSystemDataStore_AnswersContainsQueries()
         {
-            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now) };
+            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now, new List<string>()) };
 
             var store = new FileSystemDataStore(".", "testData", "id");
 
@@ -62,7 +62,7 @@ namespace Tests
 
             var filePath = Path.Combine(root, "testData.am.gz");
 
-            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now) };
+            var testData = new Snapshot { new MetricData(2.5d, DateTime.Now, new List<string>()) };
 
             store.ResetWith(testData);
 

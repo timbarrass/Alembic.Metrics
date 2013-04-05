@@ -17,7 +17,7 @@ namespace Tests
         [Test]
         public void ChainBuilderTakesSourcesAndSinksAndBuildsSetOfChainsBasedOnConfig()
         {
-            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
+            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string>()) };
 
             var configs = new List<ChainElement>
                 {
@@ -60,7 +60,7 @@ namespace Tests
         [Test]
         public void ChainBuilderContinuesIfYouAskForAStoreOrSinkThatDoesntExist()
         {
-            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008")) };
+            var snapshot = new Snapshot { new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string> { "value" }) };
 
             var configs = new List<ChainElement>
                 {
@@ -95,9 +95,9 @@ namespace Tests
         {
             var snapshot = new Snapshot
                 {
-                    new MetricData(0.5, DateTime.Parse("12 Aug 2008")),
-                    new MetricData(0.8, DateTime.Parse("13 Aug 2008")),
-                    new MetricData(0.9, DateTime.Parse("14 Aug 2008"))
+                    new MetricData(0.5, DateTime.Parse("12 Aug 2008"), new List<string> { "value" }),
+                    new MetricData(0.8, DateTime.Parse("13 Aug 2008"), new List<string> { "value" }),
+                    new MetricData(0.9, DateTime.Parse("14 Aug 2008"), new List<string> { "value" })
                 };
 
             var configs = new List<ChainElement>

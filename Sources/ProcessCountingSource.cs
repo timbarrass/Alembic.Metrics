@@ -60,8 +60,8 @@ namespace Sources
                 processes = Process.GetProcessesByName(_processToMonitor, _machineName);
             }
 
-            var snapshot = new Snapshot { Name = Name, Labels = new List<string> { Name } };
-            snapshot.Add(new MetricData( processes.Length, DateTime.Now));
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( processes.Length, DateTime.Now, new List<string> { Name }));
 
             return snapshot;
         }

@@ -31,7 +31,7 @@ namespace Coordination
             var sourceStringBuilder = new StringBuilder();
             foreach(var source in config.Sources.Split(','))
             {
-                sourceStringBuilder.Append(source).Append(" Source,");
+                sourceStringBuilder.Append(source).Append(" Buffer,");
             }
             var configSources = sourceStringBuilder.ToString().TrimEnd(',');
 

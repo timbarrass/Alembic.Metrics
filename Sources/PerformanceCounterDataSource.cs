@@ -56,8 +56,8 @@ namespace Sources
         {
             Log.Debug("Querying " + Name);
 
-            var snapshot = new Snapshot { Name = Name, Labels = new List<string> { Name } };
-            snapshot.Add(new MetricData( _counter.NextValue(), DateTime.Now));
+            var snapshot = new Snapshot { Name = Name };
+            snapshot.Add(new MetricData( _counter.NextValue(), DateTime.Now, new List<string> { Name }));
 
             return snapshot;
         }

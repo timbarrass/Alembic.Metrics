@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Configuration;
 using Coordination;
 using Data;
@@ -42,9 +43,9 @@ namespace Tests
         {
             var snapshot = new Snapshot
                             {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now),
-                                new MetricData( 4.0, DateTime.Now)
+                                new MetricData( 1.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 2.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 4.0, DateTime.Now, new List<string> { "value" })
                             };
 
             var source = MockRepository.GenerateMock<ISnapshotProvider>();
@@ -60,8 +61,8 @@ namespace Tests
         {
             var snapshot = new Snapshot
                             {
-                                new MetricData( 2.0, DateTime.Parse("2013-02-28")),
-                                new MetricData( 4.0, DateTime.Parse("2013-03-03"))
+                                new MetricData( 2.0, DateTime.Parse("2013-02-28"), new List<string> { "value" }),
+                                new MetricData( 4.0, DateTime.Parse("2013-03-03"), new List<string> { "value" })
                             };
 
             var cutoff = DateTime.Parse("2013-02-15");
@@ -80,9 +81,9 @@ namespace Tests
         {
             var snapshot = new Snapshot
                             {
-                                new MetricData( 1.0, DateTime.Now),
-                                new MetricData( 2.0, DateTime.Now),
-                                new MetricData( 4.0, DateTime.Now)
+                                new MetricData( 1.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 2.0, DateTime.Now, new List<string> { "value" }),
+                                new MetricData( 4.0, DateTime.Now, new List<string> { "value" })
                             };
 
             var sink = MockRepository.GenerateMock<ISnapshotConsumer>();

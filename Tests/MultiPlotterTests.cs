@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Configuration;
 using Data;
@@ -27,14 +28,14 @@ namespace Tests
         public void CanBeReset()
         {
             var firstSnapshot = new Snapshot { Name = "first" };
-            firstSnapshot.Add(new MetricData(10, DateTime.Now.AddMinutes(-2)));
-            firstSnapshot.Add(new MetricData(11, DateTime.Now.AddMinutes(-1.5)));
-            firstSnapshot.Add(new MetricData(15, DateTime.Now.AddMinutes(-1)));
+            firstSnapshot.Add(new MetricData(10, DateTime.Now.AddMinutes(-2), new List<string> { "value" }));
+            firstSnapshot.Add(new MetricData(11, DateTime.Now.AddMinutes(-1.5), new List<string> { "value" }));
+            firstSnapshot.Add(new MetricData(15, DateTime.Now.AddMinutes(-1), new List<string> { "value" }));
 
             var secondSnapshot = new Snapshot { Name = "second" };
-            secondSnapshot.Add(new MetricData(10, DateTime.Now.AddMinutes(-2)));
-            secondSnapshot.Add(new MetricData(5, DateTime.Now.AddMinutes(-1.5)));
-            secondSnapshot.Add(new MetricData(6, DateTime.Now.AddMinutes(-1)));
+            secondSnapshot.Add(new MetricData(10, DateTime.Now.AddMinutes(-2), new List<string> { "value2" }));
+            secondSnapshot.Add(new MetricData(5, DateTime.Now.AddMinutes(-1.5), new List<string> { "value2" }));
+            secondSnapshot.Add(new MetricData(6, DateTime.Now.AddMinutes(-1), new List<string> { "value2" }));
 
             var name = "testPlotter";
 
