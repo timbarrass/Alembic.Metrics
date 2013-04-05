@@ -47,7 +47,7 @@ namespace Tests
             var actual = sink.Snapshot();
 
             Assert.AreEqual(2, actual.Count());
-            Assert.AreEqual(10, actual.First().Data);
+            Assert.AreEqual(10, actual.First().Data[0]);
 
             snapshot = new Snapshot { new MetricData(20, DateTime.Now) };
 
@@ -56,7 +56,7 @@ namespace Tests
             actual = sink.Snapshot();
 
             Assert.AreEqual(1, actual.Count());
-            Assert.AreEqual(20, actual.First().Data);
+            Assert.AreEqual(20, actual.First().Data[0]);
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Tests
             var actual = sink.Snapshot(DateTime.Parse("8 Feb 2013"));
 
             Assert.AreEqual(1, actual.Count());
-            Assert.AreEqual(20, actual.First().Data);
+            Assert.AreEqual(20, actual.First().Data[0]);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace Tests
             var actual = sink.Snapshot();
 
             Assert.AreEqual(1, actual.Count());
-            Assert.AreEqual(10, actual.First().Data);
+            Assert.AreEqual(10, actual.First().Data[0]);
         }
 
         [Test]
@@ -112,8 +112,8 @@ namespace Tests
             var total = 0.0d;
             foreach (var dataPoint in snapshot)
             {
-                if(dataPoint.Data.HasValue)
-                    total += dataPoint.Data.Value;
+                if(dataPoint.Data[0].HasValue)
+                    total += dataPoint.Data[0].Value;
             }
 
             Assert.AreEqual(7.0d, total);
@@ -139,7 +139,7 @@ namespace Tests
             var total = 0.0d;
             foreach (var dataPoint in snapshot)
             {
-                total += dataPoint.Data.Value;
+                total += dataPoint.Data[0].Value;
             }
 
             Assert.AreEqual(7.0d, total);

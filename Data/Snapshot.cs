@@ -7,5 +7,7 @@ namespace Data
     public class Snapshot : List<MetricData>
     {
         public string Name { get; set; }
+
+        public List<string> Labels = new List<string>(); 
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Data
 {
     public struct NullMetricData
     {
-        public double? Data
+        public List<double?> Data
         {
-            get { return null; }
+            get { return new List<double?>(); }
         }
 
         public DateTime Timestamp

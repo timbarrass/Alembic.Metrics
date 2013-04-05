@@ -75,7 +75,7 @@ namespace Sinks
 
             if (xvals.Length != 0)
             {
-                yvals = snapshot.Select(y => y.Data * _scale).ToArray();
+                yvals = snapshot.Select(y => y.Data[0] * _scale).ToArray();
             }
 
             AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot.Name);

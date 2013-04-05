@@ -1,4 +1,22 @@
-Add Id, use Id to relate components
-Use Name for filenames and plot titles
-
 SimplePlotterElement etc to provide PlotterId, BufferId, StoreId properties etc for subscribing classes to use
+
+Support multi-value snapshots
+  At Simple* config level we want it handled automatically
+    Will need labels for values
+  At detailed config level assume that sinks accept all points that sources produce -- is there another use case?
+  Sources still just provide a snapshot
+    Source label no longer describes all data from source; need value labels
+	At detailed config level need value labels
+  Sinks still accept a snapshot
+    x At detailed config level need value labels (independent of sources ...) [self describing snapshots]
+  New dimension for MetricData, or a list of values? Assume all values associated with same time point and -> list of values, order must match labels
+
+  Or can snapshot include label information? Self describing data would mean that sinks don't need to be preconfigured with labels.
+
+  "simpler", as the stores just hold collections of snapshots. potentially wasteful in terms of memory (stores could downconvert to a more optimized form for persistence)
+
+  1. MetricData takes a list of values; maintain current functionality by sources/sinks only populating/using first value
+  2. Snapshots extended to include a list of value labels (unused)
+  3. Sources populate snapshot value labels
+  4. Sinks use all snapshot values with labels
+  5. 
