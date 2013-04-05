@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Configuration;
 using Data;
@@ -55,7 +56,7 @@ namespace Sources
         {
             Log.Debug("Querying " + Name);
 
-            var snapshot = new Snapshot { Name = Name };
+            var snapshot = new Snapshot { Name = Name, Labels = new List<string> { Name } };
             snapshot.Add(new MetricData( _counter.NextValue(), DateTime.Now));
 
             return snapshot;

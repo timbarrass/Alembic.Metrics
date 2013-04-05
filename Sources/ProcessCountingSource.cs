@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Configuration;
 using Data;
@@ -59,7 +60,7 @@ namespace Sources
                 processes = Process.GetProcessesByName(_processToMonitor, _machineName);
             }
 
-            var snapshot = new Snapshot { Name = Name };
+            var snapshot = new Snapshot { Name = Name, Labels = new List<string> { Name } };
             snapshot.Add(new MetricData( processes.Length, DateTime.Now));
 
             return snapshot;

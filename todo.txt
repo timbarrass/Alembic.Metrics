@@ -17,6 +17,7 @@ Support multi-value snapshots
 
   1. MetricData takes a list of values; maintain current functionality by sources/sinks only populating/using first value
   2. Snapshots extended to include a list of value labels (unused)
-  3. Sources populate snapshot value labels
-  4. Sinks use all snapshot values with labels
+  3. Sources populate snapshot value labels for single current value
+  4. Sources populate snapshot value labels based on configured labels
+  4. Most sinks ok -- plotter needs to plot all, using labels
   5. 
