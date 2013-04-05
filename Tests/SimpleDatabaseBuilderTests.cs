@@ -29,9 +29,10 @@ namespace Tests
             const string outputPath = "thePath";
             const double scale = 0.1d;
             const int delay = 1;
+            const string labels = "label1";
 
             var simpleConfig = new SimpleDatabaseElement(id, name, query, connectionString, min, max, points,
-                                                         outputPath, scale, delay);
+                                                         outputPath, scale, delay, labels);
 
             var components = SimpleDatabaseBuilder.Build(simpleConfig);
 

@@ -30,7 +30,7 @@ namespace Configuration
         IScheduleConfiguration
     {
         public SimpleDatabaseElement(string id, string name, string query, string connectionString, float? min, float? max,
-                                    int pointsToKeep, string outputPath, double scale, int delay)
+                                    int pointsToKeep, string outputPath, double scale, int delay, string labels)
         {
             base["id"] = id;
             base["name"] = name;
@@ -42,6 +42,7 @@ namespace Configuration
             base["outputPath"] = outputPath;
             base["scale"] = scale;
             base["delay"] = delay;
+            base["labels"] = labels;
         }
 
         public SimpleDatabaseElement()
@@ -106,6 +107,12 @@ namespace Configuration
         public int Delay
         {
             get { return (int)base["delay"]; }
+        }
+
+        [ConfigurationProperty("labels", IsRequired = true)]
+        public string Labels
+        {
+            get { return (string)base["labels"]; }
         }
     }
 

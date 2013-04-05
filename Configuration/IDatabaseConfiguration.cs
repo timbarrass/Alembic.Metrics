@@ -5,5 +5,7 @@ namespace Configuration
         string Query { get; }
 
         string ConnectionString { get; }
+
+        string Labels { get; }
     }
 }

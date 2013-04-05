@@ -8,6 +8,6 @@ namespace Data
     {
         public string Name { get; set; }
 
-        public List<string> Labels = new List<string>(); 
+        public IList<string> Labels = new List<string>(); 
     }
 }

@@ -15,7 +15,7 @@ namespace Tests
 
             var configs = new[]
                 {
-                    new DatabaseElement("id", name, @"Data Source=.\SQLEXPRESS;Initial catalog=Alembic.Metrics.Dev;Integrated Security=True", "select 1")
+                    new DatabaseElement("id", name, @"Data Source=.\SQLEXPRESS;Initial catalog=Alembic.Metrics.Dev;Integrated Security=True", "select 1", "testValue1")
                 };
 
             var configCollection = new SqlServerDataSourceConfiguration(configs);

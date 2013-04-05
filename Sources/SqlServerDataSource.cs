@@ -2,12 +2,35 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Data.SqlClient;
+using System.Linq;
 using Configuration;
 using Data;
 using log4net;
 
 namespace Sources
 {
+    public class DataContextWrapper
+    {
+        private readonly DataContext _context;
+
+        public DataContextWrapper()
+        {
+            _context = null;
+        }
+
+        public DataContextWrapper(DataContext context)
+        {
+            _context = context;
+        }
+
+        public virtual IEnumerable<T> ExecuteQuery<T>(string query)
+        {
+            if (_context != null) return _context.ExecuteQuery<T>(query);
+
+            return null;
+        }
+    }
+
     /// <summary>
     /// Primarily intended as an example sql data source. More concrete classes should
     /// be implemented for each specific source.
@@ -19,13 +42,15 @@ namespace Sources
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SqlServerDataSource).Name);
 
-        private DataContext _context;
+        private DataContextWrapper _context;
 
         private string _query;
 
         public string Name { get; private set; }
 
         public string Id { get; private set; }
+
+        public IList<string> Labels { get; private set; } 
 
         public SqlServerDataSource(DatabaseElement config)
         {
@@ -34,23 +59,30 @@ namespace Sources
                     ConnectionString = config.ConnectionString
                 };
 
-            var context = new DataContext(conn);
+            var context = new DataContextWrapper(new DataContext(conn));
 
-            Initialise(config.Id, config.Name, context, config.Query);
+            Initialise(config.Id, config.Name, context, config.Query, new List<string>());
         }
 
-        public SqlServerDataSource(string id, string name, DataContext context, string query)
+        public SqlServerDataSource(string id, string name, DataContextWrapper context, string query)
         {
-            Initialise(id, name, context, query);
+            Initialise(id, name, context, query, new List<string>());
         }
 
-        private void Initialise(string id, string name, DataContext context, string query)
+        public SqlServerDataSource(string id, string name, DataContextWrapper context, string query, IList<string> labels)
+        {
+            Initialise(id, name, context, query, labels);
+        }
+
+        private void Initialise(string id, string name, DataContextWrapper context, string query, IList<string> labels)
         {
             _context = context;
 
             Name = name;
 
             Id = id;
+
+            Labels = labels;
 
             _query = query;
         }
@@ -70,17 +102,19 @@ namespace Sources
             catch (SqlException ex)
             {
                 Log.Warn(Name + ": SqlException thrown: " + ex.Message);
-                timeseries = new List<TimeseriesPoint>() { new TimeseriesPoint { Timestamp = DateTime.Now, Value = 0.0 } };
+                timeseries = new List<TimeseriesPoint>() { new TimeseriesPoint { Timestamp = DateTime.Now, Value1 = 0.0 } };
             }
             
             var queryEnd = DateTime.Now;
             var queryDuration = new TimeSpan(queryEnd.Ticks - start.Ticks).TotalMilliseconds;
 
-            var returnSeries = new Snapshot { Name = Name, Labels = new List<string> { Name } };
+            var returnSeries = new Snapshot { Name = Name, Labels = Labels };
 
             foreach(var point in timeseries)
             {
-                var metricData = new MetricData( point.Value, point.Timestamp);
+                var values = new[] {point.Value1, point.Value2, point.Value3, point.Value4, point.Value5}.ToList();
+
+                var metricData = new MetricData(values, point.Timestamp);
                 
                 returnSeries.Add(metricData);
             }
@@ -109,6 +143,14 @@ namespace Sources
     {
         public DateTime Timestamp;
 
-        public double Value;
+        public double? Value1;
+
+        public double? Value2;
+
+        public double? Value3;
+
+        public double? Value4;
+
+        public double? Value5;
     }
 }

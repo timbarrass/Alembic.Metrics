@@ -27,16 +27,17 @@ namespace Configuration
         }
 
         public DatabaseElement(IDatabaseConfiguration config)
-            : this(config.Id + " Source", config.Name, config.ConnectionString, config.Query)
+            : this(config.Id + " Source", config.Name, config.ConnectionString, config.Query, config.Labels)
         {
         }
 
-        public DatabaseElement(string id, string name, string connString, string query)
+        public DatabaseElement(string id, string name, string connString, string query, string labels)
         {
             base["id"] = id;
             base["name"] = name;
             base["connectionString"] = connString;
             base["query"] = query;
+            base["labels"] = labels;
         }
 
         [ConfigurationProperty("id", IsRequired = true)]
@@ -61,6 +62,12 @@ namespace Configuration
         public string Query
         {
             get { return (string)base["query"]; }
+        }
+
+        [ConfigurationProperty("labels", IsRequired = true)]
+        public string Labels
+        {
+            get { return (string)base["labels"]; }
         }
     }
 
