@@ -39,8 +39,8 @@ namespace MetricAgent
 
             if (Environment.UserInteractive)
             {
-                service.OnStart(args);
                 Console.WriteLine("Running as console app ... press a key to stop");
+                service.OnStart(args);
                 Console.Read();
                 service.OnStop();
             }
@@ -54,11 +54,16 @@ namespace MetricAgent
         {
             Log.Info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
+            new Thread(Run).Start();
+        }
+
+        private void Run(object state)
+        {
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
 
             var schedules = ConfigurationParser.Parse(configuration);
 
-            foreach(var preload in schedules.PreloadSchedules)
+            foreach (var preload in schedules.PreloadSchedules)
             {
                 preload.RunOnce();
             }
@@ -81,13 +86,18 @@ namespace MetricAgent
             }
             catch (AggregateException ae)
             {
-                ae.Handle(x => { Log.Error(ae.Message); return false; });
+                ae.Handle(x =>
+                    {
+                        Log.Error(ae.Message);
+                        return false;
+                    });
             }
         }
 
         protected override void OnStop()
         {
-            _tokenSource.Cancel();
+            if(_tokenSource != null)
+                _tokenSource.Cancel();
 
             Log.Info("========================================================================");
         }
