@@ -1,8 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
+using System.Linq;
 using Configuration;
 using Data;
 using log4net;
@@ -41,11 +40,11 @@ namespace Sinks
 
         public void ResetWith(Snapshot snapshot)
         {
-            var zipFileName = ZipFileName(Name);
+            var fileName = FileName(Name);
 
-            if (File.Exists(zipFileName))
+            if (File.Exists(fileName))
             {
-                File.Delete(zipFileName);
+                File.Delete(fileName);
             }
 
             Update(snapshot);
@@ -53,93 +52,60 @@ namespace Sinks
 
         public void Update(Snapshot snapshot)
         {
-            var allowedAttempts = 3;
-            var attempt = 1;
-
-            var zipFileName = ZipFileName(Name);
-
-            using (var os = new MemoryStream())
+            using(var file = File.Create(FileName(Name)))
+            using(var w = new StreamWriter(file))
             {
-                var bf = new BinaryFormatter();
+                w.WriteLine(string.Join(",", snapshot[0].Labels));
 
-                bf.Serialize(os, snapshot);
-
-                while (attempt++ <= allowedAttempts)
+                foreach(var dataPoint in snapshot)
                 {
-                    try
+                    w.Write(string.Format("{0}", dataPoint.Timestamp));
+                    
+                    foreach(var value in dataPoint.Data)
                     {
-                        using (var gzo = new FileStream(zipFileName, FileMode.Create, FileAccess.Write, FileShare.None))
-                        using (var gz = new GZipStream(gzo, CompressionMode.Compress))
-                        {
-                            os.Seek(0, SeekOrigin.Begin);
-
-                            os.CopyTo(gz);
-                        }
+                        w.Write(string.Format(",{0}", value.GetValueOrDefault(0.0)));
                     }
-                    catch (Exception)
-                    {
-                        if (attempt == allowedAttempts) throw;
 
-                        // Default to simple block to avoid complication of checking for cancellation.
-                        // If something more complex is needed, inject a backoff strategy for use here ...
-                        Thread.Sleep(100);
-                    }
+                    w.WriteLine(); w.Flush();
                 }
             }
         }
 
         public Snapshot Snapshot()
         {
-            var allowedAttempts = 3;
-            var attempt = 1;
+            var snapshot = new Snapshot();
 
-            var zipFileName = ZipFileName(Name);
-
-            var snapshot = new Snapshot { Name = Name };
-
-            using (var gzo = new MemoryStream())
+            try
             {
-                while (attempt++ <= allowedAttempts)
+                using (var file = File.OpenRead(FileName(Name)))
+                using (var r = new StreamReader(file))
                 {
-                    try
+                    string line = r.ReadLine();
+
+                    if (line == null) return new Snapshot();
+
+                    var labels = line.Split(',').ToList();
+
+                    while ((line = r.ReadLine()) != null)
                     {
-                        using (var gzi = new FileStream(zipFileName, FileMode.Open))
-                        using (var gz = new GZipStream(gzi, CompressionMode.Decompress))
-                        {
-                            gz.CopyTo(gzo);
+                        var data = line.Split(',').ToList();
 
-                            gzo.Seek(0, SeekOrigin.Begin);
-                        }
+                        var dataPoints = new List<double?>();
 
+                        for (int i = 1; i < data.Count; i++) dataPoints.Add(double.Parse(data[i]));
+
+                        snapshot.Add(new MetricData(dataPoints, DateTime.Parse(data[0]), labels));
                     }
-                    catch(FileNotFoundException)
-                    {
-                        Log.Warn(string.Format("Attempted to snapshot '{0}', but no underlying file was found.", Name));
-
-                        return new Snapshot();
-                    }
-                    catch (Exception)
-                    {
-                        if (attempt == allowedAttempts)
-                        {
-                            Log.Warn(string.Format("Attempted to snapshot '{0}', but failed {1} times", Name, attempt));
-
-                            return new Snapshot();                            
-                        }
-                        
-                        // As for Write -- default to simplest backoff
-                        Thread.Sleep(100);
-
-                        continue;
-                    }
-
-                    var bf = new BinaryFormatter();
-
-                    snapshot = bf.Deserialize(gzo) as Snapshot;
                 }
-            }
 
-            return snapshot;
+                return snapshot;
+            }
+            catch (FileNotFoundException)
+            {
+                Log.Warn(string.Format("Attempted to snapshot '{0}', but no underlying file was found.", Name));
+
+                return snapshot;
+            }
         }
 
         public Snapshot Snapshot(DateTime cutoff)
@@ -149,23 +115,22 @@ namespace Sinks
 
         public bool Contains(string name)
         {
-            var fileName = ZipFileName(name);
+            var fileName = FileName(name);
 
             return File.Exists(fileName);
         }
 
-
-        private string ZipFileName(string name)
+        private string FileName(string name)
         {
             name = Path.Combine(_root, name);
 
-            if (name.EndsWith(".am.gz"))
+            if (name.EndsWith(".am"))
             {
                 return name;
             }
 
-            var zipFileName = Path.ChangeExtension(name, ".am.gz");
-            
+            var zipFileName = Path.ChangeExtension(name, ".am");
+
             return zipFileName;
         }
 

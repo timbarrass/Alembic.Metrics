@@ -8,32 +8,26 @@ namespace Data
     {
         public MetricData(double? value, DateTime timestamp, IList<string> labels)
         {
-            _data = new List<double?> { value };
+            Data = new List<double?> { value };
 
-            _timestamp = timestamp;
+            Timestamp = timestamp;
 
-            _labels = labels;
+            Labels = labels;
         }
 
         public MetricData(List<double?> value, DateTime timestamp, IList<string> labels)
         {
-            _data = value;
+            Data = value;
 
-            _timestamp = timestamp;
+            Timestamp = timestamp;
 
-            _labels = labels;
+            Labels = labels;
         }
 
-        public List<double?> Data { get { return _data; } }
+        public List<double?> Data;
 
-        public DateTime Timestamp { get { return _timestamp; } }
+        public DateTime Timestamp;
 
-        public IList<string> Labels { get { return _labels; } } 
-
-        private readonly List<double?> _data;
-
-        private readonly DateTime _timestamp;
-
-        private readonly IList<string> _labels;
+        public IList<string> Labels;
     }
 }

@@ -33,7 +33,7 @@ namespace Tests
 
             Assert.AreEqual(testData.First().Data, ret.First().Data);
 
-            File.Delete("testData.am.gz");
+            File.Delete("testData.am");
         }
 
         [Test, Category("IntegrationTest")]
@@ -48,7 +48,7 @@ namespace Tests
             Assert.IsTrue(store.Contains("testData"));
             Assert.IsFalse(store.Contains("realData"));
 
-            File.Delete("testData.am.gz");
+            File.Delete("testData.am");
         }
 
         [Test, Category("IntegrationTest")]
@@ -60,7 +60,7 @@ namespace Tests
 
             Assert.IsTrue(Directory.Exists(root));
 
-            var filePath = Path.Combine(root, "testData.am.gz");
+            var filePath = Path.Combine(root, "testData.am");
 
             var testData = new Snapshot { new MetricData(2.5d, DateTime.Now, new List<string>()) };
 
