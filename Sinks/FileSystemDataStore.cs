@@ -63,7 +63,10 @@ namespace Sinks
                     
                     foreach(var value in dataPoint.Data)
                     {
-                        w.Write(string.Format(",{0}", value.GetValueOrDefault(0.0)));
+                        if(value.HasValue)
+                        {
+                            w.Write(string.Format(",{0}", value.Value));
+                        }
                     }
 
                     w.WriteLine(); w.Flush();
