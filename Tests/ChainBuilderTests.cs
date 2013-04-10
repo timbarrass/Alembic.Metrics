@@ -137,7 +137,7 @@ namespace Tests
             }
 
             var chartName = Path.Combine(@".", plotter.Name + ".png");
-            var storeName = store.Name + ".am.gz";
+            var storeName = store.Name + ".am";
 
             Assert.IsTrue(File.Exists(chartName));
             Assert.IsTrue(File.Exists(storeName));
