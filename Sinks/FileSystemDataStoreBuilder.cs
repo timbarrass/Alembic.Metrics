@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using Configuration;
+using Data;
 
 namespace Sinks
 {
     public class FileSystemDataStoreBuilder
     {
-        public static IEnumerable<FileSystemDataStore> Build(FileSystemDataStoreConfiguration fileSystemDataStoreConfiguration)
+        public static IEnumerable<ISnapshotConsumerAndProvider> Build(FileSystemDataStoreConfiguration fileSystemDataStoreConfiguration)
         {
             var fileSystemDataStores = new List<FileSystemDataStore>();
 

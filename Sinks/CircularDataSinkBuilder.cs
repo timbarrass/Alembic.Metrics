@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using Configuration;
+using Data;
 
 namespace Sinks
 {
     public class CircularDataSinkBuilder
     {
-        public static IEnumerable<CircularDataSink> Build(CircularDataSinkConfiguration circularDataSinkConfiguration)
+        public static IEnumerable<ISnapshotConsumerAndProvider> Build(CircularDataSinkConfiguration circularDataSinkConfiguration)
         {
             var circularDataSinks = new List<CircularDataSink>();
 

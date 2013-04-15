@@ -7,7 +7,7 @@ using Data;
 
 namespace Sinks
 {
-    public class CircularDataSink : ISnapshotProvider, ISnapshotConsumer
+    public class CircularDataSink : ISnapshotConsumerAndProvider
     {
         private readonly object _padlock = new object();
 

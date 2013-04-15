@@ -8,7 +8,7 @@ using log4net;
 
 namespace Sinks
 {
-    public class FileSystemDataStore : ISnapshotConsumer, ISnapshotProvider
+    public class FileSystemDataStore : ISnapshotConsumerAndProvider
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(FileSystemDataStore).Name);
 

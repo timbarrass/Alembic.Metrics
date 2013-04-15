@@ -6,7 +6,7 @@ namespace Sources
 {
     public class PerformanceCounterDataSourceBuilder
     {
-        public static List<ISnapshotProvider> Build(PerformanceCounterDataSourceConfiguration performanceCounterSourceConfiguration)
+        public static IEnumerable<ISnapshotProvider> Build(PerformanceCounterDataSourceConfiguration performanceCounterSourceConfiguration)
         {
             var performanceCounterDataSinks = new List<ISnapshotProvider>();
 
