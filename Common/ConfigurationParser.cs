@@ -24,68 +24,52 @@ namespace Common
             var scheduleConfigs = new List<ScheduleConfiguration>();
 
             // Simple configurations
-            var simpleCounterConfiguration = configuration.GetSection("simplePerformanceCounterSources") as SimplePerformanceCounterSourceConfiguration;
-
-            if (simpleCounterConfiguration != null)
+            var counterBuilder = new SimpleCounterBuilder();
+            var counterComponents = counterBuilder.Instance.Build(configuration);
+            foreach (var components in counterComponents)
             {
-                var componentsSet = SimpleCounterBuilder.Build(simpleCounterConfiguration);
-                foreach (var components in componentsSet)
-                {
-                    sources.AddRange(components.Sources);
-                    sinks.AddRange(components.Sinks);
-                    multiSourceSinks.AddRange(components.Multisinks);
-                    chainConfigs.Add(components.Chains);
-                    preloadScheduleConfigs.Add(components.PreloadSchedules);
-                    scheduleConfigs.Add(components.Schedules);
-                }
+                sources.AddRange(components.Sources);
+                sinks.AddRange(components.Sinks);
+                multiSourceSinks.AddRange(components.Multisinks);
+                chainConfigs.Add(components.Chains);
+                preloadScheduleConfigs.Add(components.PreloadSchedules);
+                scheduleConfigs.Add(components.Schedules);
             }
 
-            var simpleProcessUptimeConfiguration = configuration.GetSection("simpleProcessUptimeSources") as SimpleProcessUptimeConfiguration;
-
-            if (simpleProcessUptimeConfiguration != null)
+            var processUptimeBuilder = new SimpleProcessUptimeBuilder();
+            var processUptimeComponents = processUptimeBuilder.Instance.Build(configuration);
+            foreach (var components in processUptimeComponents)
             {
-                var componentsSet = SimpleProcessUptimeBuilder.Build(simpleProcessUptimeConfiguration);
-                foreach (var components in componentsSet)
-                {
-                    sources.AddRange(components.Sources);
-                    sinks.AddRange(components.Sinks);
-                    multiSourceSinks.AddRange(components.Multisinks);
-                    chainConfigs.Add(components.Chains);
-                    preloadScheduleConfigs.Add(components.PreloadSchedules);
-                    scheduleConfigs.Add(components.Schedules);
-                }
+                sources.AddRange(components.Sources);
+                sinks.AddRange(components.Sinks);
+                multiSourceSinks.AddRange(components.Multisinks);
+                chainConfigs.Add(components.Chains);
+                preloadScheduleConfigs.Add(components.PreloadSchedules);
+                scheduleConfigs.Add(components.Schedules);
             }
 
-            var simpleProcessCounterConfiguration = configuration.GetSection("simpleProcessCountingSources") as SimpleProcessCountingConfiguration;
-
-            if (simpleProcessCounterConfiguration != null)
+            var processCountingBuilder = new SimpleProcessCountingBuilder();
+            var processingCountingComponents = processCountingBuilder.Instance.Build(configuration);
+            foreach (var components in processingCountingComponents)
             {
-                var componentsSet = SimpleProcessCountingBuilder.Build(simpleProcessCounterConfiguration);
-                foreach (var components in componentsSet)
-                {
-                    sources.AddRange(components.Sources);
-                    sinks.AddRange(components.Sinks);
-                    multiSourceSinks.AddRange(components.Multisinks);
-                    chainConfigs.Add(components.Chains);
-                    preloadScheduleConfigs.Add(components.PreloadSchedules);
-                    scheduleConfigs.Add(components.Schedules);
-                }
+                sources.AddRange(components.Sources);
+                sinks.AddRange(components.Sinks);
+                multiSourceSinks.AddRange(components.Multisinks);
+                chainConfigs.Add(components.Chains);
+                preloadScheduleConfigs.Add(components.PreloadSchedules);
+                scheduleConfigs.Add(components.Schedules);
             }
 
-            var simpleDatabaseConfiguration = configuration.GetSection("simpleDatabaseSources") as SimpleDatabaseConfiguration;
-
-            if (simpleDatabaseConfiguration != null)
+            var databaseBuilder = new SimpleDatabaseBuilder();
+            var databaseComponents = databaseBuilder.Instance.Build(configuration);
+            foreach (var components in databaseComponents)
             {
-                var componentsSet = SimpleDatabaseBuilder.Build(simpleDatabaseConfiguration);
-                foreach (var components in componentsSet)
-                {
-                    sources.AddRange(components.Sources);
-                    sinks.AddRange(components.Sinks);
-                    multiSourceSinks.AddRange(components.Multisinks);
-                    chainConfigs.Add(components.Chains);
-                    preloadScheduleConfigs.Add(components.PreloadSchedules);
-                    scheduleConfigs.Add(components.Schedules);
-                }
+                sources.AddRange(components.Sources);
+                sinks.AddRange(components.Sinks);
+                multiSourceSinks.AddRange(components.Multisinks);
+                chainConfigs.Add(components.Chains);
+                preloadScheduleConfigs.Add(components.PreloadSchedules);
+                scheduleConfigs.Add(components.Schedules);
             }
 
             var simplePlotterConfiguration = configuration.GetSection("simplePlotters") as SimplePlotterConfiguration;

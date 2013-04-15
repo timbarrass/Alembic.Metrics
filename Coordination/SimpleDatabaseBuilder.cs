@@ -6,13 +6,25 @@ namespace Coordination
 {
     public class SimpleDatabaseBuilder
     {
-        public static IEnumerable<BuiltComponents> Build(SimpleDatabaseConfiguration configs)
+        public static readonly SimpleDatabaseBuilder _instance = new SimpleDatabaseBuilder();
+
+        public SimpleDatabaseBuilder Instance
+        {
+            get { return _instance; }
+        }
+
+        public IEnumerable<BuiltComponents> Build(System.Configuration.Configuration configuration)
         {
             var components = new List<BuiltComponents>();
 
-            foreach(SimpleDatabaseElement config in configs.Databases)
+            var simpleDatabaseConfiguration = configuration.GetSection("simpleDatabaseSources") as SimpleDatabaseConfiguration;
+
+            if (simpleDatabaseConfiguration != null)
             {
-                components.Add(Build(config));
+                foreach (SimpleDatabaseElement config in simpleDatabaseConfiguration.Databases)
+                {
+                    components.Add(Build(config));
+                }
             }
 
             return components;

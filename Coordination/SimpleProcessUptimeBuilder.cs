@@ -6,13 +6,25 @@ namespace Coordination
 {
     public class SimpleProcessUptimeBuilder
     {
-        public static IEnumerable<BuiltComponents> Build(SimpleProcessUptimeConfiguration configs)
+        public static readonly SimpleProcessUptimeBuilder _instance = new SimpleProcessUptimeBuilder();
+
+        public SimpleProcessUptimeBuilder Instance
+        {
+            get { return _instance; }
+        }
+
+        public IEnumerable<BuiltComponents> Build(System.Configuration.Configuration configuration)
         {
             var components = new List<BuiltComponents>();
 
-            foreach(SimpleProcessElement config in configs.Processes)
+            var simpleProcessUptimeConfiguration = configuration.GetSection("simpleProcessUptimeSources") as SimpleProcessUptimeConfiguration;
+
+            if (simpleProcessUptimeConfiguration != null)
             {
-                components.Add(Build(config));
+                foreach (SimpleProcessElement config in simpleProcessUptimeConfiguration.Processes)
+                {
+                    components.Add(Build(config));
+                }
             }
 
             return components;

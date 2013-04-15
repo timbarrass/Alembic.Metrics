@@ -6,13 +6,25 @@ namespace Coordination
 {
     public class SimpleProcessCountingBuilder
     {
-        public static IEnumerable<BuiltComponents> Build(SimpleProcessCountingConfiguration configs)
+        public static readonly SimpleProcessCountingBuilder _instance = new SimpleProcessCountingBuilder();
+
+        public SimpleProcessCountingBuilder Instance
+        {
+            get { return _instance; }
+        }
+
+        public IEnumerable<BuiltComponents> Build(System.Configuration.Configuration configuration)
         {
             var schedules = new List<BuiltComponents>();
 
-            foreach(SimpleProcessElement config in configs.Processes)
+            var simpleProcessCounterConfiguration = configuration.GetSection("simpleProcessCountingSources") as SimpleProcessCountingConfiguration;
+
+            if (simpleProcessCounterConfiguration != null)
             {
-                schedules.Add(Build(config));
+                foreach (SimpleProcessElement config in simpleProcessCounterConfiguration.Processes)
+                {
+                    schedules.Add(Build(config));
+                }
             }
 
             return schedules;
