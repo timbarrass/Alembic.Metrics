@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuiltComponents.cs" />
+    <Compile Include="SimpleComponentBuilder.cs" />
     <Compile Include="SimpleDatabaseBuilder.cs" />
     <Compile Include="SimplePlotterBuilder.cs" />
     <Compile Include="SimpleProcessCountingBuilder.cs" />

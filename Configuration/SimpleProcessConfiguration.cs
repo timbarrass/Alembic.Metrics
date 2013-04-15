@@ -42,10 +42,7 @@ namespace Configuration
     public class SimpleProcessElement :
         ConfigurationElement,
         IProcessConfiguration,
-        ISinkConfiguration,
-        IStoreConfiguration,
-        IPlotterConfiguration,
-        IScheduleConfiguration
+        IStandardSinkSetConfiguration
     {
         public SimpleProcessElement(string id, string name, string executableName, string machineName, float? min, float? max,
                                     int pointsToKeep, string outputPath, double scale, int delay)

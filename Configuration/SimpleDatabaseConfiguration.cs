@@ -24,10 +24,7 @@ namespace Configuration
     public class SimpleDatabaseElement :
         ConfigurationElement,
         IDatabaseConfiguration,
-        ISinkConfiguration,
-        IStoreConfiguration,
-        IPlotterConfiguration,
-        IScheduleConfiguration
+        IStandardSinkSetConfiguration
     {
         public SimpleDatabaseElement(string id, string name, string query, string connectionString, float? min, float? max,
                                     int pointsToKeep, string outputPath, double scale, int delay, string labels)

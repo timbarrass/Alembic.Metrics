@@ -24,10 +24,7 @@ namespace Configuration
     public class SimpleCounterElement : 
         ConfigurationElement, 
         ICounterConfiguration, 
-        ISinkConfiguration, 
-        IStoreConfiguration, 
-        IPlotterConfiguration,
-        IScheduleConfiguration
+        IStandardSinkSetConfiguration
     {
         public SimpleCounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay)
         {
