@@ -13,7 +13,8 @@ namespace Tests
         {
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
 
-            var schedules = ConfigurationParser.Parse(configuration);
+            var parser = new ConfigurationParser();
+            var schedules = parser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
             Assert.AreEqual(8, schedules.Schedules.Count());
@@ -24,7 +25,8 @@ namespace Tests
         {
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
 
-            var schedules = ConfigurationParser.Parse(configuration);
+            var parser = new ConfigurationParser();
+            var schedules = parser.Parse(configuration);
 
             Assert.IsInstanceOf<ParsedSchedules>(schedules);
             Assert.AreEqual(7, schedules.PreloadSchedules.Count());            

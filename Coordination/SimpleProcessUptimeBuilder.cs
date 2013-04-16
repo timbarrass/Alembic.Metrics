@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using Configuration;
 using Sources;
 
 namespace Coordination
 {
+    [Export(typeof(ISimpleBuilder))]
     public class SimpleProcessUptimeBuilder : ISimpleBuilder
     {
         public static readonly SimpleProcessUptimeBuilder _instance = new SimpleProcessUptimeBuilder();

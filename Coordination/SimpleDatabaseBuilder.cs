@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using Configuration;
 using Sources;
 
 namespace Coordination
 {
+    [Export(typeof(ISimpleBuilder))]
     public class SimpleDatabaseBuilder : ISimpleBuilder
     {
         public static readonly SimpleDatabaseBuilder _instance = new SimpleDatabaseBuilder();

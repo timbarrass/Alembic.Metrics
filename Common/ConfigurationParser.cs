@@ -19,15 +19,11 @@ namespace Common
 
         public ConfigurationParser()
         {
-            //An aggregate catalog that combines multiple catalogs
             var catalog = new AggregateCatalog();
-            //Adds all the parts found in the same assembly as the Program class
-            catalog.Catalogs.Add(new AssemblyCatalog(typeof(SimpleCounterBuilder).Assembly));
+            catalog.Catalogs.Add(new DirectoryCatalog("."));
 
-            //Create the CompositionContainer with the parts in the catalog
             _container = new CompositionContainer(catalog);
 
-            //Fill the imports of this object
             try
             {
                 _container.ComposeParts(this);
@@ -52,14 +48,6 @@ namespace Common
             var scheduleConfigs = new List<ScheduleConfiguration>();
 
             // Simple configurations
-            var builders = new List<ISimpleBuilder>
-                {
-                    new SimpleCounterBuilder(),
-                    new SimpleProcessUptimeBuilder(),
-                    new SimpleProcessCountingBuilder(),
-                    new SimpleDatabaseBuilder()
-                };
-            
             foreach(var builder in DiscoveredBuilders)
             {
                 var allComponentSets = builder.Value.Instance.Build(configuration);
