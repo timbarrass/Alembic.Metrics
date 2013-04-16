@@ -1,0 +1,29 @@
+* Alembic.Metrics
+
+** Introduction
+
+Alembic.Metrics is intended to be a simple drop-in mechanism for collecting metrics; holding them in a circular buffer; persisting them to disk; and plotting them up for comparison.
+
+It's not intended to replace enterprise-scale solutions like NetIQ. Instead, it's something you might use as a minimum-configuration alternative while getting an enterprise-scale system in place.
+
+It's not as fully featured as something like RRD. It was developed after a frustrating period trying to get RRD working in Windows, and to minimise the number of external requirements (it only requires .NET 4).
+
+It allows you to develop plugin sources of data that can be managed in the same way as the packaged sources.
+
+** Using packaged sources
+
+** Plotting timeseries from multiple sources on the same chart
+
+** Fine-grained control over sources, sinks, chains and schedules
+
+** Recovering and plotting persisted data; scaling out across multiple machines
+
+** Creating your own data source
+
+Your source should implement ISnapshotProvider. A snapshot is a list of one or more data points.
+
+Your source -- and any automatically-created sinks, chains and schedules -- should implement ISimpleBuilder.
+
+Example: a web service query perhaps, that uses hardcoded paramaters. Add the standard sink set in builder?
+
+Extend to act on configuration.

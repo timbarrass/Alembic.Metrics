@@ -14,6 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sources", "Sources\Sources.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{BC1EFDDF-849A-45CC-A324-7A931F70871C}"
 	ProjectSection(SolutionItems) = preProject
+		Notes.txt = Notes.txt
 		todo.txt = todo.txt
 	EndProjectSection
 EndProject
