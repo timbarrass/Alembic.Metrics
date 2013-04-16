@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using Configuration;
 using Coordination;
 using Data;
@@ -10,7 +12,33 @@ namespace Common
 {
     public class ConfigurationParser
     {
-        public static ParsedSchedules Parse(System.Configuration.Configuration configuration)
+        [ImportMany]
+        private IEnumerable<Lazy<ISimpleBuilder>> DiscoveredBuilders;
+
+        private readonly CompositionContainer _container;
+
+        public ConfigurationParser()
+        {
+            //An aggregate catalog that combines multiple catalogs
+            var catalog = new AggregateCatalog();
+            //Adds all the parts found in the same assembly as the Program class
+            catalog.Catalogs.Add(new AssemblyCatalog(typeof(SimpleCounterBuilder).Assembly));
+
+            //Create the CompositionContainer with the parts in the catalog
+            _container = new CompositionContainer(catalog);
+
+            //Fill the imports of this object
+            try
+            {
+                _container.ComposeParts(this);
+            }
+            catch (CompositionException compositionException)
+            {
+                Console.WriteLine(compositionException.ToString());
+            }
+        }
+
+        public ParsedSchedules Parse(System.Configuration.Configuration configuration)
         {
             var sources = new List<ISnapshotProvider>();
             var sinks = new List<ISnapshotConsumer>();
@@ -32,9 +60,9 @@ namespace Common
                     new SimpleDatabaseBuilder()
                 };
             
-            foreach(var builder in builders)
+            foreach(var builder in DiscoveredBuilders)
             {
-                var allComponentSets = builder.Instance.Build(configuration);
+                var allComponentSets = builder.Value.Instance.Build(configuration);
 
                 foreach (var components in allComponentSets)
                 {

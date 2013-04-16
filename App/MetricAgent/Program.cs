@@ -61,7 +61,9 @@ namespace MetricAgent
         {
             var configuration = ConfigurationManager.OpenExeConfiguration("MetricAgent.exe");
 
-            var schedules = ConfigurationParser.Parse(configuration);
+            var parser = new ConfigurationParser();
+
+            var schedules = parser.Parse(configuration);
 
             foreach (var preload in schedules.PreloadSchedules)
             {
