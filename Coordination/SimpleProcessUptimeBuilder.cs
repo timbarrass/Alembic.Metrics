@@ -4,11 +4,11 @@ using Sources;
 
 namespace Coordination
 {
-    public class SimpleProcessUptimeBuilder
+    public class SimpleProcessUptimeBuilder : ISimpleBuilder
     {
         public static readonly SimpleProcessUptimeBuilder _instance = new SimpleProcessUptimeBuilder();
 
-        public SimpleProcessUptimeBuilder Instance
+        public ISimpleBuilder Instance
         {
             get { return _instance; }
         }

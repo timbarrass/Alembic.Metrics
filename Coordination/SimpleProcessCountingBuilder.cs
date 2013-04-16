@@ -4,11 +4,11 @@ using Sources;
 
 namespace Coordination
 {
-    public class SimpleProcessCountingBuilder
+    public class SimpleProcessCountingBuilder : ISimpleBuilder
     {
         public static readonly SimpleProcessCountingBuilder _instance = new SimpleProcessCountingBuilder();
 
-        public SimpleProcessCountingBuilder Instance
+        public ISimpleBuilder Instance
         {
             get { return _instance; }
         }

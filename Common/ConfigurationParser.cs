@@ -24,52 +24,27 @@ namespace Common
             var scheduleConfigs = new List<ScheduleConfiguration>();
 
             // Simple configurations
-            var counterBuilder = new SimpleCounterBuilder();
-            var counterComponents = counterBuilder.Instance.Build(configuration);
-            foreach (var components in counterComponents)
+            var builders = new List<ISimpleBuilder>
+                {
+                    new SimpleCounterBuilder(),
+                    new SimpleProcessUptimeBuilder(),
+                    new SimpleProcessCountingBuilder(),
+                    new SimpleDatabaseBuilder()
+                };
+            
+            foreach(var builder in builders)
             {
-                sources.AddRange(components.Sources);
-                sinks.AddRange(components.Sinks);
-                multiSourceSinks.AddRange(components.Multisinks);
-                chainConfigs.Add(components.Chains);
-                preloadScheduleConfigs.Add(components.PreloadSchedules);
-                scheduleConfigs.Add(components.Schedules);
-            }
+                var allComponentSets = builder.Instance.Build(configuration);
 
-            var processUptimeBuilder = new SimpleProcessUptimeBuilder();
-            var processUptimeComponents = processUptimeBuilder.Instance.Build(configuration);
-            foreach (var components in processUptimeComponents)
-            {
-                sources.AddRange(components.Sources);
-                sinks.AddRange(components.Sinks);
-                multiSourceSinks.AddRange(components.Multisinks);
-                chainConfigs.Add(components.Chains);
-                preloadScheduleConfigs.Add(components.PreloadSchedules);
-                scheduleConfigs.Add(components.Schedules);
-            }
-
-            var processCountingBuilder = new SimpleProcessCountingBuilder();
-            var processingCountingComponents = processCountingBuilder.Instance.Build(configuration);
-            foreach (var components in processingCountingComponents)
-            {
-                sources.AddRange(components.Sources);
-                sinks.AddRange(components.Sinks);
-                multiSourceSinks.AddRange(components.Multisinks);
-                chainConfigs.Add(components.Chains);
-                preloadScheduleConfigs.Add(components.PreloadSchedules);
-                scheduleConfigs.Add(components.Schedules);
-            }
-
-            var databaseBuilder = new SimpleDatabaseBuilder();
-            var databaseComponents = databaseBuilder.Instance.Build(configuration);
-            foreach (var components in databaseComponents)
-            {
-                sources.AddRange(components.Sources);
-                sinks.AddRange(components.Sinks);
-                multiSourceSinks.AddRange(components.Multisinks);
-                chainConfigs.Add(components.Chains);
-                preloadScheduleConfigs.Add(components.PreloadSchedules);
-                scheduleConfigs.Add(components.Schedules);
+                foreach (var components in allComponentSets)
+                {
+                    sources.AddRange(components.Sources);
+                    sinks.AddRange(components.Sinks);
+                    multiSourceSinks.AddRange(components.Multisinks);
+                    chainConfigs.Add(components.Chains);
+                    preloadScheduleConfigs.Add(components.PreloadSchedules);
+                    scheduleConfigs.Add(components.Schedules);
+                }
             }
 
             var simplePlotterConfiguration = configuration.GetSection("simplePlotters") as SimplePlotterConfiguration;

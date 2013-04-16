@@ -4,16 +4,16 @@ using Sources;
 
 namespace Coordination
 {
-    public class SimpleCounterBuilder
+    public class SimpleCounterBuilder : ISimpleBuilder
     {
         public static readonly SimpleCounterBuilder _instance = new SimpleCounterBuilder();
 
-        public SimpleCounterBuilder Instance
+        public ISimpleBuilder Instance
         {
             get { return _instance;}
         }
 
-        public List<BuiltComponents> Build(System.Configuration.Configuration configuration)
+        public IEnumerable<BuiltComponents> Build(System.Configuration.Configuration configuration)
         {
             var components = new List<BuiltComponents>();
 

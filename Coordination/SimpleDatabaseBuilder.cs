@@ -4,11 +4,11 @@ using Sources;
 
 namespace Coordination
 {
-    public class SimpleDatabaseBuilder
+    public class SimpleDatabaseBuilder : ISimpleBuilder
     {
         public static readonly SimpleDatabaseBuilder _instance = new SimpleDatabaseBuilder();
 
-        public SimpleDatabaseBuilder Instance
+        public ISimpleBuilder Instance
         {
             get { return _instance; }
         }
