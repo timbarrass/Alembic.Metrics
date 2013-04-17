@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -12,7 +11,7 @@ namespace Sinks
 {
     public class MultiPlotter : IMultipleSnapshotConsumer
     {
-        public MultiPlotter(string id, string name, string outputPath, float? expectedMin, float? expectedMax, double scale)
+        public MultiPlotter(string id, string name, string outputPath, float? expectedMin, float? expectedMax, double scale, string areas)
         {
             Id = id;
 
@@ -25,10 +24,12 @@ namespace Sinks
             _max = expectedMax;
 
             _scale = scale;
+
+            _areas = areas;
         }
 
         public MultiPlotter(PlotterElement config)
-            : this(config.Id, config.Name, config.OutputDirectory, config.Min, config.Max, config.Scale)
+            : this(config.Id, config.Name, config.OutputDirectory, config.Min, config.Max, config.Scale, config.Areas)
         {
         }
 
@@ -43,13 +44,25 @@ namespace Sinks
 
         public void Update(IEnumerable<Snapshot> snapshots)
         {
+            var areas = _areas.Split(',').ToList();
+            
             var smallChart = InitializeSmallChart(Name);
             var largeChart = InitializeLargeChart(Name);
 
+            var index = 0;
             foreach (var snapshot in snapshots)
             {
-                Plot(smallChart, snapshot);
-                Plot(largeChart, snapshot);
+                var area = "";
+
+                if (areas.Count > 1)
+                {
+                    area = areas[index];
+                }
+
+                Plot(smallChart, snapshot, area);
+                Plot(largeChart, snapshot, area);
+
+                index++;
             }
 
             RenderChart(smallChart, string.Join("-", Name, "small"));
@@ -66,7 +79,7 @@ namespace Sinks
             chart.SaveImage(path, ChartImageFormat.Png);
         }
 
-        private void Plot(Chart chart, Snapshot snapshot)
+        private void Plot(Chart chart, Snapshot snapshot, string area)
         {
             var xvals = snapshot.Select(x => x.Timestamp).ToArray();
 
@@ -78,12 +91,12 @@ namespace Sinks
                 {
                     yvals = snapshot.Select(y => y.Data[i]*_scale).ToArray();
 
-                    AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot[0].Labels[i]);
+                    AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot[0].Labels[i], area);
                 }
             }
         }
 
-        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, float? min, float? max, string seriesName)
+        private void AddSeriesToChart(Chart chart, DateTime[] xvals, double?[] yvals, float? min, float? max, string seriesName, string area)
         {
             if (min.HasValue)
             {
@@ -98,6 +111,7 @@ namespace Sinks
 
             var series = new Series();
             series.Name = seriesName;
+            if (!string.IsNullOrEmpty(area)) series.ChartArea = area;
             series.ChartType = SeriesChartType.FastLine;
             series.XValueType = ChartValueType.DateTime;
             chart.Series.Add(series);
@@ -120,25 +134,50 @@ namespace Sinks
                 GraphicsUnit.Pixel);
 
             var chart = new Chart();
-            chart.Size = new Size(1200, 400);
+            
             chart.AntiAliasing = AntiAliasingStyles.None;
             chart.Titles.Add(new Title(chartName, Docking.Top, titleFont, Color.Black));
 
-            var chartArea = new ChartArea();
-            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
-            chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisX.LabelStyle.Font = labelFont;
-            chartArea.AxisY.LabelStyle.Font = labelFont;
-            chartArea.IsSameFontSizeForAllAxes = true;
+            var chartAreas = _areas.Split(',').Distinct();
 
-            chartArea.BorderColor = Color.Black;
-            chartArea.BorderWidth = 1;
-            chartArea.BorderDashStyle = ChartDashStyle.Solid;
+            chart.Size = new Size(1200, 400 + ((chartAreas.Count() - 1) * 360));
 
-            chart.ChartAreas.Add(chartArea);
+            var bigArea = 100 * ((float)400 / (float)chart.Size.Height);
+            var smallArea = bigArea * 0.9f;
 
-            chart.Legends.Add(new Legend(chartName));
+            int index = 0;
+            foreach (var area in chartAreas)
+            {
+                var chartArea = new ChartArea();
+                chartArea.Name = area;
+                chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
+                chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
+                chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
+                chartArea.AxisX.LabelStyle.Font = labelFont;
+                chartArea.AxisY.LabelStyle.Font = labelFont;
+                chartArea.IsSameFontSizeForAllAxes = true;
+
+                chartArea.BorderColor = Color.Black;
+                chartArea.BorderWidth = 1;
+                chartArea.BorderDashStyle = ChartDashStyle.Solid;
+
+                if (area != chartAreas.Last())
+                {
+                    chartArea.AxisX.LabelStyle = new LabelStyle { Enabled = false };
+                    chartArea.AlignWithChartArea = chartAreas.Last();
+                    chartArea.Position = new ElementPosition(0, smallArea * index, 100, smallArea);
+                }
+                else
+                {
+                    chartArea.Position = new ElementPosition(0, smallArea * index, 100, bigArea);
+                }
+
+                chart.ChartAreas.Add(chartArea);
+
+                chart.Legends.Add(new Legend(area));
+
+                index++;
+            }
 
             return chart;
         }
@@ -162,21 +201,45 @@ namespace Sinks
             chart.AntiAliasing = AntiAliasingStyles.None;
             chart.Titles.Add(new Title(chartName, Docking.Top, titleFont, Color.Black));
 
-            var chartArea = new ChartArea();
-            chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
-            chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
-            chartArea.AxisX.LabelStyle.Font = labelFont;
-            chartArea.AxisY.LabelStyle.Font = labelFont;
-            chartArea.IsSameFontSizeForAllAxes = true;
+            var chartAreas = _areas.Split(',').Distinct();
 
-            chartArea.BorderColor = Color.Black;
-            chartArea.BorderWidth = 1;
-            chartArea.BorderDashStyle = ChartDashStyle.Solid;
+            chart.Size = new Size(300, 150 + ((chartAreas.Count() - 1) * 135));
 
-            chartArea.AxisX.LabelAutoFitMaxFontSize = 7;
-            chartArea.AxisY.LabelAutoFitMaxFontSize = 7;
-            chart.ChartAreas.Add(chartArea);
+            var bigArea = 100 * ((float)150 / (float)chart.Size.Height);
+            var smallArea = bigArea * 0.9f;
+
+            int index = 0;
+            foreach (var area in chartAreas)
+            {
+                var chartArea = new ChartArea();
+                chartArea.Name = area;
+                chartArea.AxisX.LabelStyle.Format = "dd/MMM\nHH:mm";
+                chartArea.AxisX.MajorGrid.LineColor = Color.LightGray;
+                chartArea.AxisY.MajorGrid.LineColor = Color.LightGray;
+                chartArea.AxisX.LabelAutoFitStyle = LabelAutoFitStyles.DecreaseFont;
+                chartArea.AxisX.LabelStyle.Font = labelFont;
+                chartArea.AxisY.LabelStyle.Font = labelFont;
+                chartArea.IsSameFontSizeForAllAxes = true;
+
+                chartArea.BorderColor = Color.Black;
+                chartArea.BorderWidth = 1;
+                chartArea.BorderDashStyle = ChartDashStyle.Solid;
+
+                if (area != chartAreas.Last())
+                {
+                    chartArea.AxisX.LabelStyle = new LabelStyle { Enabled = false };
+                    chartArea.AlignWithChartArea = chartAreas.Last();
+                    chartArea.Position = new ElementPosition(0, smallArea * index, 100, smallArea);
+                }
+                else
+                {
+                    chartArea.Position = new ElementPosition(0, smallArea * index, 100, bigArea);
+                }
+
+                chart.ChartAreas.Add(chartArea);
+
+                index++;
+            }
 
             return chart;
         }
@@ -188,5 +251,7 @@ namespace Sinks
         private readonly float? _max;
 
         private readonly double _scale;
+
+        private readonly string _areas;
     }
 }

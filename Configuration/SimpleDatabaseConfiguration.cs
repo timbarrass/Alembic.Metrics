@@ -27,7 +27,7 @@ namespace Configuration
         IStandardSinkSetConfiguration
     {
         public SimpleDatabaseElement(string id, string name, string query, string connectionString, float? min, float? max,
-                                    int pointsToKeep, string outputPath, double scale, int delay, string labels)
+                                    int pointsToKeep, string outputPath, double scale, int delay, string labels, string areas)
         {
             base["id"] = id;
             base["name"] = name;
@@ -40,6 +40,7 @@ namespace Configuration
             base["scale"] = scale;
             base["delay"] = delay;
             base["labels"] = labels;
+            base["areas"] = areas;
         }
 
         public SimpleDatabaseElement()
@@ -110,6 +111,12 @@ namespace Configuration
         public string Labels
         {
             get { return (string)base["labels"]; }
+        }
+
+        [ConfigurationProperty("areas", IsRequired = false), DefaultSettingValue("")]
+        public string Areas
+        {
+            get { return (string)base["areas"]; }
         }
     }
 

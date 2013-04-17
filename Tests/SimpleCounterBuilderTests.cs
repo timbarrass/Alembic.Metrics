@@ -34,7 +34,7 @@ namespace Tests
             const int delay = 1;
 
             var simpleConfig = new SimpleCounterElement(id, name, catgeory, counter, instance, machine, min, max, points,
-                                                        outputPath, scale, delay);
+                                                        outputPath, scale, delay, "");
 
             var components = SimpleCounterBuilder.Build(simpleConfig);
 

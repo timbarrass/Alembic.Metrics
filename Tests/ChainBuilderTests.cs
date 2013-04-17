@@ -117,7 +117,7 @@ namespace Tests
 
             var store = new FileSystemDataStore(".", "testStore", "testStoreId");
 
-            var config = new PlotterElement("testPlotterId", "testPlotter", ".", 0, 1, 1);
+            var config = new PlotterElement("testPlotterId", "testPlotter", ".", 0, 1, 1, "");
 
             var plotter = new MultiPlotter(config);
 

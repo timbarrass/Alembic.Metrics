@@ -32,7 +32,7 @@ namespace Tests
             const string labels = "label1";
 
             var simpleConfig = new SimpleDatabaseElement(id, name, query, connectionString, min, max, points,
-                                                         outputPath, scale, delay, labels);
+                                                         outputPath, scale, delay, labels, "");
 
             var components = SimpleDatabaseBuilder.Build(simpleConfig);
 

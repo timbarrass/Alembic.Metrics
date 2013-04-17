@@ -31,7 +31,7 @@ namespace Tests
             const int delay = 1;
 
             var simpleConfig = new SimpleProcessElement(id, name, exe, machine, min, max, points,
-                                                        outputPath, scale, delay);
+                                                        outputPath, scale, delay, "");
 
             var components = SimpleProcessUptimeBuilder.Build(simpleConfig);
 

@@ -45,7 +45,7 @@ namespace Configuration
         IStandardSinkSetConfiguration
     {
         public SimpleProcessElement(string id, string name, string executableName, string machineName, float? min, float? max,
-                                    int pointsToKeep, string outputPath, double scale, int delay)
+                                    int pointsToKeep, string outputPath, double scale, int delay, string areas)
         {
             base["id"] = id;
             base["name"] = name;
@@ -57,6 +57,7 @@ namespace Configuration
             base["outputPath"] = outputPath;
             base["scale"] = scale;
             base["delay"] = delay;
+            base["areas"] = areas;
         }
 
         public SimpleProcessElement()
@@ -121,6 +122,12 @@ namespace Configuration
         public int Delay
         {
             get { return (int)base["delay"]; }
+        }
+
+        [ConfigurationProperty("areas", IsRequired = false), DefaultSettingValue("")]
+        public string Areas
+        {
+            get { return (string)base["areas"]; }
         }
     }
 

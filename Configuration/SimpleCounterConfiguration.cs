@@ -26,7 +26,7 @@ namespace Configuration
         ICounterConfiguration, 
         IStandardSinkSetConfiguration
     {
-        public SimpleCounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay)
+        public SimpleCounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay, string areas)
         {
             base["id"] = id;
             base["name"] = name;
@@ -40,6 +40,7 @@ namespace Configuration
             base["outputPath"] = outputPath;
             base["scale"] = scale;
             base["delay"] = delay;
+            base["areas"] = areas;
         }
 
         public SimpleCounterElement()
@@ -116,6 +117,12 @@ namespace Configuration
         public int Delay
         {
             get { return (int)base["delay"]; }
+        }
+
+        [ConfigurationProperty("areas"), DefaultSettingValue("")]
+        public string Areas
+        {
+            get { return (string)base["areas"]; }
         }
     }
 

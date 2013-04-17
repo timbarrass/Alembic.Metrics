@@ -9,5 +9,7 @@ namespace Configuration
         float? Max { get; }
 
         double Scale { get; }
+
+        string Areas { get; }
     }
 }

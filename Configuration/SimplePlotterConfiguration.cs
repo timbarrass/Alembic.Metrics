@@ -90,6 +90,12 @@ namespace Configuration
         {
             get { return (int)base["delay"]; }
         }
+
+        [ConfigurationProperty("areas", IsRequired = false)]
+        public string Areas
+        {
+            get { return (string)base["areas"]; }
+        }
     }
 
     [ConfigurationCollection(typeof(SimplePlotterElement),
