@@ -5,8 +5,6 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Configuration;
-using Coordination;
 using log4net;
 
 namespace MetricAgent
@@ -22,6 +20,8 @@ namespace MetricAgent
             CanPauseAndContinue = false;
             CanShutdown = true;
             CanStop = true;
+
+            log4net.GlobalContext.Properties["processId"] = System.Diagnostics.Process.GetCurrentProcess().Id.ToString();
         }
 
         private void Configure()

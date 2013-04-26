@@ -7,6 +7,7 @@ using Coordination;
 using Data;
 using Sinks;
 using Sources;
+using log4net;
 
 namespace Common
 {
@@ -31,6 +32,13 @@ namespace Common
             catch (CompositionException compositionException)
             {
                 Console.WriteLine(compositionException.ToString());
+            }
+
+            foreach(var _ in DiscoveredBuilders)
+            {
+                var builder = _.Value;
+
+                Log.Info(string.Format("Found {0} in {1}", builder.GetType().Name, builder.GetType().Assembly.GetName()));
             }
         }
 
@@ -181,5 +189,7 @@ namespace Common
 
             return new ParsedSchedules { Schedules = schedules, PreloadSchedules = preloadSchedules };
         }
+
+        private static readonly ILog Log = LogManager.GetLogger(typeof(ConfigurationParser).Name);
     }
 }
