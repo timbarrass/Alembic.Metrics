@@ -23,7 +23,6 @@ namespace Configuration
 
     public class SimpleCounterElement : 
         ConfigurationElement, 
-        ICounterConfiguration, 
         IStandardSinkSetConfiguration
     {
         public SimpleCounterElement(string id, string name, string categoryName, string counterName, string instanceName, string machineName, float? min, float? max, int points, string outputPath, double scale, int delay, string areas)
