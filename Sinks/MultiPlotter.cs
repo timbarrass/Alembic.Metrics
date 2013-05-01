@@ -87,9 +87,9 @@ namespace Sinks
 
             if (xvals.Length != 0)
             {
-                for (int i = 0; i < snapshot[0].Data.Count(d => d.HasValue); i++)
+                for (int i = 0; i < snapshot[0].Data.Count(); i++)
                 {
-                    yvals = snapshot.Select(y => y.Data[i]*_scale).ToArray();
+                    yvals = snapshot.Select(y => y.Data[i].HasValue ? new double?(y.Data[i].Value*_scale) : null).ToArray();
 
                     AddSeriesToChart(chart, xvals, yvals, _min, _max, snapshot[0].Labels[i], area);
                 }

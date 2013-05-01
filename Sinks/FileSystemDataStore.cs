@@ -63,10 +63,7 @@ namespace Sinks
                     
                     foreach(var value in dataPoint.Data)
                     {
-                        if(value.HasValue)
-                        {
-                            w.Write(string.Format(",{0}", value.Value));
-                        }
+                        w.Write(string.Format(",{0}", value.HasValue ? value.Value.ToString() : "null"));
                     }
 
                     w.WriteLine(); w.Flush();
@@ -78,37 +75,38 @@ namespace Sinks
         {
             var snapshot = new Snapshot();
 
-            try
-            {
-                using (var file = File.OpenRead(FileName(Name)))
-                using (var r = new StreamReader(file))
-                {
-                    string line = r.ReadLine();
-
-                    if (line == null) return new Snapshot();
-
-                    var labels = line.Split(',').ToList();
-
-                    while ((line = r.ReadLine()) != null)
-                    {
-                        var data = line.Split(',').ToList();
-
-                        var dataPoints = new List<double?>();
-
-                        for (int i = 1; i < data.Count; i++) dataPoints.Add(double.Parse(data[i]));
-
-                        snapshot.Add(new MetricData(dataPoints, DateTime.Parse(data[0]), labels));
-                    }
-                }
-
-                return snapshot;
-            }
-            catch (FileNotFoundException)
+            if(! File.Exists(FileName(Name)))
             {
                 Log.Warn(string.Format("Attempted to snapshot '{0}', but no underlying file was found.", Name));
 
                 return snapshot;
             }
+
+            using (var file = File.OpenRead(FileName(Name)))
+            using (var r = new StreamReader(file))
+            {
+                string line = r.ReadLine();
+
+                if (line == null) return new Snapshot();
+
+                var labels = line.Split(',').ToList();
+
+                while ((line = r.ReadLine()) != null)
+                {
+                    var data = line.Split(',').ToList();
+
+                    var dataPoints = new List<double?>();
+
+                    for (int i = 1; i < data.Count; i++)
+                    {
+                        dataPoints.Add(data[i].Equals("null") ? new double?() : double.Parse(data[i]));
+                    }
+
+                    snapshot.Add(new MetricData(dataPoints, DateTime.Parse(data[0]), labels));
+                }
+            }
+
+            return snapshot;
         }
 
         public Snapshot Snapshot(DateTime cutoff)
