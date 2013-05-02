@@ -94,6 +94,22 @@ namespace Tests
             Assert.AreEqual(10, actual.First().Data[0]);
         }
 
+        [Test, ExpectedException("System.InvalidOperationException")]
+        public void CircularDataSink_WarnsWhenStructureOfDataHasChanged()
+        {
+            var config = new SinkElement("id", "testData", 10, float.MinValue, float.MaxValue);
+
+            var sink = new CircularDataSink(config);
+
+            var snapshot = new Snapshot { new MetricData(10, DateTime.Now.AddMinutes(-1), new List<string> { "value" }) };
+
+            sink.Update(snapshot);
+
+            snapshot = new Snapshot { new MetricData(10, DateTime.Now, new List<string> { "value", "some extra value" }) };
+
+            sink.Update(snapshot);
+        }
+
         [Test]
         public void CircularDataSink_SupportsDataSnapshot()
         {

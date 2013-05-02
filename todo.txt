@@ -1,4 +1,9 @@
-1. Reconsider exception handling. Currently MetricAgent should die at first unhandled exception. Schedules map to thread boundaries. Should they insulate app from exceptions?
-2. MultiPlotter -- final step might be nice to define multi-area charts.
 3. Store -- rewrite whole store on Update is wasteful. Define archive behaviour (points, as buffer?). Modify store to update and roll-off.
 4. Spin off example html5/js/css3 app like mashup? charting controls?
+5. Watermark on (large) plots
+6. Dynamic sink discovery
+7. Plotter with important event labelling (from some source .. represent as a snapshot?)
+8. SQL server store?
+9. Integrity; what if source/sink change configuration between stop and start?
+9a. First step, compare and warn, most can be fixed manually at the moment
+9b. Fix automatically where possible

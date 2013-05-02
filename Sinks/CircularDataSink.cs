@@ -21,6 +21,8 @@ namespace Sinks
 
         private readonly string _id;
 
+        private IList<string> _labels;
+
         public CircularDataSink(ISinkConfiguration config)
         {
             _id = config.Id;
@@ -67,11 +69,27 @@ namespace Sinks
                 {
                     if (metric.Timestamp > _lastUpdate)
                     {
+                        CheckDataStructure(metric);
+
                         _data.Add(metric);
 
                         _lastUpdate = metric.Timestamp;
                     }
                 }
+            }
+        }
+
+        private void CheckDataStructure(MetricData metric)
+        {
+            if (_labels == null) _labels = metric.Labels;
+
+            if (!metric.Labels.SequenceEquals(_labels))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Data structure for {0} has changed '{1}':'{2}'",
+                                  Name,
+                                  string.Join(",", _labels),
+                                  string.Join(",", metric.Labels)));
             }
         }
 
@@ -155,6 +173,21 @@ namespace Sinks
 
                 return value.ToString();
             }
+        }
+    }
+
+    internal static class StringListExtensions
+    {
+        public static bool SequenceEquals(this IList<string> first, IList<string> second)
+        {
+            if (first.Count != second.Count) return false;
+
+            for (int i = 0; i < first.Count; i++)
+            {
+                if (!first[i].Equals(second[i])) return false;
+            }
+
+            return true;
         }
     }
 }
