@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Text;
 using Configuration;
 using Data;
@@ -6,17 +7,28 @@ using Sinks;
 
 namespace Coordination
 {
-    public class SimplePlotterBuilder
+    [Export(typeof(ISimpleSinkBuilder))]
+    public class SimplePlotterBuilder : ISimpleSinkBuilder
     {
-        public static IEnumerable<ISchedule> Build(SimplePlotterConfiguration configs, IEnumerable<ISnapshotProvider> sources)
+        private static readonly ISimpleSinkBuilder _instance = new SimplePlotterBuilder();
+
+        public ISimpleSinkBuilder Instance { get { return _instance; } }
+
+        public IEnumerable<ISchedule> Build(System.Configuration.Configuration configuration, IEnumerable<ISnapshotProvider> sources)
         {
-            var copiedSources = sources;
+            var simplePlotterConfiguration = configuration.GetSection("simplePlotters") as SimplePlotterConfiguration;
 
             var schedules = new List<ISchedule>();
 
-            foreach(SimplePlotterElement config in configs.Plotters)
+            if (simplePlotterConfiguration != null)
             {
-                schedules.Add(Build(config, copiedSources));
+                var copiedSources = sources;
+
+                foreach (SimplePlotterElement config in simplePlotterConfiguration.Plotters)
+                {
+                    schedules.Add(Build(config, copiedSources));
+                }
+
             }
 
             return schedules;

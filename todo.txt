@@ -2,6 +2,7 @@
 4. Spin off example html5/js/css3 app like mashup? charting controls tho'? asp.net better ... ?
 5. Watermark on (large) plots
 6. Dynamic sink discovery
+6a. Rationalize consumer interfaces
 7. Plotter with important event labelling (from some source .. represent as a snapshot?)
 8. SQL server store?
 9. Integrity; what if source/sink change configuration between stop and start?

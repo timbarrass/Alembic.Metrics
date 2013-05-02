@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="BuiltComponents.cs" />
     <Compile Include="ISimpleBuilder.cs" />
+    <Compile Include="ISimpleSinkBuilder.cs" />
     <Compile Include="SimpleComponentBuilder.cs" />
     <Compile Include="SimpleDatabaseBuilder.cs" />
     <Compile Include="SimplePlotterBuilder.cs" />

@@ -16,6 +16,9 @@ namespace Common
         [ImportMany]
         private IEnumerable<Lazy<ISimpleBuilder>> DiscoveredBuilders;
 
+        [ImportMany]
+        private IEnumerable<Lazy<ISimpleSinkBuilder>> DiscoveredSinkBuilders; 
+
         private readonly CompositionContainer _container;
 
         public ConfigurationParser()
@@ -31,10 +34,17 @@ namespace Common
             }
             catch (CompositionException compositionException)
             {
-                Console.WriteLine(compositionException.ToString());
+                Log.Warn(compositionException.ToString());
             }
 
             foreach(var _ in DiscoveredBuilders)
+            {
+                var builder = _.Value;
+
+                Log.Info(string.Format("Found {0} in {1}", builder.GetType().Name, builder.GetType().Assembly.GetName()));
+            }
+
+            foreach (var _ in DiscoveredSinkBuilders)
             {
                 var builder = _.Value;
 
@@ -71,13 +81,10 @@ namespace Common
                 }
             }
 
-            var simplePlotterConfiguration = configuration.GetSection("simplePlotters") as SimplePlotterConfiguration;
-
-            if (simplePlotterConfiguration != null)
+            foreach(var sinkBuilder in DiscoveredSinkBuilders)
             {
-                schedules.AddRange(SimplePlotterBuilder.Build(simplePlotterConfiguration, sources)); // this won't work, as everything else is hidden behind schedules
+                schedules.AddRange(sinkBuilder.Value.Instance.Build(configuration, sources));    
             }
-
 
             // ProcessCountingSources
             var processCountingSourceConfiguration =
