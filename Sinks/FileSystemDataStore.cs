@@ -52,6 +52,8 @@ namespace Sinks
 
         public void Update(Snapshot snapshot)
         {
+            CheckDataStructure(snapshot);
+
             using(var file = File.Create(FileName(Name)))
             using(var w = new StreamWriter(file))
             {
@@ -67,6 +69,25 @@ namespace Sinks
                     }
 
                     w.WriteLine(); w.Flush();
+                }
+            }
+        }
+
+        private IList<string> _labels;
+
+        private void CheckDataStructure(Snapshot snapshot)
+        {
+            foreach (var metric in snapshot)
+            {
+                if (_labels == null) _labels = metric.Labels;
+
+                if (!metric.Labels.SequenceEquals(_labels))
+                {
+                    throw new InvalidOperationException(
+                        string.Format("Data structure for {0} has changed '{1}':'{2}'",
+                                      Name,
+                                      string.Join(",", _labels),
+                                      string.Join(",", metric.Labels)));
                 }
             }
         }

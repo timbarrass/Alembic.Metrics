@@ -21,8 +21,6 @@ namespace Sinks
 
         private readonly string _id;
 
-        private IList<string> _labels;
-
         public CircularDataSink(ISinkConfiguration config)
         {
             _id = config.Id;
@@ -78,6 +76,8 @@ namespace Sinks
                 }
             }
         }
+
+        private IList<string> _labels;
 
         private void CheckDataStructure(MetricData metric)
         {
