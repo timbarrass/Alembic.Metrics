@@ -69,7 +69,6 @@ namespace Sinks
             RenderChart(largeChart, Name);
         }
 
-
         private void RenderChart(Chart chart, string chartName)
         {
             chart.Invalidate();
@@ -87,7 +86,7 @@ namespace Sinks
 
             if (xvals.Length != 0)
             {
-                for (int i = 0; i < snapshot[0].Data.Count(); i++)
+                for (int i = 0; i < snapshot[0].Labels.Count; i++)
                 {
                     yvals = snapshot.Select(y => y.Data[i].HasValue ? new double?(y.Data[i].Value*_scale) : null).ToArray();
 
